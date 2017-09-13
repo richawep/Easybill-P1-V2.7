@@ -220,7 +220,7 @@ public class UserManagementActivity extends WepBaseActivity implements View.OnCl
             {
                 if(editTextAdhar.getText().toString().trim().length()<12 && editTextAdhar.getText().toString().trim().length()>0)
                 {
-                    Toast.makeText(myContext, "12 digit required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(myContext, "Invalid Aadhar number", Toast.LENGTH_SHORT).show();
                 }
                 else /*if(isValidEmailAddress(editTextEmail.getText().toString().toString()))*/
                 {
