@@ -157,12 +157,15 @@ public class PrintIngredients extends WepPrinterBaseActivity {
         }
     }
     public void SetPrinterAvailable(boolean flag) {
-
-        Toast.makeText(this, "Bill Printer Status : " + flag, Toast.LENGTH_SHORT).show();
+        String status="Offline";
+        if(flag)
+            status = "Available";
+        Toast.makeText(this, " Printer Status : " + status, Toast.LENGTH_SHORT).show();
         isPrinterAvailable = flag;
         //btn_PrintBill.setEnabled(true);
         //btn_Reprint.setEnabled(true);
     }
+
 
 
     public void Print(View v) {

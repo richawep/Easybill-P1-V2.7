@@ -1148,8 +1148,10 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
        }
    }
     public void SetPrinterAvailable(boolean flag) {
-
-        Toast.makeText(BillingCounterSalesActivity.this, "Bill Printer Status : " + flag, Toast.LENGTH_SHORT).show();
+        String status="Offline";
+        if(flag)
+            status = "Available";
+        Toast.makeText(BillingCounterSalesActivity.this, "Bill Printer Status : " + status, Toast.LENGTH_SHORT).show();
         isPrinterAvailable = flag;
         //btn_PrintBill.setEnabled(true);
         //btn_Reprint.setEnabled(true);
@@ -1875,6 +1877,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                     TextView cessRate = (TextView) Row.getChildAt(25);
                     TextView cessAmt = (TextView) Row.getChildAt(26);
                     TextView tvTaxableValue = (TextView) Row.getChildAt(28);
+                    TextView tvOriginalRate = (TextView) Row.getChildAt(27);
 
                     dTaxPercent = Double.parseDouble(TaxPer.getText().toString().equalsIgnoreCase("") ? "0"
                             : TaxPer.getText().toString()); // Temp
@@ -1915,6 +1918,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                         IGSTAmt.setText(String.format("%.2f", dIGSTAmt));
                         Amount.setText(String.format("%.2f", (strQty * (dRate-dTempAmt))));
                         tvTaxableValue.setText(String.format("%.2f", (strQty * (dRate-dTempAmt))));
+                        tvOriginalRate.setText(String.format("%.2f", (dRate)));
 
                     } else {// reverse tax
 

@@ -86,12 +86,15 @@ public class TabbedReportActivity extends WepPrinterBaseActivity {
         }
     }
     public void SetPrinterAvailable(boolean flag) {
-
-        Toast.makeText(this, "Bill Printer Status : " + flag, Toast.LENGTH_SHORT).show();
+        String status="Offline";
+        if(flag)
+            status = "Available";
+        Toast.makeText(this, "Report Printer Status : " + status, Toast.LENGTH_SHORT).show();
         isPrinterAvailable = flag;
         //btn_PrintBill.setEnabled(true);
         //btn_Reprint.setEnabled(true);
     }
+
 
 
     @Override
