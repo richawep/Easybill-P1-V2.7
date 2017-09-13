@@ -276,6 +276,22 @@ public class InwardItemActivity extends WepBaseActivity {
                 }
             });
 
+            autocomplete_inw_ItemName.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    hideKeyboard();
+                }
+            });
+            autocomplete_inw_ItemName.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK)
+                    {
+                        hideKeyboard();
+                    }
+                    return false;
+                }
+            });
             autocomplete_inw_ItemName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String itemname = autocomplete_inw_ItemName.getText().toString();
@@ -287,9 +303,8 @@ public class InwardItemActivity extends WepBaseActivity {
                         tvMenuCode.setText(itemDetail.getString(itemDetail.getColumnIndex("MenuCode")));
                         et_inw_ItemBarcode.setText(itemDetail.getString(itemDetail.getColumnIndex("ItemBarcode")));
                         et_inw_HSNCode.setText(itemDetail.getString(itemDetail.getColumnIndex("HSNCode")));
-                        et_inw_averagerate_entered.setText(String.format("%.2f,",itemDetail.getDouble(itemDetail.getColumnIndex("AverageRate"))));
-                        et_inw_quantity.setText(String.format("%.2f,",itemDetail.getDouble(itemDetail.getColumnIndex("Quantity"))));
-
+                        et_inw_averagerate_entered.setText(String.format("%.2f",itemDetail.getDouble(itemDetail.getColumnIndex("AverageRate"))));
+                        et_inw_quantity.setText(String.format("%.2f",itemDetail.getDouble(itemDetail.getColumnIndex("Quantity"))));
                         et_Inw_CGSTRate.setText(String.format("%.2f",itemDetail.getDouble(itemDetail.getColumnIndex("CGSTRate"))));
                         et_Inw_SGSTRate.setText(String.format("%.2f",itemDetail.getDouble(itemDetail.getColumnIndex("SGSTRate"))));
                         et_Inw_IGSTRate.setText(String.format("%.2f",itemDetail.getDouble(itemDetail.getColumnIndex("IGSTRate"))));
@@ -1868,5 +1883,6 @@ public class InwardItemActivity extends WepBaseActivity {
     @Override
     public void onHomePressed() {
         ActionBarUtils.navigateHome(this);    }
+
 
 }
