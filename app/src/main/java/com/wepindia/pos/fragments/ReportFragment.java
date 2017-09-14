@@ -3955,8 +3955,8 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
 
                             // Quantity
                             TextView Qty = (TextView) rowItem.getChildAt(2);
-                            Qty.setText(String.valueOf(Integer.parseInt(Qty.getText().toString()) +
-                                    Report.getInt(Report.getColumnIndex("Quantity"))));
+                            Qty.setText(String.valueOf(Float.parseFloat(Qty.getText().toString()) +
+                                    Report.getFloat(Report.getColumnIndex("Quantity"))));
                             /*Qty.setText(String.format("%.2f",
                                     Double.parseDouble(Qty.getText().toString()) +
                                             Report.getDouble(Report.getColumnIndex("Quantity"))));
@@ -4037,8 +4037,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                     SoldQty = new TextView(myContext);
                     /*SoldQty.setText(String.format("%.2f", Report.getDouble(Report
                             .getColumnIndex("Quantity"))));*/
-                    SoldQty.setText(Report.getString(Report
-                            .getColumnIndex("Quantity")));
+                    SoldQty.setText(String.format("%.2f",Report.getFloat(Report.getColumnIndex("Quantity"))));
                     SoldQty.setGravity(Gravity.END);
                     SoldQty.setPadding(0,0,35,0);
 
