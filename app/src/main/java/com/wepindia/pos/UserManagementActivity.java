@@ -226,6 +226,12 @@ public class UserManagementActivity extends WepBaseActivity implements View.OnCl
                 {
                     Toast.makeText(myContext, "Invalid email address", Toast.LENGTH_SHORT).show();
                 }
+            } else if(txtLogin.equalsIgnoreCase("d#demo") ||txtPass.equalsIgnoreCase("d#demo") )
+            {
+                Toast.makeText(myContext, "Login or password cannot be d#demo", Toast.LENGTH_SHORT).show();
+            }else if(txtName.equalsIgnoreCase("d#demo") )
+            {
+                Toast.makeText(myContext, "Name cannot be d#demo", Toast.LENGTH_SHORT).show();
             }
             else
             {

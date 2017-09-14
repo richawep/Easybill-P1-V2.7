@@ -24,9 +24,12 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
+
+import com.mswipetech.wisepad.sdktest.view.ApplicationData;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.gst.B2Csmall;
 import com.wep.common.app.gst.GSTR1AB2BSData;
@@ -643,7 +646,7 @@ public class FragmentGSTLink extends Fragment   implements HTTPAsyncTask_Frag.On
     private RelativeLayout PostGSTR1,fileGSTR1,getGSTRR2B2B,postGSTR2,getGSTR3;
     private RelativeLayout fileGSTR2, fileGSTR3, getGSTR1Summary,getGSTR1,getGSTR1A, getGSTR2A,getGSTR2Reconcile;
     private  String BillNoPrefix = "";
-
+    private TextView tvEnvironment;
     private static final int REQUEST_GET_GSTR2_B2B = 1001;
 
     Context myContext ;
@@ -670,6 +673,16 @@ public class FragmentGSTLink extends Fragment   implements HTTPAsyncTask_Frag.On
         return view;
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(ENVIRONMENT==TEST_ENVIRONMENT || ENVIRONMENT==DEMO_ENVIRONMENT )
+        {
+            tvEnvironment.setText("DEMO");
+        }
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -679,6 +692,10 @@ public class FragmentGSTLink extends Fragment   implements HTTPAsyncTask_Frag.On
                 BASE_URL_TOKEN = Config.Base_URL_Azure;
                 Header_TokenAuth = Config.Header_TokenAuth;
                 ENVIRONMENT = dbGSTLink.getEnvironmentSetting();
+                if ((ApplicationData.getUserName(myActivity)).equalsIgnoreCase("d#demo"))
+                {       ENVIRONMENT = DEMO_ENVIRONMENT;
+                }
+
                 switch (ENVIRONMENT)
                 {
                     case PRODUCTION_ENVIRONMENT : BASE_URL = Config.Base_URL_Azure;
@@ -742,6 +759,7 @@ public class FragmentGSTLink extends Fragment   implements HTTPAsyncTask_Frag.On
         getGSTR2Reconcile = (RelativeLayout) view.findViewById(R.id.getGSTR2Reconcile);
         getGSTR3 = (RelativeLayout) view.findViewById(R.id.getGSTR3);
         getGSTRR2B2B = (RelativeLayout) view.findViewById(R.id.getGSTRR2B2B);
+        tvEnvironment = (TextView) view.findViewById(R.id.tvEnvironment);
         dbGSTLink = new DatabaseHandler(myContext);
         sharedPreferences = myActivity.getSharedPreferences("com.wepindia.pos",Context.MODE_PRIVATE);
 

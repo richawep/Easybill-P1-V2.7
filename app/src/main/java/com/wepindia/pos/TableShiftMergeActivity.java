@@ -304,7 +304,7 @@ public class TableShiftMergeActivity extends WepBaseActivity {
 							TableRow Row = (TableRow) v;
 							CheckBox TableNo = (CheckBox) Row.getChildAt(0);
 
-							MsgBox.Show(" ", TableNo.getText().toString());
+							MsgBox.Show("Table ", TableNo.getText().toString());
 							if (TableNo.isChecked()) {
 								Cursor OccupiedTableSplitNo = dbTableShiftMerge.getOccupiedTableSplitNo(Integer.valueOf(TableNo.getText().toString()));
 								if (OccupiedTableSplitNo.moveToFirst()) {

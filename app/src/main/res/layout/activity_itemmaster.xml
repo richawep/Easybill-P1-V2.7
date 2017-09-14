@@ -234,6 +234,20 @@
                             android:hint="Item Full name"
                             android:inputType="text"
                             android:maxLength="20"
+                            android:visibility="gone"
+                            android:textSize="13dp" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/AutoCompleteItemLongName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:hint="Item Full name"
+                            android:inputType="text"
+                            android:maxLength="20"
+                            android:completionThreshold="1"
+                            android:drawableRight="@drawable/searchicon_img"
                             android:textSize="13dp" />
                     </LinearLayout>
 

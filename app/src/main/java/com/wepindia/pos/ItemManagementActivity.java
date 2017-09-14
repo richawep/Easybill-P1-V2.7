@@ -32,10 +32,12 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -84,6 +86,7 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     int ROWCLICKEVENT = 0;
     EditText /*txtLongName,*/ txtShortName, txtBarcode, txtDineIn1, txtDineIn2, txtDineIn3, txtStock;
     WepEditText txtLongName;
+    AutoCompleteTextView AutoCompleteItemLongName;
     Spinner spnrDepartment, spnrCategory, spnrKitchen,  spnrOptionalTax1, spnrOptionalTax2;
     CheckBox chkPriceChange, chkDiscountEnable, chkBillWithStock;
     RadioButton rbForwardTax, rbReverseTax;
@@ -179,6 +182,7 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
         try {
 
             InitializeViewVariables();
+            clickEvent();
             setCVSFile();
             parseCVSFile();
             ResetItem();
@@ -208,6 +212,7 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
 
             loadSpinnerData();
             loadSpinnerData1();
+            loadAutoCompleteData_ItemNames();
 
 
 
@@ -501,6 +506,7 @@ protected void onPostExecute(Void aVoid) {
         switch(view.getId()){
         case R.id.etItemLongName:
         tx = txtLongName.getText().toString();
+        tx = AutoCompleteItemLongName.getText().toString();
         break;
         case R.id.etItemDineInPrice1:
         tx = txtDineIn1.getText().toString();
@@ -537,10 +543,56 @@ public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 public void afterTextChanged(Editable editable) {    }
 
 
+    private  void clickEvent()
+    {
+        AutoCompleteItemLongName.setOnTouchListener(new View.OnTouchListener(){
+            //@Override
+            public boolean onTouch(View v, MotionEvent event){
+                AutoCompleteItemLongName.showDropDown();
+                return false;
+            }
+        });
+        AutoCompleteItemLongName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String itemName = AutoCompleteItemLongName.getText().toString();
+                Cursor cursorItem = dbItems.getItemDetail(itemName);
+                if(cursorItem!=null && cursorItem.moveToFirst())
+                {
+                    ItemOutward item = new ItemOutward();
+                    item.setMenuCode(cursorItem.getInt(cursorItem.getColumnIndex("MenuCode")));
+                    item.setItemName(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
+                    item.setDineIn1(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice1")))));
+                    item.setDineIn2(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice2")))));
+                    item.setDineIn3(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice3")))));
+                    item.setStock(  Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("Quantity")))));
+                    item.setDeptCode(cursorItem.getInt(cursorItem.getColumnIndex("DeptCode")));
+                    item.setCategCode(cursorItem.getInt(cursorItem.getColumnIndex("CategCode")));
+                    item.setKitchenCode(cursorItem.getInt(cursorItem.getColumnIndex("KitchenCode")));
+                    item.setBarCode(cursorItem.getString(cursorItem.getColumnIndex("ItemBarcode")));
+                    item.setImageUri(cursorItem.getString(cursorItem.getColumnIndex("ImageUri")));
+                    item.setUOM(cursorItem.getString(cursorItem.getColumnIndex("UOM")));
+                    item.setCGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("CGSTRate")))));
+                    item.setSGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("SGSTRate")))));
+                    item.setIGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("IGSTRate")))));
+                    item.setCessRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("cessRate")))));
+                    item.setItemId(cursorItem.getInt(cursorItem.getColumnIndex("ItemId")));
+                    item.setHSN(cursorItem.getString(cursorItem.getColumnIndex("HSNCode")));
+                    item.setTaxationType(cursorItem.getString(cursorItem.getColumnIndex("TaxationType")));
+                    item.setItemDiscount(Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("DiscountPercent")))));
+                    listItemClickEvent(item);
+                }else
+                {
+                    Log.d("ItemManagement","No Such item present");
+                }
+            }
+        });
+    }
 private void InitializeViewVariables() {
         EditTextInputHandler etInputValidate = new EditTextInputHandler();
 
         txtLongName = (WepEditText) findViewById(R.id.etItemLongName);
+        AutoCompleteItemLongName = (AutoCompleteTextView) findViewById(R.id.AutoCompleteItemLongName);
         txtBarcode = (EditText) findViewById(R.id.etItemBarcode);
         txtDineIn1 = (EditText) findViewById(R.id.etItemDineInPrice1);
         etInputValidate.ValidateDecimalInput(txtDineIn1);
@@ -551,7 +603,32 @@ private void InitializeViewVariables() {
         txtStock = (EditText) findViewById(R.id.etItemStock);
         tvFileName = (TextView) findViewById(R.id.tvFileName);
 
-        txtStock.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        txtStock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(btnEdit.isEnabled()==false)
+                    return;
+                try{
+                    Date d = new SimpleDateFormat("dd-MM-yyyy").parse(businessDate);
+                    int invoiceno = dbItems.getLastBillNoforDate(String.valueOf(d.getTime()));
+                    if(invoiceno > 0)
+                    {
+                        // since already billing done for this businessdate, hence stock cannot be updated from here.
+                        // to update stock , goto Price & Stock module
+                        MsgBox.Show("Restriction", "You cannot update quantity after making bill for the day. \n\nTo update quantity , " +
+                                "please goto Price & Stock module \n\n Or make Day End  to update from here ");
+                        ResetItem();
+                        return;
+                    }
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                    Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        /*txtStock.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 @Override
 public void onFocusChange(View v, boolean hasFocus) {
         if(hasFocus && btnEdit.isEnabled() ){
@@ -573,7 +650,7 @@ public void onFocusChange(View v, boolean hasFocus) {
         Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
         }}
         }
-        });
+        });*/
 
         tvDineIn1Caption = (TextView) findViewById(R.id.tvDineInPrice1);
         tvDineIn2Caption = (TextView) findViewById(R.id.tvDineInPrice2);
@@ -718,6 +795,7 @@ public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         txtDineIn3.addTextChangedListener(this);
         txtStock.addTextChangedListener(this);
         txtLongName.addTextChangedListener(this);
+    AutoCompleteItemLongName.addTextChangedListener(this);
         edtMenuCode.addTextChangedListener(this);
         etHSN.addTextChangedListener(this);
         edtItemCGSTTax.addTextChangedListener(this);
@@ -1403,9 +1481,10 @@ default: flag = 2;
         }
 
 
-private void listItemClickEvent(ItemOutward item) {
+    private void listItemClickEvent(ItemOutward item) {
         edtMenuCode.setText(String.valueOf(item.getMenuCode()));
         txtLongName.setText(item.getItemName());
+        AutoCompleteItemLongName.setText(item.getItemName());
         itemName_beforeChange_in_update = item.getItemName();
         txtBarcode.setText(item.getBarCode());
         txtDineIn1.setText(String.format("%.2f",item.getDineIn1()));
@@ -1481,9 +1560,8 @@ private void listItemClickEvent(ItemOutward item) {
         btnEdit.setEnabled(true);
 
 
-        //spinnerRole
-        }
-private void InitializeAdapters() {
+    }
+    private void InitializeAdapters() {
         Log.d("Functions", "InitializeAdapters");
         // Cursor variable
         Cursor crsrAdapterData;
@@ -2282,6 +2360,7 @@ private void InsertItem(String LongName, String ShortName, float DineInPrice1, f
 
         strMenuCode = edtMenuCode.getText().toString();
         strLongName = txtLongName.getText().toString().toUpperCase();
+        strLongName = AutoCompleteItemLongName.getText().toString().toUpperCase();
         strBarcode = txtBarcode.getText().toString();
 
         fDineIn1 = Double.parseDouble(String.format("%.2f",Double.parseDouble(txtDineIn1.getText().toString())));
@@ -2419,6 +2498,7 @@ private void ResetItem() {
         strItemId = "";
         strImageUri = "";
         txtLongName.setText("");
+    AutoCompleteItemLongName.setText("");
         //txtShortName.setText("");
         txtBarcode.setText("");
         txtDineIn1.setText("0.00");
@@ -2453,7 +2533,6 @@ private void ResetItem() {
         fGSTTax = 0;
         fDiscount = 0;
         imgItemImage.setImageResource(R.drawable.img_noimage);
-
 
         }
 
@@ -2505,6 +2584,10 @@ protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 public void AddItem(View v) {
 
         if (txtLongName.getText().toString().equalsIgnoreCase("")) {
+        /*MsgBox.Show("Warning", "Please Enter Item Name");
+        return;*/
+        }
+        if (AutoCompleteItemLongName.getText().toString().equalsIgnoreCase("")) {
         MsgBox.Show("Warning", "Please Enter Item Name");
         return;
         }
@@ -2523,6 +2606,7 @@ public void AddItem(View v) {
         else {
         iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
         String ItemFullName = txtLongName.getText().toString().toUpperCase();
+         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
         if(IsItemExists( ItemFullName,  iMenuCode,txtBarcode.getText().toString().trim(),1))
         {
         return;
@@ -2531,6 +2615,7 @@ public void AddItem(View v) {
         }else
         {
         String ItemFullName = txtLongName.getText().toString().toUpperCase();
+         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
         List<String> itemlist = dbItems.getAllItemsNames();
         if(itemlist.contains(ItemFullName))
         {
@@ -2667,6 +2752,7 @@ protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         try{
         ResetItem();
+            loadAutoCompleteData_ItemNames();
         //ClearItemTable();
         DisplayItemList();
         //Toast.makeText(myContext, "Item Added Successfully", Toast.LENGTH_LONG).show();
@@ -2695,6 +2781,10 @@ public void EditItem(View v) {
 
 
         if (txtLongName.getText().toString().equalsIgnoreCase("")) {
+        /*MsgBox.Show("Warning", "Please Enter Item Name");
+        return;*/
+        }
+        if (AutoCompleteItemLongName.getText().toString().equalsIgnoreCase("")) {
         MsgBox.Show("Warning", "Please Enter Item Name");
         return;
         }
@@ -2713,6 +2803,7 @@ public void EditItem(View v) {
         iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
         iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
         String ItemFullName = txtLongName.getText().toString().toUpperCase();
+         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
         if(IsItemExists( ItemFullName,  iMenuCode,txtBarcode.getText().toString().trim(),2))
         {
         return;
@@ -2721,6 +2812,7 @@ public void EditItem(View v) {
         }else
         {
         String ItemFullName = txtLongName.getText().toString().toUpperCase();
+         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
         List<String> itemlist = dbItems.getAllItemsNames();
         if(itemlist.contains(ItemFullName) && !itemName_beforeChange_in_update.equalsIgnoreCase(ItemFullName))
         {
@@ -2832,6 +2924,7 @@ protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         try {
         ResetItem();
+            loadAutoCompleteData_ItemNames();
         //ClearItemTable();
         DisplayItemList();
         Toast.makeText(myContext, "Item Updated Successfully", Toast.LENGTH_LONG).show();
@@ -2860,7 +2953,16 @@ public void CloseItem(View v) {
         this.finish();
         }
 
-private void loadSpinnerData() {
+    private void loadAutoCompleteData_ItemNames() {
+        List ItemName_list = dbItems.getAllItemsName();
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, ItemName_list);
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching data adapter to spinner
+        AutoCompleteItemLongName.setAdapter(dataAdapter);
+    }
+    private void loadSpinnerData() {
         labelsDept = dbItems.getAllDeptforCateg();
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, labelsDept);
@@ -2870,7 +2972,7 @@ private void loadSpinnerData() {
         spnrDepartment.setAdapter(dataAdapter);
         }
 
-private void loadSpinnerData1() {
+    private void loadSpinnerData1() {
         if (spnrDepartment.getSelectedItem().toString().equals("Select"))
         {
         labelsCateg = new ArrayList<String>();
@@ -2888,7 +2990,7 @@ private void loadSpinnerData1() {
         // attaching data adapter to spinner
         spnrCategory.setAdapter(dataAdapter);
         }
-private void loadSpinnerData_cat(ArrayList<String>categName) {
+    private void loadSpinnerData_cat(ArrayList<String>categName) {
         if (categName.size() ==0)
         {
         return;
@@ -2901,7 +3003,7 @@ private void loadSpinnerData_cat(ArrayList<String>categName) {
         spnrCategory.setAdapter(dataAdapter);
         }
 
-private void loadSpinnerData1_old() {
+    private void loadSpinnerData1_old() {
         labelsCateg = dbItems.getAllCategforDept();
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, labelsCateg);
@@ -2912,7 +3014,7 @@ private void loadSpinnerData1_old() {
         }
 
 
-private void DisplayItems_old() {
+    private void DisplayItems_old() {
         Cursor crsrItems = null;
 
         crsrItems = dbItems.getAllItems();
@@ -3174,6 +3276,7 @@ public void onClick(View v) {
 
         edtMenuCode.setText(MenuCode.getText().toString());
         txtLongName.setText(LongName.getText());
+            AutoCompleteItemLongName.setText(LongName.getText());
         // txtShortName.setText(ShortName.getText());
         txtBarcode.setText(Barcode.getText());
         txtDineIn1.setText(DineIn1.getText());
@@ -3346,6 +3449,8 @@ public void onClick(DialogInterface dialog, int whichButton) {
 public void onBackPressed() {
         txtLongName.clearFocus();
         txtLongName.setCursorVisible(false);
+    AutoCompleteItemLongName.clearFocus();
+    AutoCompleteItemLongName.setCursorVisible(false);
         }
 
 
@@ -3377,6 +3482,7 @@ public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (v.getId())
         {
         case R.id.etItemLongName :txtLongName.setText(tx);
+            AutoCompleteItemLongName.setText(tx);
         break;
         case R.id.etHSNCode:  etHSN.setText(tx);
         break;

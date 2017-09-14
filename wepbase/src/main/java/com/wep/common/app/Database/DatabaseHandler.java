@@ -1388,6 +1388,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             Log.d(TAG, e.toString());
             e.printStackTrace();
         }
+        cvDbValues = new ContentValues();
+        cvDbValues.put(KEY_USER_NAME, "d#demo");
+        cvDbValues.put(KEY_USER_MOBILE, "1234567890");
+        cvDbValues.put(KEY_USER_DESIGNATION, "d#demo");
+        cvDbValues.put(KEY_ROLE_ID, 1);
+        cvDbValues.put(KEY_USER_LOGIN, "d#demo");
+        cvDbValues.put(KEY_USER_PASS, "d#demo");
+        cvDbValues.put(KEY_USER_ADHAR, "Adhaar1");
+        cvDbValues.put(KEY_USER_EMAIL, "wep@india.com");
+        cvDbValues.put(KEY_USER_ADDRESS, "lavelle road");
+        cvDbValues.put(KEY_USER_FILE_LOCATION, "xx");
+         status = 0;
+        try {
+            status = db.insert(TBL_USERS, null, cvDbValues);
+
+        } catch (Exception e) {
+            status = 0;
+            Log.d(TAG, e.toString());
+            e.printStackTrace();
+        }
 
         try {
             long status1 = 0;
@@ -7366,7 +7386,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ArrayList<com.wep.common.app.models.User> list = new ArrayList<com.wep.common.app.models.User>();
         list = new ArrayList<com.wep.common.app.models.User>();
 
-        String SELECT_QUERY = "SELECT * FROM " + TBL_USERS + " ORDER BY UserId ASC";
+        String SELECT_QUERY = "SELECT * FROM " + TBL_USERS + " Where LoginId not in ('d#demo')  ORDER BY UserId ASC ";
         Cursor cursor = dbFNB.rawQuery(SELECT_QUERY, null);
         if (cursor != null) {
             //Log.d(TAG,"fetched "+cursor.getCount()+" Items");

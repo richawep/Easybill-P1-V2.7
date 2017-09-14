@@ -132,8 +132,17 @@
             android:layout_height="match_parent"
            >
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tvEnvironment"
+                android:layout_alignParentBottom="true"
+                android:text="Production"
+                android:textSize="@dimen/_10dp_720dp_7dp_600dp"
+                />
             <RelativeLayout
                 android:id="@+id/boxContent"
+                android:layout_above="@+id/tvEnvironment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerHorizontal="true"

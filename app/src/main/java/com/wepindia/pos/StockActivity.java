@@ -25,10 +25,12 @@ import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -40,6 +42,7 @@ import com.wep.common.app.Database.Category;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.Database.Department;
 import com.wep.common.app.WepBaseActivity;
+import com.wep.common.app.models.ItemOutward;
 import com.wep.common.app.models.Items;
 import com.wep.common.app.views.WepButton;
 import com.wepindia.pos.GenericClasses.MessageDialog;
@@ -51,6 +54,7 @@ import com.wepindia.pos.utils.StockOutwardMaintain;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class StockActivity extends WepBaseActivity {
 
@@ -112,7 +116,6 @@ public class StockActivity extends WepBaseActivity {
         com.wep.common.app.ActionBarUtils.setupToolbar(this,toolbar,getSupportActionBar(),"Price and Stock",strUserName," Date:"+s.toString());
 
         try {
-            InitializeViews();
 
             TextView tvdeptline = (TextView) findViewById(R.id.tvStockdeptline);
             TextView tvcategline = (TextView) findViewById(R.id.tvStockcategline);
@@ -123,7 +126,9 @@ public class StockActivity extends WepBaseActivity {
             dbStock.CreateDatabase();
             dbStock.OpenDatabase();
             //DisplayItems();
-
+            InitializeViews();
+            loadAutoCompleteData_ItemNames();
+            clickEvent();
             ResetStock();
             // Get departments
 
@@ -208,10 +213,41 @@ public class StockActivity extends WepBaseActivity {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            MsgBox.Show("", e.getMessage());
+            MsgBox.Show("Error", e.getMessage());
         }
     }
 
+    private  void clickEvent()
+    {
+        ItemLongName.setOnTouchListener(new View.OnTouchListener(){
+            //@Override
+            public boolean onTouch(View v, MotionEvent event){
+                ItemLongName.showDropDown();
+                return false;
+            }
+        });
+        ItemLongName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String itemName = ItemLongName.getText().toString();
+                Cursor cursorItem = dbStock.getItemDetail(itemName);
+                if(cursorItem!=null && cursorItem.moveToFirst())
+                {
+                    strMenuCode = cursorItem.getString(cursorItem.getColumnIndex("MenuCode"));
+                    ItemLongName.setText(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
+                    tvExistingStock.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("Quantity"))));
+                    txtRate1.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice1"))));
+                    txtRate2.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice2"))));
+                    txtRate3.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice3"))));
+                    txtNewStock.setText("0");
+                    btnUpdate.setEnabled(true);
+                }else
+                {
+                    Log.d("ItemManagement","No Such item present");
+                }
+            }
+        });
+    }
     /*private AdapterView.OnItemClickListener itemsClick = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -570,6 +606,15 @@ public class StockActivity extends WepBaseActivity {
         this.finish();
     }
 
+    private void loadAutoCompleteData_ItemNames() {
+        List ItemName_list = dbStock.getAllItemsName();
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, ItemName_list);
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching data adapter to spinner
+        ItemLongName.setAdapter(dataAdapter);
+    }
 
     private void LoadDepartments(Cursor crsrDept) {
 
