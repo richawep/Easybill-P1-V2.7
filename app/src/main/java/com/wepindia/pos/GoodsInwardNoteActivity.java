@@ -1067,8 +1067,8 @@ public class GoodsInwardNoteActivity extends WepBaseActivity {
                     {
                         double qty_prev = inwardItemcursor.getDouble(inwardItemcursor.getColumnIndex("Quantity"));
                         double qty_final = qty_prev + Double.parseDouble(qty);
-                        int ll = dbGoodsInwardNote.updateInwardItemQuantity(itemname_str,qty_final);
-                        Log.d("GoodsInward","Quantity updated in inward item database for itemname "+itemname_str+" :"+qty_final);
+                       // int ll = dbGoodsInwardNote.updateInwardItemQuantity(itemname_str,qty_final);
+                       // Log.d("GoodsInward","Quantity updated in inward item database for itemname "+itemname_str+" :"+qty_final);
                     }
                 }
                 // updating quantity in inward item stock
