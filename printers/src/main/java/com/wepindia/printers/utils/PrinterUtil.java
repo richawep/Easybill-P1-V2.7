@@ -622,7 +622,7 @@ public class PrinterUtil {
         esc.addSelectJustification(EscCommand.JUSTIFICATION.CENTER);
         if(item.getRoundOff()>0){
             esc.addText("------------------------------------------------\n");
-            esc.addText(getSpaceFormater("Total Roundoff  ",String.format("%.2f",item.getRoundOff()),48,1)+"\n");
+            esc.addText(getSpaceFormater("Total Roundoff to 1.00 ","",48,1)+"\n");
         }
         esc.addText("================================================"+"\n");
         if(!item.getFooterLine().equals(""))

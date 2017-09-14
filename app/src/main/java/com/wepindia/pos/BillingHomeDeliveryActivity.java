@@ -3218,6 +3218,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
         tvBillNumber.setText(String.valueOf(db.getNewBillNumber()));
         setInvoiceDate();
         fTotalDiscount =0;
+        fRoundOfValue =0;
 
     }
 
@@ -6691,6 +6692,8 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                         Log.d("BusinessDate: ", String.valueOf(milli));
                                         Cursor cursorBillInfo = db.getBillDetail_counter(Integer.parseInt(strBillNo), String.valueOf(milli));
                                         if (cursorBillInfo.moveToNext()) {
+                                            fRoundOfValue = cursorBillInfo.getString(cursorBillInfo.getColumnIndex("TotalDiscountAmount"))== null?
+                                                                0: Float.parseFloat(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("RoundOff"))));
                                             tvDiscountAmount.setText(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("TotalDiscountAmount"))));
                                             tvDiscountPercentage.setText(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("DiscPercentage"))));
                                             tvBillAmount.setText(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("BillAmount"))));
@@ -7490,7 +7493,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                 String time = c.getString(c.getColumnIndex("Time"));
                                 item.setTime(time);
                                 item.setDate(tvDate.getText().toString());
-                                float round = c.getString(c.getColumnIndex("RoundOff")).equals(null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
+                                float round = c.getString(c.getColumnIndex("RoundOff"))==(null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
                                 item.setRoundOff(Float.parseFloat(String.format("%.2f",round)));
 
                                 if(reprintBillingMode==1)

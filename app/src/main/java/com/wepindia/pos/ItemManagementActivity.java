@@ -988,9 +988,9 @@ protected void onPostExecute(Void aVoid) {
             mCheckCSVValueType = checkCSVTypeValue1(colums[1],"String");
             if (mCheckCSVValueType == CHECK_STRING_VALUE) {
                 if(colums[1].length()>20)
-                    mItemName = colums[1].substring(0,21);
+                    mItemName = colums[1].substring(0,21).toUpperCase();
                 else
-                    mItemName = colums[1];
+                    mItemName = colums[1].toUpperCase();
             } else {
             mFlag = true;
             mUserCSVInvalidValue = getResources().getString(R.string.item_name_invalid) + colums[0];

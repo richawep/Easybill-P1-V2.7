@@ -5082,6 +5082,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("CustId", objBillDetail.getCustId());
         cvDbValues.put("PettyCashPayment", objBillDetail.getPettyCashPayment());
         cvDbValues.put(KEY_WalletPayment, objBillDetail.getWalletAmount());
+        cvDbValues.put(KEY_RoundOff, objBillDetail.getfRoundOff());
         cvDbValues.put("PaidTotalPayment", objBillDetail.getPaidTotalPayment());
         cvDbValues.put("ChangePayment", objBillDetail.getChangePayment());
         cvDbValues.put(KEY_CustName, objBillDetail.getCustname());

@@ -545,6 +545,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
         tvBillNumber.setText(String.valueOf(db.getNewBillNumber()));
 
         fTotalDiscount =0;
+        fRoundOfValue =0;
     }
     private static int checkScreenResolutionWidthType(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -3718,7 +3719,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                                 String time = c.getString(c.getColumnIndex("Time"));
                                 item.setTime(time);
                                 item.setDate(tvDate.getText().toString());
-                                float round = c.getString(c.getColumnIndex("RoundOff")).equals(null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
+                                float round = c.getString(c.getColumnIndex("RoundOff")) == (null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
                                 item.setRoundOff(Float.parseFloat(String.format("%.2f",round)));
 
                                 if(reprintBillingMode==1)

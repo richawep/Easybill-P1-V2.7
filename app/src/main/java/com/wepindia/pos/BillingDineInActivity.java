@@ -2923,6 +2923,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
         }*/
         setInvoiceDate();
         fTotalDiscount =0;
+        fRoundOfValue =0;
     }
 
 
@@ -7138,7 +7139,6 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                         //item.setTime(String.format("%tR", Time));
                         String strTime = new SimpleDateFormat("kk:mm:ss").format(Time.getTime());
                         item.setTime(strTime);
-
                     }else
                     {
                         switch (reprintBillingMode)
@@ -7171,7 +7171,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                                 String time = c.getString(c.getColumnIndex("Time"));
                                 item.setTime(time);
                                 item.setDate(tvDate.getText().toString());
-                                float round = c.getString(c.getColumnIndex("RoundOff")).equals(null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
+                                float round = c.getString(c.getColumnIndex("RoundOff")) == (null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
                                 item.setRoundOff(Float.parseFloat(String.format("%.2f",round)));
 
                                 if(reprintBillingMode==1)
