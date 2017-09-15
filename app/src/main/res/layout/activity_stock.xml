@@ -232,6 +232,7 @@
                                             android:layout_height="wrap_content"
                                             android:completionThreshold="1"
                                             android:imeOptions="flagNoExtractUi"
+                                            android:drawableRight="@drawable/searchicon_img"
                                             android:inputType="text"
                                             android:textAppearance="?android:attr/textAppearanceMedium" />
                                     </TableRow>

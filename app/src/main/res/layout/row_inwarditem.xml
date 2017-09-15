@@ -37,7 +37,7 @@
             android:layout_width="140dp"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:text="Average Rate"
+            android:text="Rate"
             android:paddingEnd="15dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
              />
@@ -61,6 +61,7 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:paddingEnd="15dp"
+            android:visibility="gone"
             android:textAppearance="?android:attr/textAppearanceMedium"
 
              />

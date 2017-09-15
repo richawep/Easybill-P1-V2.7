@@ -10,6 +10,7 @@ import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,11 +41,17 @@ import com.wepindia.pos.utils.StockInwardMaintain;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class InwardItemActivity extends WepBaseActivity {
 
@@ -54,13 +61,16 @@ public class InwardItemActivity extends WepBaseActivity {
     int ITEMWISE = 2;
     int sema_display=0;
 
+    private String CSV_GENERATE_PATH = Environment.getExternalStorageDirectory().getPath() + "/WeP_FnB_CSVs/";
+    private String FILENAME = "Sample_InwardItem.csv";
+
 
     Toolbar toolbar;
     Context myContext;
     DatabaseHandler dbInwardItem;
     public AlertDialog.Builder MsgBox;
     public MessageDialog MsgBox1;
-    WepButton btnAdd, btnEdit, btnUploadExcel, btnSaveExcel, btnCloseItem, btnClearItem, btnResetQuantity;
+    WepButton btnGenerateCSVInward,btnAdd, btnEdit, btnUploadExcel, btnSaveExcel, btnCloseItem, btnClearItem, btnResetQuantity;
     Spinner spnrUOM,spnr_supplytype;
     EditText et_inw_ItemBarcode,et_inw_HSNCode;
     AutoCompleteTextView autocomplete_inw_ItemName;
@@ -174,6 +184,12 @@ public class InwardItemActivity extends WepBaseActivity {
     void onClickActions()
     {
         try{
+            btnGenerateCSVInward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    generateCSV();
+                }
+            });
             btnAdd.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -604,6 +620,105 @@ public class InwardItemActivity extends WepBaseActivity {
     }
 
 
+    class GenerateCSV extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog pd = new ProgressDialog(InwardItemActivity.this);
+        int progress = 0;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = 0;
+            pd.setMessage("Generating sample csv...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            progress = 1;
+
+            try {
+                File directory = new File(CSV_GENERATE_PATH);
+                if (!directory.exists())
+                    directory.mkdirs();
+
+                InputStream isAssetDbFile = myContext.getAssets().open("Sample_InwardItem.csv");
+                OutputStream osNewDbFile = new FileOutputStream(CSV_GENERATE_PATH + FILENAME);
+                byte[] bFileBuffer = new byte[1024];
+                int iBytesRead = 0;
+
+                while ((iBytesRead = isAssetDbFile.read(bFileBuffer)) > 0) {
+                    osNewDbFile.write(bFileBuffer, 0, iBytesRead);
+                }
+
+                osNewDbFile.flush();
+                osNewDbFile.close();
+                isAssetDbFile.close();
+                pd.dismiss();
+                publishProgress();
+
+            } catch (FileNotFoundException e) {
+                pd.dismiss();
+                progress = 3;
+                publishProgress();
+                e.printStackTrace();
+            } catch (IOException e) {
+                pd.dismiss();
+                progress = 4;
+                publishProgress();
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if (progress == 1) {
+                Toast.makeText(InwardItemActivity.this, "CSV generated successfully! Path:" + CSV_GENERATE_PATH + FILENAME, Toast.LENGTH_LONG).show();
+            } else if (progress == 3 || progress == 4){
+                Toast.makeText(InwardItemActivity.this, "Error occurred!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress = 2;
+            pd.dismiss();
+        }
+    }
+
+    public void generateCSV(){
+        File temp = new File(CSV_GENERATE_PATH + FILENAME);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(InwardItemActivity.this)
+                .setIcon(R.drawable.ic_launcher)
+                .setTitle("Overwrite Alert")
+                .setMessage("There already exists a CSV file, regenerating a " +
+                        "CSV file will overwrite the existing one. " +
+                        "Are you sure you want to overwrite the file?")
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        new GenerateCSV().execute();
+                    }
+                });
+        AlertDialog alert = builder.create();
+
+        if (!temp.exists())
+            new GenerateCSV().execute();
+        else
+            alert.show();
+
+    }
+
+
     /**
      * Display exiting data as well as new data from data base
      *
@@ -631,20 +746,14 @@ public class InwardItemActivity extends WepBaseActivity {
                 .setMessage(getResources().getString(R.string.are_you_sure_you_want_replace_all_exiting_item))
                 .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        dbInwardItem.clearInwardItemdatabase();
-                        dbInwardItem.clearInwardStock(businessDate);
-                        dbInwardItem.clearSupplierLinkage();
-                        InwardItemList.clear();
-                        InwardItemAdapter.notifyDataSetChanged(InwardItemList);
                         downloadCSVData();
-
                         dialog.dismiss();
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        DisplayItems();
+                        //DisplayItems();
                     }
                 });
         AlertDialog alert = builder.create();
@@ -682,9 +791,9 @@ public class InwardItemActivity extends WepBaseActivity {
                     ResetItem();
                     if(mFlag== true){
                         MsgBox1.Show("Error",mUserCSVInvalidValue );
-                        dbInwardItem.clearInwardItemdatabase();
-                        InwardItemList.clear();
-                        InwardItemAdapter.notifyDataSetChanged(InwardItemList);
+                        //dbInwardItem.clearInwardItemdatabase();
+                        //InwardItemList.clear();
+                        //InwardItemAdapter.notifyDataSetChanged(InwardItemList);
                     }else {
                         DisplayItems();
                         Toast.makeText(InwardItemActivity.this, getResources().getString(R.string.item_import_successfully), Toast.LENGTH_SHORT).show();
@@ -709,7 +818,8 @@ public class InwardItemActivity extends WepBaseActivity {
 
         String checkUOMTypye = "Pk Lt Ml Gm Kg Bg Bx No Mt Dz Sa St Bt Pl Pc";
         String[] checkSupplyType = {"G", "S"};
-        String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,CESS RATE,IMAGEURL";
+        String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE";
+        ArrayList<ItemInward> inwardList = new ArrayList<>();
         boolean flag;
         try {
             String line;
@@ -721,7 +831,7 @@ public class InwardItemActivity extends WepBaseActivity {
             if (!flag) {
                 mFlag = true;
                 mUserCSVInvalidValue = getResources().getString(R.string.header_value_empty) + "\n"
-                        + "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,CESS RATE";
+                        + "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE";
                 return;
             }
 
@@ -907,11 +1017,27 @@ public class InwardItemActivity extends WepBaseActivity {
                         mRate, mQuantity, mUOM,
                         mIGSTRate, IGSTAmt, mCGSTRate, CGSTAmt, mSGSTRate, SGSTAmt, mCESSRate, cessAmt,
                         "TaxationType", mSupplyType);
+                inwardList.add(itemInwardObj);
 
-                long lRowId = dbInwardItem.addItem_InwardDatabase(itemInwardObj);
+                //long lRowId = dbInwardItem.addItem_InwardDatabase(itemInwardObj);
             }
-            StockInwardMaintain stock_outward = new StockInwardMaintain(InwardItemActivity.this, dbInwardItem);
-            stock_outward.saveOpeningStock_Inward(currentDate);
+            if(mFlag==false )
+            {
+                dbInwardItem.clearInwardItemdatabase();
+                dbInwardItem.clearInwardStock(businessDate);
+                dbInwardItem.clearSupplierLinkage();
+                InwardItemList.clear();
+                //InwardItemAdapter.notifyDataSetChanged(InwardItemList);
+
+                for(ItemInward item :inwardList)
+                {
+                    long lRowId = dbInwardItem.addItem_InwardDatabase(item);
+                    StockInwardMaintain stock_outward = new StockInwardMaintain(InwardItemActivity.this, dbInwardItem);
+                    stock_outward.saveOpeningStock_Inward(currentDate);
+                }
+
+            }
+
 
         } catch (Exception exp) {
             exp.printStackTrace();
@@ -965,6 +1091,7 @@ public class InwardItemActivity extends WepBaseActivity {
         et_inw_HSNCode = (EditText) findViewById(R.id.et_inw_HSNCode);
         tv_AverageRate  = (TextView)findViewById(R.id.tv_AverageRate);
 
+        btnGenerateCSVInward = (WepButton) findViewById(R.id.btnGenerateCSVInward);
         btnAdd = (WepButton) findViewById(R.id.btnAddItem);
         btnEdit = (WepButton) findViewById(R.id.btnEditItem);
         //btnResetQuantity = (WepButton) findViewById(R.id.btnResetQuantity);
@@ -1513,7 +1640,7 @@ public class InwardItemActivity extends WepBaseActivity {
         autocomplete_inw_ItemName.setText("");
         tvMenuCode.setText("-1");
         et_inw_averagerate_entered.setText("");
-        et_inw_quantity.setText("");
+        et_inw_quantity.setText("0.00");
         et_Inw_Amount.setText("");
         et_inw_HSNCode.setText("");
         tv_AverageRate.setText("0.00"); // no value

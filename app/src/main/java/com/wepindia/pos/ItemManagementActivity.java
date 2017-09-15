@@ -24,6 +24,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -67,8 +68,12 @@ import com.wepindia.pos.utils.StockOutwardMaintain;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,6 +81,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
 
 public class ItemManagementActivity extends WepBaseActivity  implements  TextWatcher{
     String tx = "";
@@ -90,7 +96,11 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     Spinner spnrDepartment, spnrCategory, spnrKitchen,  spnrOptionalTax1, spnrOptionalTax2;
     CheckBox chkPriceChange, chkDiscountEnable, chkBillWithStock;
     RadioButton rbForwardTax, rbReverseTax;
-    WepButton btnAdd, btnEdit, btnUploadExcel, btnSaveExcel,btnClearItem,btnCloseItem,btnImageBrowse;
+    WepButton btnGenerateCSV, btnAdd, btnEdit, btnUploadExcel, btnSaveExcel,btnClearItem,btnCloseItem,btnImageBrowse;
+
+    private String CSV_GENERATE_PATH = Environment.getExternalStorageDirectory().getPath() + "/WeP_FnB_CSVs/";
+    private String FILENAME = "Sample_OutwardItem.csv";
+
 
     ImageView imgItemImage;
     TableLayout tblItems;
@@ -718,6 +728,7 @@ public void onNothingSelected(AdapterView<?> parent) {
         rbReverseTax =
         (RadioButton) findViewById(R.id.rbReverseTax);
 
+        btnGenerateCSV = (WepButton) findViewById(R.id.btnGenerateCSV);
         btnAdd = (WepButton) findViewById(R.id.btnAddItem);
         btnEdit = (WepButton) findViewById(R.id.btnEditItem);
         btnClearItem = (WepButton) findViewById(R.id.btnClearItem);
@@ -754,6 +765,12 @@ public void onClick(View v) {
         CloseItem(v);
         }
         });
+        btnGenerateCSV.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            generateCSV();
+                }
+                });
 
         tblItems = (TableLayout) findViewById(R.id.tblItem);
 
@@ -866,7 +883,105 @@ public void afterTextChanged(Editable s) {
         }
 
 
-/**
+
+    class GenerateCSV extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog pd = new ProgressDialog(ItemManagementActivity.this);
+        int progress = 0;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = 0;
+            pd.setMessage("Generating sample csv...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            progress = 1;
+
+            try {
+                File directory = new File(CSV_GENERATE_PATH);
+                if (!directory.exists())
+                    directory.mkdirs();
+
+                InputStream isAssetDbFile = myContext.getAssets().open("Sample_OutwardItem.csv");
+                OutputStream osNewDbFile = new FileOutputStream(CSV_GENERATE_PATH + FILENAME);
+                byte[] bFileBuffer = new byte[1024];
+                int iBytesRead = 0;
+
+                while ((iBytesRead = isAssetDbFile.read(bFileBuffer)) > 0) {
+                    osNewDbFile.write(bFileBuffer, 0, iBytesRead);
+                }
+
+                osNewDbFile.flush();
+                osNewDbFile.close();
+                isAssetDbFile.close();
+                pd.dismiss();
+                publishProgress();
+
+            } catch (FileNotFoundException e) {
+                pd.dismiss();
+                progress = 3;
+                publishProgress();
+                e.printStackTrace();
+            } catch (IOException e) {
+                pd.dismiss();
+                progress = 4;
+                publishProgress();
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if (progress == 1) {
+                Toast.makeText(ItemManagementActivity.this, "CSV generated successfully! Path:" + CSV_GENERATE_PATH + FILENAME, Toast.LENGTH_LONG).show();
+            } else if (progress == 3 || progress == 4){
+                Toast.makeText(ItemManagementActivity.this, "Error occurred!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progress = 2;
+            pd.dismiss();
+        }
+    }
+
+    public void generateCSV(){
+        File temp = new File(CSV_GENERATE_PATH + FILENAME);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ItemManagementActivity.this)
+                .setIcon(R.drawable.ic_launcher)
+                .setTitle("Overwrite Alert")
+                .setMessage("There already exists a CSV file, regenerating a " +
+                        "CSV file will overwrite the existing one. " +
+                        "Are you sure you want to overwrite the file?")
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        new GenerateCSV().execute();
+                    }
+                });
+        AlertDialog alert = builder.create();
+
+        if (!temp.exists())
+            new GenerateCSV().execute();
+        else
+            alert.show();
+    }
+
+    /**
  * performing button onclick upload csv file from external or SDCard
  */
 
@@ -930,15 +1045,15 @@ private void setCSVFileToDB(ArrayList<ItemOutward> inwardItemList) {
 private void showCSVAlertMessage() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext)
-        .setTitle("Replace Item")
+                .setTitle("Replace Item")
                 .setIcon(R.drawable.ic_launcher)
-        .setMessage(" Are you sure you want to Replace all the existing Items, if any")
-        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setMessage(" Are you sure you want to Replace all the existing Items, if any")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 public void onClick(DialogInterface dialog, int which) {
 
-        downloadCSVData();
-        dialog.dismiss();
-        }
+                downloadCSVData();
+                dialog.dismiss();
+            }
         })
         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
 public void onClick(DialogInterface dialog, int which) {

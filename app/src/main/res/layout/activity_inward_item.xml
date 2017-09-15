@@ -69,6 +69,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="end"
                     android:text="Stock"
+                    android:visibility="gone"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/txtColorAccent"
                     android:textSize="@dimen/table_text_heading_16sp_720dp_14sp_600dp" />
@@ -345,6 +346,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:visibility="gone"
                         android:orientation="horizontal">
 
                         <TextView
@@ -630,7 +632,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_gravity="bottom"
-                            android:text="*To enter/update quantity , kindly goto INWARD STOCK page \n**Please note any value entered is taken upto 2 digits after decimal"
+                            android:text="*To enter/update quantity , kindly make GoodsInwardNote \n**Please note any value entered is taken upto 2 digits after decimal"
                             android:textColor="@color/red" />
 
                         <FrameLayout
@@ -647,15 +649,16 @@
                         android:layout_marginLeft="@dimen/activity_horizontal_margin"
                         android:layout_weight="1"
                         android:orientation="horizontal"
-                        android:weightSum="2">
+                        >
 
                         <TextView
                             android:id="@+id/tvFileName"
-                            android:layout_width="wrap_content"
+                            android:layout_width="120dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_marginLeft="10dp"
                             android:gravity="right"
+                            android:layout_weight="1"
                             android:text="Select File Name" />
 
                         <com.wep.common.app.views.WepButton
@@ -761,6 +764,22 @@
                     android:layout_height="match_parent"
                     android:gravity="center_horizontal"
                     android:orientation="horizontal">
+
+                    <com.wep.common.app.views.WepButton
+                        android:id="@+id/btnGenerateCSVInward"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="@dimen/_5dp_720dp_4dp_600dp"
+                        android:layout_marginLeft="@dimen/_10dp_720dp_7dp_600dp"
+                        android:layout_marginTop="@dimen/_5dp_720dp_4dp_600dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/background_btn"
+                        android:text="Generate Sample CSV"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/button_14sp_720dp_12sp_600dp"
+                        android:theme="@style/WepButtonWithMarigin" />
 
                     <com.wep.common.app.views.WepButton
                         android:id="@+id/btnAddItem"
