@@ -1816,6 +1816,10 @@ public class MSwipePaymentActivity extends WepPrinterBaseActivity implements Car
 
                             @Override
                             public void onDismiss(DialogInterface dialog) {
+                                dlgTrxResults.dismiss();
+                                Intent intent = new Intent();
+                                intent.putExtra("amount",payAmount);
+                                setResult(RESULT_OK,intent);
                                 showSignature();
                                 // Transaction Completed put print code
                                 //Toast.makeText(MSwipePaymentActivity.this, "Transaction Completed", Toast.LENGTH_SHORT).show();

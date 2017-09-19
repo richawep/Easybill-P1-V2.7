@@ -155,10 +155,10 @@ public class PaymentModeConfigurationActivity extends WepBaseActivity implements
                     return;
                 }
 
-                if (mSecretKeyEditText.getText().toString().equalsIgnoreCase("")) {
+                /*if (mSecretKeyEditText.getText().toString().equalsIgnoreCase("")) {
                     mErrorMsgBox.Show("Warning", "Please Enter Secret Key");
                     return;
-                }
+                }*/
 
                 mPaymentModeKeyId = mKeyIdEditText.getText().toString().trim();
                 mPaymentModeSecretKey = mSecretKeyEditText.getText().toString().trim();

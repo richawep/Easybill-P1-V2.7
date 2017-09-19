@@ -276,14 +276,17 @@ public class ReportHelper{
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
+			Amount.setGravity(Gravity.END);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Bill Amount");
 
 			TextView SalesTax = new TextView(activityContext);
 			SalesTax.setWidth(100);
 			SalesTax.setTextSize(15);
+			SalesTax.setGravity(Gravity.END);
 			SalesTax.setTextColor(Color.WHITE);
 			SalesTax.setText("      Tax");
+			SalesTax.setPadding(0,0,10,0);
 
 			TextView ServiceTax = new TextView(activityContext);
 			ServiceTax.setWidth(100);
@@ -294,6 +297,7 @@ public class ReportHelper{
 			TextView Discount = new TextView(activityContext);
 			Discount.setWidth(100);
 			Discount.setTextSize(15);
+			Discount.setGravity(Gravity.END);
 			Discount.setTextColor(Color.WHITE);
 			Discount.setText("Discount");
 
@@ -1456,7 +1460,7 @@ public class ReportHelper{
             Description.setTextSize(15);
             Description.setTextColor(Color.WHITE);
             Description.setText("Description");
-            Description.setGravity(Gravity.CENTER);
+            //Description.setGravity(Gravity.CENTER);
 
             TextView HSN = new TextView(activityContext);
 			HSN.setWidth(100);
@@ -1474,29 +1478,31 @@ public class ReportHelper{
             UOM.setGravity(Gravity.CENTER);
 
 			TextView Value = new TextView(activityContext);
-			Value.setWidth(100);
+			Value.setWidth(110);
 			Value.setTextSize(15);
-            Value.setGravity(Gravity.CENTER);
+            Value.setGravity(Gravity.END);
 			Value.setTextColor(Color.WHITE);
 			Value.setText("Value");
+			Value.setPadding(0,0,5,0);
 
 			TextView Quantity = new TextView(activityContext);
-			Quantity.setWidth(100);
+			Quantity.setWidth(110);
 			Quantity.setTextSize(15);
 			Quantity.setTextColor(Color.WHITE);
 			Quantity.setText("Qty");
-			Quantity.setGravity(Gravity.CENTER);
+			Quantity.setGravity(Gravity.END);
 
 			TextView TaxableValue = new TextView(activityContext);
 			TaxableValue.setWidth(100);
 			TaxableValue.setTextSize(15);
-            TaxableValue.setGravity(Gravity.CENTER);
+            TaxableValue.setGravity(Gravity.END);
 			TaxableValue.setTextColor(Color.WHITE);
-			TaxableValue.setText("Taxable       Value");
+			TaxableValue.setText("Taxable Value");
 
 			TextView GSTRate = new TextView(activityContext);
 			GSTRate.setWidth(75);
 			GSTRate.setTextSize(15);
+			GSTRate.setGravity(Gravity.CENTER);
 			GSTRate.setTextColor(Color.WHITE);
 			GSTRate.setText("GST Rate");
 
@@ -1508,9 +1514,9 @@ public class ReportHelper{
 			TextView IGSTAmt = new TextView(activityContext);
 			IGSTAmt.setWidth(75);
 			IGSTAmt.setTextSize(15);
-            IGSTAmt.setGravity(Gravity.CENTER);
+            IGSTAmt.setGravity(Gravity.END);
 			IGSTAmt.setTextColor(Color.WHITE);
-			IGSTAmt.setText("IGST     Amt");
+			IGSTAmt.setText("IGST  Amt");
 
 			/*TextView CGSTRate = new TextView(activityContext);
 			CGSTRate.setWidth(65);
@@ -1521,7 +1527,7 @@ public class ReportHelper{
 			TextView CGSTAmt = new TextView(activityContext);
 			CGSTAmt.setWidth(75);
 			CGSTAmt.setTextSize(15);
-			CGSTAmt.setGravity(Gravity.CENTER);
+			CGSTAmt.setGravity(Gravity.END);
 			CGSTAmt.setTextColor(Color.WHITE);
 			CGSTAmt.setText("CGST   Amt");
 
@@ -1535,15 +1541,16 @@ public class ReportHelper{
 			SGSTAmt.setWidth(75);
 			SGSTAmt.setTextSize(15);
 			SGSTAmt.setTextColor(Color.WHITE);
-			SGSTAmt.setGravity(Gravity.CENTER);
+			SGSTAmt.setGravity(Gravity.END);
 			SGSTAmt.setText("UTGST/SGST      Amt");
 			
 			TextView cessAmt = new TextView(activityContext);
 			cessAmt.setWidth(75);
 			cessAmt.setTextSize(15);
-			cessAmt.setGravity(Gravity.CENTER);
+			cessAmt.setGravity(Gravity.END);
 			cessAmt.setTextColor(Color.WHITE);
-			cessAmt.setText("cess      Amt");
+			cessAmt.setText("cess Amt");
+			cessAmt.setPadding(0,0,3,0);
 
 			TextView SubTotal = new TextView(activityContext);
 			SubTotal.setWidth(105);

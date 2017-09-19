@@ -441,20 +441,21 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
             objReportColumn.setReportColumnCaptions(myContext, strReportName, tblReport);
 
             //switch (spnrReportType.getSelectedItemPosition() + 1) {
-            switch (Integer.valueOf(strReportsId)) {
-                case 1:    // Bill wise Report
-                    BillwiseReport();
-                    break;
+            try{
+                switch (Integer.valueOf(strReportsId)) {
+                    case 1:    // Bill wise Report
+                        BillwiseReport();
+                        break;
 
-                case 2:    // Transaction Report
-                    TransactionReport();
-                    break;
+                    case 2:    // Transaction Report
+                        TransactionReport();
+                        break;
 
-                case 3:    // Sales Tax Report
-                    TaxReport();
-                    break;
+                    case 3:    // Sales Tax Report
+                        TaxReport();
+                        break;
 
-                case 4:    // Service Tax Report
+                    case 4:    // Service Tax Report
                 /*int iTaxType = 0;
                 String strServiceTaxPercent = "";
                 Cursor Settings = dbReport.getBillSetting();
@@ -469,166 +470,171 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                 }
                 break;*/
 
-                case 5:    // Void Bill Report
-                    VoidBillReport();
-                    break;
+                    case 5:    // Void Bill Report
+                        VoidBillReport();
+                        break;
 
-                case 6:    // Duplicate Bill Report
-                    DuplicateBillReport();
-                    break;
+                    case 6:    // Duplicate Bill Report
+                        DuplicateBillReport();
+                        break;
 
-                case 7:    // KOT Pending Report
-                    KOTPendingReport();
-                    break;
+                    case 7:    // KOT Pending Report
+                        KOTPendingReport();
+                        break;
 
-                case 8:    // KOT Deleted Report
-                    KOTDeletedReport();
-                    break;
+                    case 8:    // KOT Deleted Report
+                        KOTDeletedReport();
+                        break;
 
-                case 9:    // Item wise Report
-                    ItemwiseReport();
-                    break;
+                    case 9:    // Item wise Report
+                        ItemwiseReport();
+                        break;
 
-                case 10: // Day wise Report
-                    int count = tblReport.getChildCount();
-                    DaywiseReport(count);
-                    break;
+                    case 10: // Day wise Report
+                        int count = tblReport.getChildCount();
+                        DaywiseReport(count);
+                        break;
 
-                case 11: // Month wise Report
-                    try {
-                        MonthwiseReport();
-                    } catch (NumberFormatException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    break;
+                    case 11: // Month wise Report
+                        try {
+                            MonthwiseReport();
+                        } catch (NumberFormatException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        break;
 
-                case 12: // Department wise Report
-                    DepartmentwiseReport();
-                    break;
+                    case 12: // Department wise Report
+                        DepartmentwiseReport();
+                        break;
 
-                case 13: // Category wise Report
-                    CategorywiseReport();
-                    break;
+                    case 13: // Category wise Report
+                        CategorywiseReport();
+                        break;
 
-                case 14: // Kitchen wise Report
-                    KitchenwiseReport();
-                    break;
+                    case 14: // Kitchen wise Report
+                        KitchenwiseReport();
+                        break;
 
-                case 15: // Waiter wise Report
-                    WaiterwiseReport();
-                    break;
+                    case 15: // Waiter wise Report
+                        WaiterwiseReport();
+                        break;
 
-                case 16: // Waiter Detailed Report
-                    WaiterDetailedReport();
-                    break;
+                    case 16: // Waiter Detailed Report
+                        WaiterDetailedReport();
+                        break;
 
-                case 17: // Rider wise Report
-                    RiderwiseReport();
-                    break;
+                    case 17: // Rider wise Report
+                        RiderwiseReport();
+                        break;
 
-                case 18: // Rider Detailed Report
-                    RiderDetailedReport();
-                    break;
+                    case 18: // Rider Detailed Report
+                        RiderDetailedReport();
+                        break;
 
-                case 19: // User wise Report
-                    UserwiseReport();
-                    break;
+                    case 19: // User wise Report
+                        UserwiseReport();
+                        break;
 
-                case 20: // User Detailed Report
-                    UserDetailedReport();
-                    break;
+                    case 20: // User Detailed Report
+                        UserDetailedReport();
+                        break;
 
-                case 21: // Customer wise Report
-                    CustomerwiseReport();
-                    break;
+                    case 21: // Customer wise Report
+                        CustomerwiseReport();
+                        break;
 
-                case 22: // Customer Detailed Report
-                    CustomerDetailedReport();
-                    break;
+                    case 22: // Customer Detailed Report
+                        CustomerDetailedReport();
+                        break;
 
-                case 23: // Payments Report
-                    PaymentReport();
-                    break;
+                    case 23: // Payments Report
+                        PaymentReport();
+                        break;
 
-                case 24: // Receipts Report
-                    ReceiptReport();
-                    break;
+                    case 24: // Receipts Report
+                        ReceiptReport();
+                        break;
 
-                case 25: // Fast Sellin Itemwise Report
-                    FastSellingItemwiseReport();
-                    break;
+                    case 25: // Fast Sellin Itemwise Report
+                        FastSellingItemwiseReport();
+                        break;
 
-                case 26: //// GSTR1-B2B
-                    GSTR1_B2B();
-                    break;
-                case 27: // GSTR1-B2BA
-                    GSTR1_B2BA();
-                    break;
-                case 28:// GSTR1-B2C
-                    GSTR1_B2Cs();
-                    break;
-                case 29:// GSTR1-B2ClA
-                    GSTR1_B2CSA();
-                    break;
-                case 30:// GSTR1-B2Cl
-                    GSTR1_B2Cl();
-                    break;
-                case 31:// GSTR1-B2ClA
-                    GSTR1_B2CLA();
-                    break;
-                case 32: // GSTR2-B2B
-                    GSTR2_Registered_Report();
-                    break;
-                case 33:// GSTR2-B2BA
-                    GSTR2_Registered_Amend();
-                    break;
-                case 34: // GTR2-B2C
-                    GSTR2_UnRegistered_Report();
-                    break;
-                case 35: // GTR2-B2cA
-                    GSTR2_UnRegistered_Amend();
-                    break;
-                case 36: //2A
+                    case 26: //// GSTR1-B2B
+                        GSTR1_B2B();
+                        break;
+                    case 27: // GSTR1-B2BA
+                        GSTR1_B2BA();
+                        break;
+                    case 28:// GSTR1-B2C
+                        GSTR1_B2Cs();
+                        break;
+                    case 29:// GSTR1-B2ClA
+                        GSTR1_B2CSA();
+                        break;
+                    case 30:// GSTR1-B2Cl
+                        GSTR1_B2Cl();
+                        break;
+                    case 31:// GSTR1-B2ClA
+                        GSTR1_B2CLA();
+                        break;
+                    case 32: // GSTR2-B2B
+                        GSTR2_Registered_Report();
+                        break;
+                    case 33:// GSTR2-B2BA
+                        GSTR2_Registered_Amend();
+                        break;
+                    case 34: // GTR2-B2C
+                        GSTR2_UnRegistered_Report();
+                        break;
+                    case 35: // GTR2-B2cA
+                        GSTR2_UnRegistered_Amend();
+                        break;
+                    case 36: //2A
 
-                    break;
-                case 37:// modified 2a
-                    GSTR1_CDNReport();
-                    break;
-                case 38://2A validation
-                    reconcile2();
-                    break;
-                case 39://1A validation
-                    reconcile1();
-                    break;
-                case 40: //Supplier wise
-                    SupplierwiseReport();
-                    break;
-                case 41: //Cummulative Payment-Reciept-Sales Report
-                    Cummulate_payment();
-                    break;
-                // richa_2012
-                case 42:  // Cummulative Billing Report
-                    Cummulate_Billing();
-                    break;
-                case 43:  // Outward Stock Report
-                    OutwardStockReport();
-                    break;
-                case 44:  // Inward Stock Report
-                    InwardStockReport();
-                    break;
-                case 45:  // GSTR1-HSNSummary
-                    GSTR1_HSNSummary();
-                    break;
-                case 46: // doc issuesd
-                    GSTR1_DocIssued();
-                    break;
-                case 47: GSTR4_CompositeReport();
-                    // GSTR4 composite Report
-                    break;
+                        break;
+                    case 37:// modified 2a
+                        GSTR1_CDNReport();
+                        break;
+                    case 38://2A validation
+                        reconcile2();
+                        break;
+                    case 39://1A validation
+                        reconcile1();
+                        break;
+                    case 40: //Supplier wise
+                        SupplierwiseReport();
+                        break;
+                    case 41: //Cummulative Payment-Reciept-Sales Report
+                        Cummulate_payment();
+                        break;
+                    // richa_2012
+                    case 42:  // Cummulative Billing Report
+                        Cummulate_Billing();
+                        break;
+                    case 43:  // Outward Stock Report
+                        OutwardStockReport();
+                        break;
+                    case 44:  // Inward Stock Report
+                        InwardStockReport();
+                        break;
+                    case 45:  // GSTR1-HSNSummary
+                        GSTR1_HSNSummary();
+                        break;
+                    case 46: // doc issuesd
+                        GSTR1_DocIssued();
+                        break;
+                    case 47: GSTR4_CompositeReport();
+                        // GSTR4 composite Report
+                        break;
+                }
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+                MsgBox.Show("Error","Some error occured while displaying report");
             }
         }
     }
@@ -2243,6 +2249,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
         TextView cessTax = new TextView(myContext);
         cessTax.setWidth(100);
         cessTax.setTextSize(15);
+        cessTax.setGravity(Gravity.CENTER);
         cessTax.setTextColor(Color.WHITE);
         cessTax.setText("cess Amt");
 
@@ -2678,7 +2685,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                 String amt_str =(String.format("%.2f",amt_s));
                 Amount.setText(amt_str);
                 Amount.setGravity(Gravity.END);
-                Amount.setPadding(0,0,30,0);
+                Amount.setPadding(0,0,10,0);
                 totbillAmt+= Float.parseFloat(Amount.getText().toString());
 
 //                SalesTax = new TextView(myContext);
@@ -2703,14 +2710,14 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                 tax += Double.parseDouble(String.format("%.2f",Report.getDouble(Report.getColumnIndex("cessAmount"))));
                 SalesTax.setText(String.format("%.2f",tax));
                 SalesTax.setGravity(Gravity.END);
-                SalesTax.setPadding(0,0,45,0);
+                SalesTax.setPadding(0,0,10,0);
                 totSalesTax+= tax;
 
                 Discount = new TextView(myContext);
                 //Discount.setText(Report.getString(Report.getColumnIndex("TotalDiscountAmount")));
                 Discount.setText(String.format("%.2f",Report.getDouble(Report.getColumnIndex("TotalDiscountAmount"))));
                 Discount.setGravity(Gravity.END);
-                Discount.setPadding(0,0,50,0);
+                Discount.setPadding(0,0,10,0);
                 totDisc+= Float.parseFloat(Discount.getText().toString());
 
                 rowReport.addView(Date);
@@ -2746,7 +2753,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
             Amount.setText(String.format("%.2f",totbillAmt));
             Amount.setTextColor(Color.WHITE);
             Amount.setGravity(Gravity.END);
-            Amount.setPadding(0,0,30,0);
+            Amount.setPadding(0,0,10,0);
             Amount.setTextSize(15);
 
 
@@ -2755,7 +2762,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
             SalesTax.setTextSize(15);
             SalesTax.setText(String.format("%.2f",totSalesTax));
             SalesTax.setGravity(Gravity.END);
-            SalesTax.setPadding(0,0,45,0);
+            SalesTax.setPadding(0,0,10,0);
 
 
             ServiceTax = new TextView(myContext);
@@ -2768,7 +2775,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
             Discount = new TextView(myContext);
             Discount.setText(String.format("%.2f",totDisc));
             Discount.setGravity(Gravity.END);
-            Discount.setPadding(0,0,50,0);
+            Discount.setPadding(0,0,10,0);
             Discount.setTextColor(Color.WHITE);
             Discount.setTextSize(15);
 
@@ -8329,11 +8336,11 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
 
                             TextView UOM = new TextView(myContext);
                             UOM.setText(hsndata.getUqc());
-                            UOM.setGravity(Gravity.END);
+                            UOM.setGravity(Gravity.CENTER);
 
                             TextView Qty = new TextView(myContext);
                             Qty.setText(String.format("%.2f", hsndata.getQty()));
-                            Qty.setGravity(Gravity.CENTER);
+                            Qty.setGravity(Gravity.END);
 
                             TextView Value = new TextView(myContext);
                             Value.setText(String.format("%.2f", hsndata.getVal()));

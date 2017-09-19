@@ -13,7 +13,8 @@ public class AppUtils {
     public static String getImagePath(String icon,String title){
         if(icon == null || icon.equalsIgnoreCase("")){
             String fileName = title;
-            icon = AppUtils.FILE_PATH+fileName.replace(" ","_")+".jpg";
+            //icon = AppUtils.FILE_PATH+fileName.replace(" ","_")+".jpg";
+            icon = AppUtils.FILE_PATH+fileName+".jpg";
         }
         return icon;
     }
