@@ -172,7 +172,7 @@
 
     <string name="menu_code_empty">Menu Code can not be empty for Item Name  </string>
     <string name="menu_code_invalid">Please Enter Menu Code as integer for Item Name  </string>
-    <string name="insufficient_information">Please all the required data  </string>
+    <string name="insufficient_information">Please enter all the required data  </string>
     <string name="item_name_empty">Item Name can not be empty for Menu Code  </string>
     <string name="item_name_invalid">Please Enter Item Name as character for Menu Code  </string>
     <string name="supply_type_empty">Supply Type can not be empty for Item Name  </string>
@@ -203,6 +203,21 @@
 
     <string name="please_enter_item_name">Please Enter Item Name</string>
 
+    // department code and category code
+
+    <string name="department_code_empty">Department Code can not be empty for Item Name  </string>
+    <string name="department_code_invalid">Please Enter Department Code as integer for Item Name  </string>
+    <string name="please_enter_department_code">Please Enter Department Code</string>
+
+    <string name="database_department_null">Kindly configure department in the database </string>
+    <string name="department_not_match">This department code is not present in the database for Item Name</string>
+
+    <string name="category_code_empty">Category Code can not be empty for Item Name  </string>
+    <string name="category_code_invalid">Please Enter Category Code as integer for Item Name  </string>
+    <string name="please_enter_category_code">Please Enter Category Code</string>
+
+    <string name="database_category_null">Kindly configure category in the database </string>
+    <string name="category_not_match">This category code is not present in the database </string>
 
     //login screen
     <string name="login">Log In</string>

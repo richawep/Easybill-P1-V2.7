@@ -43,7 +43,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Date and Time (Choose One)" />
+                                android:text="Date and Time " />
 
                             <RadioGroup
                                 android:id="@+id/rgDateTime"
@@ -69,7 +69,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Price Change (Choose One)" />
+                                android:text="Price Change " />
 
                             <RadioGroup
                                 android:id="@+id/rgPriceChange"
@@ -95,7 +95,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Bill with Stock (Choose One)" />
+                                android:text="Bill with Stock " />
 
                             <RadioGroup
                                 android:id="@+id/rgBillwithStock"
@@ -121,7 +121,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Item No Reset (Choose One)" />
+                                android:text="Item Code" />
 
                             <RadioGroup
                                 android:id="@+id/rgItemNoReset"
@@ -147,7 +147,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Bill No Daily Reset (Choose One)" />
+                                android:text="Bill No Daily Reset " />
 
                             <RadioGroup
                                 android:id="@+id/rgBillNoReset"
@@ -189,7 +189,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
 
-                                android:text="Tax (Choose One)" />
+                                android:text="Tax " />
 
                             <RadioGroup
                                 android:id="@+id/rgTax"
@@ -214,7 +214,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Discount Type (Choose One)" />
+                                android:text="Discount Type " />
 
                             <RadioGroup
                                 android:id="@+id/rgDiscountType"
@@ -357,7 +357,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
-                                android:text="Print Preview (Choose One)"
+                                android:text="Print Preview "
                                 android:visibility="invisible" />
 
                             <RadioGroup

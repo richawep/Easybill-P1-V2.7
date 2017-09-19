@@ -101,6 +101,8 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     private String CSV_GENERATE_PATH = Environment.getExternalStorageDirectory().getPath() + "/WeP_FnB_CSVs/";
     private String FILENAME = "Sample_OutwardItem.csv";
 
+    private ArrayList<Integer> mDepartmentCodeList = new ArrayList<>();
+    private Map<Integer, Integer> mCategoryCodeList = new LinkedHashMap<>();
 
     ImageView imgItemImage;
     TableLayout tblItems;
@@ -163,8 +165,8 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     private int mDeptCode = 0;
     private int mCategCode = 0;
     private int mKitchenCode = 0;
-    private String mbarCode = "Bar Code";
-    private String mImageUri = "Image Url";
+    private String mbarCode = "";
+    private String mImageUri = "";
     private int mItemId = 0;
     private String mHSN = "";
     private String mtaxationType = "";
@@ -191,13 +193,15 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
         com.wep.common.app.ActionBarUtils.setupToolbar(ItemManagementActivity.this,toolbar,getSupportActionBar(),"Outward Items Master",strUserName," Date:"+s.toString());
         try {
 
+            dbItems.CreateDatabase();
+            dbItems.OpenDatabase();
             InitializeViewVariables();
             clickEvent();
             setCVSFile();
             parseCVSFile();
+            setAllDepartmentCode();
             ResetItem();
-            dbItems.CreateDatabase();
-            dbItems.OpenDatabase();
+
             crsrSettings = dbItems.getBillSetting();
             if (crsrSettings.moveToFirst()) {
                 tvDineIn1Caption.setText(crsrSettings.getString(crsrSettings.getColumnIndex("DineIn1Caption")));
@@ -491,6 +495,22 @@ protected void onPostExecute(Void aVoid) {
 
 
 
+    private void setAllDepartmentCode() {
+        try {
+            Cursor crsrDept = dbItems.getAllDepartments();
+            while (crsrDept != null && crsrDept.moveToNext()) {
+                mDepartmentCodeList.add(crsrDept.getInt(crsrDept.getColumnIndex("DeptCode")));
+            }
+
+            Cursor crsrCategory = dbItems.getAllCategory();
+            while (crsrCategory != null && crsrCategory.moveToNext()) {
+                mCategoryCodeList.put(crsrCategory.getInt(crsrCategory.getColumnIndex("CategCode")),
+                        crsrCategory.getInt(crsrCategory.getColumnIndex("DeptCode")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private void SetGSTView()
         {
         Cursor crsrSettings = dbItems.getBillSetting();
@@ -1100,6 +1120,7 @@ protected void onPostExecute(Void aVoid) {
                 Toast.makeText(getApplicationContext(), "Items Imported Successfully", Toast.LENGTH_LONG).show();
             }
             DisplayItemList();
+            loadAutoCompleteData_ItemNames();
             ResetItem();
             //ClearItemTable();
 
@@ -1124,7 +1145,7 @@ protected void onPostExecute(Void aVoid) {
             mUserCSVInvalidValue = "";
         String checkUOMTypye = "Pk Lt Ml Gm Kg Bg Bx No Mt Dz Sa St Bt Pl Pc";
         String[] checkSupplyType = {"G", "S"};
-        String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT";
+        String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT,DEPARTMENT CODE,CATEGORY CODE";
         boolean flag;
             boolean   mCSVHashCheckflag = false;
         try {
@@ -1139,8 +1160,8 @@ protected void onPostExecute(Void aVoid) {
 
             if (!flag) {
                 mFlag = true;
-                mUserCSVInvalidValue = getResources().getString(R.string.header_value_empty) + "\n"
-                + "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT";
+                mUserCSVInvalidValue = getResources().getString(R.string.header_value_empty) + "\n"+csvHeading;
+                //+ "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT";
                 return;
             }
 
@@ -1149,10 +1170,10 @@ protected void onPostExecute(Void aVoid) {
 
         while ((line = buffer.readLine()) != null)
         {
-            final String[] colums = line.split(",");
+            final String[] colums = line.split("\\r\\n\\r\\n", 15);
             if(colums.length ==0)
                 continue;
-            else if (colums.length !=13)
+            else if (colums.length !=15)
             {
                 mFlag = true;
                 mUserCSVInvalidValue = getResources().getString(R.string.insufficient_information);
@@ -1441,6 +1462,83 @@ protected void onPostExecute(Void aVoid) {
             mUserCSVInvalidValue = getResources().getString(R.string.discount_empty) + colums[1];
             break;
             }
+            if (colums[13] != null && colums[13].trim().length() > 0) {
+                mCheckCSVValueType = checkCSVTypeValue1(colums[13], "Int");
+                if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
+                    if (mDepartmentCodeList != null && mDepartmentCodeList.size() > 0) {
+                        if (mDepartmentCodeList.contains(Integer.parseInt(colums[13]))) {
+                            mDeptCode = Integer.parseInt(colums[13]);
+                        } else {
+                            mFlag = true;
+                            mUserCSVInvalidValue = "This department code " + colums[13] + " is not present in the database for Item Name " + colums[1];
+                            break;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.database_department_null);
+                        break;
+                    }
+
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.department_code_invalid) + " " + colums[1];
+                    break;
+                }
+            } else {
+                mDeptCode = 0;
+                mCategCode = 0;
+            }
+
+            boolean categoryFlag = false;
+
+            if (colums[14] != null && colums[14].trim().length() > 0) {
+                mCheckCSVValueType = checkCSVTypeValue1(colums[14], "Int");
+                if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
+
+                    if (mCategoryCodeList != null && mCategoryCodeList.size() > 0) {
+
+                        if (mDeptCode == 0) {
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Item Name " + mItemName + " can not have category code " + colums[14] + " without department";
+                            break;
+                        }
+
+                        if (mCategoryCodeList.containsKey(Integer.parseInt(colums[14]))) {
+                            categoryFlag = true;
+                        } else {
+                            mFlag = true;
+                            mUserCSVInvalidValue = "This category code " + colums[14] + " is not present in the database for Item Name " + colums[1];
+                            break;
+                        }
+
+                        if (categoryFlag) {
+                            for (Map.Entry map : mCategoryCodeList.entrySet()) {
+                                if (map.getKey().equals(Integer.parseInt(colums[14])) && map.getValue().equals(mDeptCode)) {
+                                    mCategCode = Integer.parseInt(colums[14]);
+                                }
+                            }
+
+                        } else {
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Category code " + colums[14] + " is not linked to department code " + mDeptCode + " for Item Name " + mItemName;
+                            break;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.database_category_null);
+                        break;
+                    }
+
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.category_code_invalid) + " " + colums[1];
+                    break;
+                }
+
+            } else {
+                mCategCode = 0;
+            }
+
             ItemOutward item_add = new ItemOutward(mMenuCode, mItemName, mRate1, mRate2, mRate3, mQuantity,
             mDeptCode, mCategCode, mKitchenCode, mbarCode, mImageUri, mMenuCode,
             mCGSTRate, mSGSTRate, mIGSTRate, mCESSRate, mUOM, mHSN, mtaxationType, mSupplyType,mDiscount);
@@ -1475,7 +1573,7 @@ protected void onPostExecute(Void aVoid) {
         /*if(mUserCSVInvalidValue.equals(""))
             mCSVHashCheckflag = true;*/
 
-        if(!mCSVHashCheckflag)
+        if(!mCSVHashCheckflag && !mFlag)
         {
             saveCSVinDatabase();
 

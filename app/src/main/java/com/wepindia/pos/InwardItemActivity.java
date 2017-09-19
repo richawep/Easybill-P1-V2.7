@@ -65,6 +65,7 @@ public class InwardItemActivity extends WepBaseActivity {
     private String FILENAME = "Sample_InwardItem.csv";
 
 
+    private int FOCUS = 0;
     Toolbar toolbar;
     Context myContext;
     DatabaseHandler dbInwardItem;
@@ -222,11 +223,41 @@ public class InwardItemActivity extends WepBaseActivity {
             });
 
             lstInwardItem.setOnItemClickListener(ListViewClickEvent);
-            autocomplete_inw_ItemName.setOnTouchListener(new View.OnTouchListener(){
+            /*autocomplete_inw_ItemName.setOnTouchListener(new View.OnTouchListener(){
                 //@Override
                 public boolean onTouch(View v, MotionEvent event){
+                    //FOCUS =1;
+                   // et_inw_HSNCode.requestFocus();
                     autocomplete_inw_ItemName.showDropDown();
                     return false;
+                }
+            });*/
+
+            autocomplete_inw_ItemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if(FOCUS ==0)
+                    {
+                        FOCUS=1;
+                        et_inw_HSNCode.requestFocus();
+                    }else
+                    {
+                       // FOCUS =0;
+                    }
+                }
+            });
+
+            et_inw_HSNCode.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (FOCUS ==1)
+                    {
+                        FOCUS =0;
+                        autocomplete_inw_ItemName.showDropDown();
+
+                       autocomplete_inw_ItemName.requestFocus();
+
+                    }
                 }
             });
 
@@ -796,6 +827,7 @@ public class InwardItemActivity extends WepBaseActivity {
                         //InwardItemAdapter.notifyDataSetChanged(InwardItemList);
                     }else {
                         DisplayItems();
+                        loadSpinnerData();
                         Toast.makeText(InwardItemActivity.this, getResources().getString(R.string.item_import_successfully), Toast.LENGTH_SHORT).show();
                     }
                     pd.dismiss();
