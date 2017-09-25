@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -56,7 +58,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class StockActivity extends WepBaseActivity {
+public class StockActivity extends WepBaseActivity implements TextWatcher {
 
     // Context object
     Context myContext;
@@ -66,8 +68,9 @@ public class StockActivity extends WepBaseActivity {
     // MessageDialog object
     MessageDialog MsgBox;
 
+    String tx ="";
     // View handlers
-    AutoCompleteTextView ItemLongName;
+    AutoCompleteTextView ItemLongName, AutoCompleteItemBarcodeValue;
     TextView tvExistingStock;
 
     EditText txtNewStock, txtRate1, txtRate2, txtRate3;
@@ -234,7 +237,38 @@ public class StockActivity extends WepBaseActivity {
                 if(cursorItem!=null && cursorItem.moveToFirst())
                 {
                     strMenuCode = cursorItem.getString(cursorItem.getColumnIndex("MenuCode"));
+                    //ItemLongName.setText(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
+                    AutoCompleteItemBarcodeValue.setText(cursorItem.getString(cursorItem.getColumnIndex("ItemBarcode")));
+                    tvExistingStock.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("Quantity"))));
+                    txtRate1.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice1"))));
+                    txtRate2.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice2"))));
+                    txtRate3.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice3"))));
+                    txtNewStock.setText("0");
+                    btnUpdate.setEnabled(true);
+                }else
+                {
+                    Log.d("ItemManagement","No Such item present");
+                }
+            }
+        });
+
+        AutoCompleteItemBarcodeValue.setOnTouchListener(new View.OnTouchListener(){
+            //@Override
+            public boolean onTouch(View v, MotionEvent event){
+                AutoCompleteItemBarcodeValue.showDropDown();
+                return false;
+            }
+        });
+        AutoCompleteItemBarcodeValue.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String barcode = AutoCompleteItemBarcodeValue.getText().toString();
+                Cursor cursorItem = (new DatabaseHandler(myContext)).getItemssbyBarCode(barcode);
+                if(cursorItem!=null && cursorItem.moveToFirst())
+                {
+                    strMenuCode = cursorItem.getString(cursorItem.getColumnIndex("MenuCode"));
                     ItemLongName.setText(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
+                    //AutoCompleteItemBarcodeValue.setText(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
                     tvExistingStock.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("Quantity"))));
                     txtRate1.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice1"))));
                     txtRate2.setText(String.format("%.2f", cursorItem.getDouble(cursorItem.getColumnIndex("DineInPrice2"))));
@@ -432,6 +466,7 @@ public class StockActivity extends WepBaseActivity {
                         if (Item.moveToNext()) {
                             strMenuCode = Item.getString(Item.getColumnIndex("MenuCode"));
                             ItemLongName.setText(Item.getString(Item.getColumnIndex("ItemName")));
+                            AutoCompleteItemBarcodeValue.setText(Item.getString(Item.getColumnIndex("ItemBarcode")));
                             tvExistingStock.setText(String.format("%.2f", Item.getDouble(Item.getColumnIndex("Quantity"))));
                             txtRate1.setText(String.format("%.2f", Item.getDouble(Item.getColumnIndex("DineInPrice1"))));
                             txtRate2.setText(String.format("%.2f", Item.getDouble(Item.getColumnIndex("DineInPrice2"))));
@@ -470,6 +505,7 @@ public class StockActivity extends WepBaseActivity {
 
     private void InitializeViews() {
         ItemLongName = (AutoCompleteTextView) findViewById(R.id.autoTextItemLongNameValue);
+        AutoCompleteItemBarcodeValue = (AutoCompleteTextView) findViewById(R.id.AutoCompleteItemBarcodeValue);
         tvExistingStock = (TextView) findViewById(R.id.tvItemExistingStockValue);
         txtNewStock = (EditText) findViewById(R.id.etItemNewStock);
         txtRate1 = (EditText) findViewById(R.id.etItemRate1);
@@ -499,6 +535,13 @@ public class StockActivity extends WepBaseActivity {
             }
         });
 
+
+        ItemLongName.addTextChangedListener(this);
+        txtNewStock.addTextChangedListener(this);
+        txtRate1.addTextChangedListener(this);
+        txtRate2.addTextChangedListener(this);
+        txtRate3.addTextChangedListener(this);
+
         mRecyclerGridView = (RecyclerView) findViewById(R.id.listViewFilter3);
         mRecyclerGridView.setHasFixedSize(true);
 
@@ -527,7 +570,9 @@ public class StockActivity extends WepBaseActivity {
     }
 
     private void ResetStock() {
+        tx = "";
         ItemLongName.setText("");
+        AutoCompleteItemBarcodeValue.setText("");
         txtNewStock.setText("0");
         tvExistingStock.setText("0");
         txtRate1.setText("0");
@@ -614,6 +659,11 @@ public class StockActivity extends WepBaseActivity {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         ItemLongName.setAdapter(dataAdapter);
+
+        List ItemBarcode_list = dbStock.getAllItemsBarCode();
+        ArrayAdapter<String> dataAdapter_barCode = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, ItemBarcode_list);
+        dataAdapter_barCode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        AutoCompleteItemBarcodeValue.setAdapter(dataAdapter_barCode);
     }
 
     private void LoadDepartments(Cursor crsrDept) {
@@ -889,6 +939,7 @@ public class StockActivity extends WepBaseActivity {
                 if (Item.moveToNext()) {
                     strMenuCode = Item.getString(Item.getColumnIndex("MenuCode"));
                     ItemLongName.setText(Item.getString(Item.getColumnIndex("ItemName")));
+                    AutoCompleteItemBarcodeValue.setText(Item.getString(Item.getColumnIndex("ItemBarcode")));
                     tvExistingStock.setText(Item.getString(Item.getColumnIndex("Quantity")));
                     txtRate1.setText(Item.getString(Item.getColumnIndex("DineInPrice1")));
                     txtRate2.setText(Item.getString(Item.getColumnIndex("DineInPrice2")));
@@ -927,5 +978,72 @@ public class StockActivity extends WepBaseActivity {
     @Override
     public void onHomePressed() {
         ActionBarUtils.navigateHome(this);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+
+        long dd = event.getEventTime()-event.getDownTime();
+        if (dd<15 && dd >0)
+        {
+            View v = getCurrentFocus();
+            AutoCompleteTextView etbar = (AutoCompleteTextView)findViewById(R.id.AutoCompleteItemBarcodeValue);
+
+
+            if (v.getId()!= R.id.AutoCompleteItemBarcode)
+            {
+
+                switch (v.getId())
+                {
+                    case R.id.autoTextItemLongNameValue :ItemLongName.setText(tx);
+                        break;
+                    case R.id.etItemNewStock:
+                    case R.id.etItemRate1:
+                    case R.id.etItemRate2:
+                    case R.id.etItemRate3:
+                        EditText ed = (EditText)findViewById(v.getId());
+                        ed.setText(tx);
+                }
+                String bar_str = etbar.getText().toString();
+                bar_str += (char)event.getUnicodeChar();
+                etbar.setText(bar_str);
+                etbar.showDropDown();
+
+            }
+
+
+        }
+
+        return true;
+    }
+
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        String str = charSequence.toString();
+        View view = getCurrentFocus();
+        if(view== null)
+            return;
+        switch(view.getId()){
+            case R.id.autoTextItemLongNameValue:
+                tx = ItemLongName.getText().toString();
+                break;
+            case R.id.etItemRate1:
+                tx = txtRate1.getText().toString();
+                break;
+            case R.id.etItemRate2:
+                tx = txtRate2.getText().toString();
+                break;
+            case R.id.etItemRate3:
+                tx = txtRate3.getText().toString();
+                break;
+            case R.id.etItemNewStock:
+                tx = txtNewStock.getText().toString();
+                break;
+
+        }
+    }
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+    public void afterTextChanged(Editable editable) {
+
     }
 }
