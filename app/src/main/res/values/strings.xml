@@ -233,7 +233,7 @@
     <string name="reprint_bill">Reprint Bill</string>
     //take away
     <string name="save_kot">Save KOT</string>
-    <string name="print_save_kot">Print / Save KOT</string>
+    <string name="print_save_kot">Print &amp; Save KOT</string>
     <string name="pickup_status">Pickup Status</string>
     // customer orders
     <string name="modify_order">Modify Order</string>

@@ -62,13 +62,13 @@
                         android:textSize="20sp" />
 
                     <TextView
-                        android:id="@+id/tvCard"
+                        android:id="@+id/tvOtherCards"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
-                        android:text="Card"
+                        android:text="Other Cards"
                         android:textColor="@color/white"
                         android:textSize="20sp" />
 
@@ -137,7 +137,7 @@
                         android:textColor="@android:color/black" />
 
                     <EditText
-                        android:id="@+id/edtCard"
+                        android:id="@+id/edtOtherCards"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
@@ -222,13 +222,25 @@
                         android:textColor="@color/white"
                         android:textSize="20sp" />
 
+                    <TextView
+                        android:id="@+id/tvCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:text="MSwipe Card"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="4">
+                    android:weightSum="5">
 
                     <TextView
                         android:id="@+id/tvCustId"
@@ -265,7 +277,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:background="@android:drawable/edit_text"
                         android:gravity="center"
@@ -284,7 +295,22 @@
                         android:inputType="numberDecimal"
                         android:selectAllOnFocus="true"
                         android:textColor="@android:color/black" />
+
+                    <EditText
+                        android:id="@+id/edtCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_weight="1"
+                        android:background="@android:drawable/edit_text"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:selectAllOnFocus="true"
+                        android:textColor="@android:color/black" />
+
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -352,7 +378,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/imageViewPayment"
                                 android:layout_centerHorizontal="true"
-                                android:text="Card Payment"
+                                android:gravity="center"
+                                android:text="MSwipe Card Payment"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/textSizePayment"
                                 android:textStyle="bold" />
@@ -485,8 +512,9 @@
                                 android:id="@+id/imageViewCoupon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_centerHorizontal="true"
-                                android:src="@drawable/ic_coupon" />
+                                android:src="@drawable/ic_coupon"
+                                android:layout_alignParentTop="true"
+                                android:layout_centerHorizontal="true" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -514,6 +542,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/buttons"
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 

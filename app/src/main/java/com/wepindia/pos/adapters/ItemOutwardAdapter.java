@@ -9,6 +9,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TableRow;
@@ -18,10 +20,12 @@ import com.squareup.picasso.Picasso;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.models.ItemOutward;
 import com.wep.common.app.utils.AppUtils;
+import com.wepindia.pos.ItemManagementActivity;
 import com.wepindia.pos.R;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by RichaA on 2/13/2017.
@@ -32,11 +36,15 @@ public class ItemOutwardAdapter extends BaseAdapter {
     private Activity activity;
     private ArrayList<ItemOutward> itemOutwardsArrayList;
     private DatabaseHandler handler;
+    private AutoCompleteTextView AutoCompleteItemLongName, AutoCompleteItemBarcode;
 
-    public ItemOutwardAdapter(Activity activity, ArrayList<ItemOutward> itemOutwardsArrayList, DatabaseHandler handler){
+    public ItemOutwardAdapter(Activity activity, ArrayList<ItemOutward> itemOutwardsArrayList, DatabaseHandler handler,
+                              AutoCompleteTextView AutoCompleteItemLongName, AutoCompleteTextView AutoCompleteItemBarcode){
         this.activity = activity;
         this.itemOutwardsArrayList = itemOutwardsArrayList;
         this.handler = handler;
+        this.AutoCompleteItemLongName = AutoCompleteItemLongName;
+        this.AutoCompleteItemBarcode = AutoCompleteItemBarcode;
     }
     public int getCount() {
         return itemOutwardsArrayList.size();
@@ -154,6 +162,8 @@ public class ItemOutwardAdapter extends BaseAdapter {
                             {
                                 itemOutwardsArrayList.remove(i);
                                 notifyDataSetChanged();
+                                loadAutoCompleteData_ItemNames();
+
                             }
                             dialog.dismiss();
                         }
@@ -168,5 +178,21 @@ public class ItemOutwardAdapter extends BaseAdapter {
 
         }
     };
+
+    private void loadAutoCompleteData_ItemNames() {
+        List ItemName_list = handler.getAllItemsName();
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, ItemName_list);
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // attaching data adapter to spinner
+        AutoCompleteItemLongName.setAdapter(dataAdapter);
+
+        List ItemBarcode_list = handler.getAllItemsBarCode();
+        ArrayAdapter<String> dataAdapter_barCode = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, ItemBarcode_list);
+        dataAdapter_barCode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        AutoCompleteItemBarcode.setAdapter(dataAdapter_barCode);
+
+    }
 
 }

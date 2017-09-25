@@ -6,7 +6,7 @@
     <dimen name="menu_box_marigin">10dp</dimen>
     <dimen name="bar_icon">50dp</dimen>
     <dimen name="menu_box_font_size">18sp</dimen>
-    <dimen name="textSizePayment">20sp</dimen>
+    <dimen name="textSizePayment">18sp</dimen>
 
 
         <dimen name="margin_left">10dp</dimen>

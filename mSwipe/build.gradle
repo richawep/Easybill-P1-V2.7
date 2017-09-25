@@ -17,6 +17,9 @@ android {
             proguardFiles 'proguard-project.txt'
         }
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
 }
 
 dependencies {

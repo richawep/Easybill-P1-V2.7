@@ -60,13 +60,14 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
     AlertDialog alertDialog = null;
 
     // DatabaseHandler object
-    DatabaseHandler dbPayBill = new DatabaseHandler(PayBillActivity.this);
+    DatabaseHandler dbPayBill;
     // MessageDialog object
     MessageDialog MsgBox;
     Dialog PayBillDialog;
 
     TextView tvCustId;
-    EditText edtTotalValue, edtRoundOff, edtPaid, edtCard, edtChange, edtPettyCash, edtDiscount, edtVoucher, edtCoupon, edtTenderTotalValue;
+    EditText edtTotalValue, edtRoundOff, edtPaid, edtCard, edtChange,
+            edtPettyCash, edtDiscount, edtVoucher, edtCoupon, edtTenderTotalValue, edtOtherCards;
     WepButton btnCreditCustomer, btnDiscount, btnCardPayment, /*btnVoucher,*/ btnSaveBill, btnCoupon, btnPrintBill;
     TableLayout tblPayBill;
     String strTotal, strCustId = "0";
@@ -116,6 +117,8 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
     ArrayList<AddedItemsToOrderTableClass> orderList_recieved;
     Date d;
     private double toPayAmount;
+    Cursor crsrSettings;
+    int BILLAMOUNTROUNDOFF = 0;
 
 
     @Override
@@ -128,7 +131,13 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         MsgBox = new MessageDialog(myContext);
 
         try {
+            dbPayBill = new DatabaseHandler(PayBillActivity.this);
             InitializeViewVariables();
+            dbPayBill.CreateDatabase();
+            dbPayBill.OpenDatabase();
+
+            settingsCheck();
+            ResetPayBill();
             Intent intentt = getIntent();
             strTotal = intentt.getStringExtra("TotalAmount");
             strCustId = intentt.getStringExtra("CustId");
@@ -137,15 +146,29 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
             taxType_recieved = intentt.getIntExtra("TaxType",1); // forward ->1, reverse -> 0
             orderList_recieved = intentt.getParcelableArrayListExtra("OrderList");
             strOrderDelivered = intentt.getBooleanExtra(ORDER_DELIVERED,false);
+//            BillAmountRoundOff = intentt.getIntExtra("BillAmountRoundOff", 0);
+
+            if (BILLAMOUNTROUNDOFF == 1) {
+                if (!strTotal.contains(".00")) {
+                    dRoundoffTotal = Math.round(Double.valueOf(strTotal)); // Round off done
+                    edtRoundOff.setText("0" + strTotal.substring(strTotal.indexOf(".")));
+                } else {
+                    dRoundoffTotal = Double.valueOf(strTotal); // Round off not done
+                    edtRoundOff.setText("0");
+                }
+
+            } else {
+                dRoundoffTotal = Double.valueOf(strTotal); // Round off disabled
+                edtRoundOff.setText("0");
+            }
+
             if(strCustId==null)
                 strCustId = "0";
             strUserName = intentt.getStringExtra("USER_NAME");
             phone = intentt.getStringExtra("phone");
             Log.v("Debug", "Total Amount:" + strTotal);
-            dRoundoffTotal = Math.round(Double.valueOf(strTotal));
 
             edtTotalValue.setText(String.format( "%.2f", dRoundoffTotal ));
-            edtRoundOff.setText("0" + strTotal.substring(strTotal.indexOf(".")));
             tvCustId.setText(strCustId);
 
             /*tvTitleUserName.setText(strUserName.toUpperCase());
@@ -153,10 +176,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
             CharSequence s = DateFormat.format("dd-MM-yyyy", d.getTime());
             tvTitleDate.setText("Date : " + s);*/
 
-            dbPayBill.CreateDatabase();
-            dbPayBill.OpenDatabase();
 
-            ResetPayBill();
 
         } catch (Exception ex) {
             MsgBox.Show("Error", ex.getMessage());
@@ -164,10 +184,22 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         sharedPreferences = getSharedPreferences("appPreferences", Context.MODE_PRIVATE);
     }
 
+    private void settingsCheck()
+    {
+        crsrSettings = dbPayBill.getBillSettings();
+
+        if (crsrSettings!=null && crsrSettings.moveToFirst() && (crsrSettings.getInt(crsrSettings.getColumnIndex("BillAmountRoundOff")) == 1)) { // Bill Amount Round Off
+            BILLAMOUNTROUNDOFF = 1;
+        }else
+        {
+            BILLAMOUNTROUNDOFF = 0;
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
         edtCard.setText(sharedPreferences.getString("paidAmount","0"));
+        edtOtherCards.setText(sharedPreferences.getString("paidAmount","0"));
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("paidAmount","0");
         editor.commit();
@@ -187,6 +219,8 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         edtTenderTotalValue.setEnabled(false);
         edtPaid = (EditText) findViewById(R.id.edtPaid);
         edtPaid.addTextChangedListener(ChangeAmountEvent);
+        edtOtherCards = (EditText) findViewById(R.id.edtOtherCards);
+        edtOtherCards.addTextChangedListener(textChangeCard);
         edtCard = (EditText) findViewById(R.id.edtCard);
         edtCard.setEnabled(false);
         edtChange = (EditText) findViewById(R.id.edtChange);
@@ -211,6 +245,8 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         btnCoupon = (Button) findViewById(R.id.btnCoupon);*/
         btnSaveBill = (WepButton) findViewById(R.id.btnSaveBill);
         btnPrintBill = (WepButton) findViewById(R.id.btnPrintBill);
+
+
     }
 
     TextWatcher ChangeAmountEvent = new TextWatcher() {
@@ -378,37 +414,62 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         }
     }
 
+    float cardAmount = 0;
+
     private void TenderChange() {
         double dTotalValue = 0.00, dPaidTotal = 0.00;
         double dTenderAmount = 0.00, dChangeAmount = 0.00;
         double dCash = 0.00, dCard = 0.00, dCoupon = 0.00;
         double dDisc = 0, dDiscAmt = 0, dVouvher = 0, dPettyCash = 0, dWallet =0;
+        try{
 
-        dCash = edtPaid.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtPaid.getText().toString());
-        dCard = edtCard.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtCard.getText().toString());
-        dCoupon = edtCoupon.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtCoupon.getText().toString());
-        //dDiscAmt = edtDiscount.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtDiscount.getText().toString());
-        dPettyCash = edtPettyCash.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtPettyCash.getText().toString());
-        dWallet = edtVoucher.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtVoucher.getText().toString());
-        dTotalValue = edtTotalValue.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtTotalValue.getText().toString());
+            dCash = edtPaid.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtPaid.getText().toString());
 
-        dTenderAmount = (dCash + dCard + dCoupon + dDiscAmt + dPettyCash+dWallet);
+            if (edtCard.getText().toString().equalsIgnoreCase("") && edtOtherCards.getText().toString().equalsIgnoreCase(""))
+                dCard = 0.00;
+            else {
+                double MSwipeVal = edtCard.getText().toString().equalsIgnoreCase("")?0:Double.parseDouble(edtCard.getText().toString());
+                double OtherCardVal = edtOtherCards.getText().toString().equalsIgnoreCase("")?0:Double.parseDouble(edtOtherCards.getText().toString());
+                if (MSwipeVal> 0 && OtherCardVal >0) {
+                    Toast.makeText(this, "Please select one of the cards.", Toast.LENGTH_SHORT).show();
+                    return;
+                } else  if(MSwipeVal > 0){
+                    dCard = MSwipeVal;
+                }else
+                    dCard = OtherCardVal;
+            }
 
-        if(dTenderAmount > dTotalValue) {
-            dChangeAmount = dTenderAmount - dTotalValue;
-        }
-        else
-        {
-            dChangeAmount = dTotalValue - dTenderAmount;
-        }
-        String strChange = String.format("%.2f", dChangeAmount);
-        edtTenderTotalValue.setText(String.format("%.2f", dTenderAmount));
-        edtChange.setText(strChange);
-        if (dTenderAmount < dTotalValue) {
-            edtTenderTotalValue.setTextColor(Color.RED);
-        } else {
-            edtTenderTotalValue.setTextColor(Color.GREEN);
-        }
+            cardAmount = (float) dCard;
+
+//        dCard = edtCard.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtCard.getText().toString());
+            dCoupon = edtCoupon.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtCoupon.getText().toString());
+            dDiscAmt = edtDiscount.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtDiscount.getText().toString());
+            dPettyCash = edtPettyCash.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtPettyCash.getText().toString());
+            dWallet = edtVoucher.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtVoucher.getText().toString());
+            dTotalValue = edtTotalValue.getText().toString().equalsIgnoreCase("") ? 0.00 : Double.parseDouble(edtTotalValue.getText().toString());
+
+            dTenderAmount = (dCash + dCard + dCoupon + dDiscAmt + dPettyCash + dWallet);
+
+            if(dTenderAmount > dTotalValue) {
+                dChangeAmount = dTenderAmount - dTotalValue;
+            }
+            else
+            {
+                dChangeAmount = dTotalValue - dTenderAmount;
+            }
+            String strChange = String.format("%.2f", dChangeAmount);
+            edtTenderTotalValue.setText(String.format("%.2f", dTenderAmount));
+            if (dTotalValue < dTenderAmount)
+                edtChange.setText("-" + strChange);
+            else
+                edtChange.setText("+" + strChange);
+//        edtChange.setText(strChange);
+            if (dTenderAmount < dTotalValue) {
+                edtTenderTotalValue.setTextColor(Color.RED);
+            } else {
+                edtTenderTotalValue.setTextColor(Color.GREEN);
+            }
+
 
         /*if (dDiscAmt > 0)
         {
@@ -427,23 +488,29 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
             }
         }
 */
+            if(dTenderAmount == dTotalValue) {
+                Toast.makeText(myContext, "No Due is : " + strChange + ", Please Save the Bill.", Toast.LENGTH_SHORT).show();
+            }
+            else if(dTenderAmount > dTotalValue) {
+                Toast.makeText(myContext, "Change Due is : " + strChange + ", Please Give.", Toast.LENGTH_SHORT).show();
+            }
+            else if(dTenderAmount < dTotalValue && RESETCALLED==0) {
+                Toast.makeText(myContext, "Amount Due is : " + String.valueOf(dChangeAmount) + ", Please Collect.", Toast.LENGTH_SHORT).show();
+            }
 
+        }catch (Exception e)
+        {
+            MsgBox.Show("Error","Some error occured in processing");
+            e.printStackTrace();
+        }
 
-        if(dTenderAmount == dTotalValue) {
-            Toast.makeText(myContext, "No Due is : " + strChange + ", Please Save the Bill.", Toast.LENGTH_SHORT).show();
-        }
-        else if(dTenderAmount > dTotalValue) {
-            Toast.makeText(myContext, "Change Due is : " + strChange + ", Please Give.", Toast.LENGTH_SHORT).show();
-        }
-        else if(dTenderAmount < dTotalValue && RESETCALLED==0) {
-            Toast.makeText(myContext, "Amount Due is : " + String.valueOf(dChangeAmount) + ", Please Collect.", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void ResetPayBill() {
         RESETCALLED =1;
         edtPaid.setText("0");
         edtCard.setText("0");
+        edtOtherCards.setText("0");
         edtCoupon.setText("0");
         edtPettyCash.setText("0");
         edtVoucher.setText("0");
@@ -451,6 +518,8 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         edtChange.setText("0");
         RESETCALLED = 0;
         discPercent =0;
+        cardAmount =0;
+
     }
 
     public void CardPayment(View view) {
@@ -531,37 +600,48 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
 
     public Intent getSaveIntent(boolean isPrint){
         Intent intentResult = new Intent();
-        intentResult.putExtra(IS_COMPLIMENTARY_BILL, false);
-        intentResult.putExtra(COMPLIMENTARY_REASON, "");
-        if (Float.parseFloat(edtDiscount.getText().toString()) > 0)
+        try{
+            intentResult.putExtra(IS_COMPLIMENTARY_BILL, false);
+            intentResult.putExtra(COMPLIMENTARY_REASON, "");
+            if (Float.parseFloat(edtDiscount.getText().toString()) > 0)
+            {
+                intentResult.putExtra(IS_DISCOUNTED, true);
+            }
+            else
+            {
+                intentResult.putExtra(IS_DISCOUNTED, false);
+            }
+            if(edtPaid.getText().toString().equals(""))
+                edtPaid.setText("0");
+            if(edtOtherCards.getText().toString().equals(""))
+                edtOtherCards.setText("0");
+            intentResult.putExtra(IS_PRINT_BILL, isPrint);
+            intentResult.putExtra(DISCOUNT_AMOUNT, Float.parseFloat(edtDiscount.getText().toString()));
+            intentResult.putExtra("DISCOUNT_PERCENTAGE",discPercent);
+            intentResult.putExtra(TENDER_CASH_VALUE, Float.parseFloat(edtPaid.getText().toString()));
+            intentResult.putExtra(TENDER_CARD_VALUE, cardAmount);
+            intentResult.putExtra(TENDER_COUPON_VALUE, Float.parseFloat(edtCoupon.getText().toString()));
+            intentResult.putExtra(TENDER_PETTYCASH_VALUE, (float) getPettyCash());
+            intentResult.putExtra(TENDER_PAIDTOTAL_VALUE, Float.parseFloat(edtTenderTotalValue.getText().toString()));
+            intentResult.putExtra(TENDER_CHANGE_VALUE, Float.parseFloat(edtChange.getText().toString()));
+            intentResult.putExtra(TENDER_ROUNDOFF, Float.parseFloat(edtRoundOff.getText().toString()));
+            intentResult.putExtra(TENDER_WALLET_VALUE, dWalletPayment);
+            intentResult.putExtra(TENDER_FINALBILL_VALUE, dRoundoffTotal);
+            intentResult.putExtra(ORDER_DELIVERED, dRoundoffTotal);
+            intentResult.putExtra("CUST_ID", Integer.parseInt(tvCustId.getText().toString()));
+            intentResult.putParcelableArrayListExtra("OrderList", orderList_recieved);
+            intentResult.putExtra("TotalBillAmount", totalBillAmount);
+            intentResult.putExtra("TotalIGSTAmount", totalIGSTAmount);
+            intentResult.putExtra("TotalCGSTAmount", totalCGSTAmount);
+            intentResult.putExtra("TotalSGSTAmount", totalSGSTAmount);
+            intentResult.putExtra("TotalcessAmount", totalcessAmount);
+        }catch (Exception e)
         {
-            intentResult.putExtra(IS_DISCOUNTED, true);
+            e.printStackTrace();
         }
-        else
-        {
-            intentResult.putExtra(IS_DISCOUNTED, false);
+        finally {
+            return intentResult;
         }
-        intentResult.putExtra(IS_PRINT_BILL, isPrint);
-        intentResult.putExtra(DISCOUNT_AMOUNT, Float.parseFloat(edtDiscount.getText().toString()));
-        intentResult.putExtra("DISCOUNT_PERCENTAGE",discPercent);
-        intentResult.putExtra(TENDER_CASH_VALUE, Float.parseFloat(edtPaid.getText().toString()));
-        intentResult.putExtra(TENDER_CARD_VALUE, Float.parseFloat(edtCard.getText().toString()));
-        intentResult.putExtra(TENDER_COUPON_VALUE, Float.parseFloat(edtCoupon.getText().toString()));
-        intentResult.putExtra(TENDER_PETTYCASH_VALUE, (float) getPettyCash());
-        intentResult.putExtra(TENDER_PAIDTOTAL_VALUE, Float.parseFloat(edtTenderTotalValue.getText().toString()));
-        intentResult.putExtra(TENDER_CHANGE_VALUE, Float.parseFloat(edtChange.getText().toString()));
-        intentResult.putExtra(TENDER_ROUNDOFF, Float.parseFloat(edtRoundOff.getText().toString()));
-        intentResult.putExtra(TENDER_WALLET_VALUE, dWalletPayment);
-        intentResult.putExtra(TENDER_FINALBILL_VALUE, dRoundoffTotal);
-        intentResult.putExtra(ORDER_DELIVERED, dRoundoffTotal);
-        intentResult.putExtra("CUST_ID", Integer.parseInt(tvCustId.getText().toString()));
-        intentResult.putParcelableArrayListExtra("OrderList", orderList_recieved);
-        intentResult.putExtra("TotalBillAmount", totalBillAmount);
-        intentResult.putExtra("TotalIGSTAmount", totalIGSTAmount);
-        intentResult.putExtra("TotalCGSTAmount", totalCGSTAmount);
-        intentResult.putExtra("TotalSGSTAmount", totalSGSTAmount);
-        intentResult.putExtra("TotalcessAmount", totalcessAmount);
-        return intentResult;
     }
 
     private double getPettyCash() {
@@ -852,18 +932,17 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
                                 TableRow Row = (TableRow) v;
                                 TextView CouponValue = (TextView) Row.getChildAt(2);
                                 String couponVal_str = CouponValue.getText().toString();
-                                if(couponVal_str!= null && !couponVal_str.equals("")
-                                        && Double.parseDouble(String.format("%.2f",Double.parseDouble(couponVal_str))) <= dRoundoffTotal )
+                                if(couponVal_str!= null && !couponVal_str.equals("")) //&& Double.parseDouble(String.format("%.2f",Double.parseDouble(couponVal_str))) <= dRoundoffTotal
                                 {
                                     edtCoupon.setText(CouponValue.getText().toString());
-                                }else
-                                {
-                                    edtCoupon.setText("0");
-                                    MsgBox.Show("Invalid","Coupons amount cannot be greater than total bill amount");
-                                    //Toast.makeText(myContext, "Discount is not applicable as bill amount is less than "+discAmt, Toast.LENGTH_LONG).show();
-                                    PayBillDialog.dismiss();
-                                    return;
-                                }
+                                } // else
+//                                {
+//                                    edtCoupon.setText("0");
+//                                    MsgBox.Show("Invalid","Coupons amount cannot be greater than total bill amount");
+//                                    //Toast.makeText(myContext, "Discount is not applicable as bill amount is less than "+discAmt, Toast.LENGTH_LONG).show();
+//                                    PayBillDialog.dismiss();
+//                                    return;
+//                                }
                                 TenderChange();
                                 PayBillDialog.dismiss();
                             }
@@ -948,15 +1027,15 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
 
         }
 
-        if(dCouponAmount <= dRoundoffTotal )
-        {
-            edtCoupon.setText(String.format("%.2f",dCouponAmount));
-        }else
-        {
-            edtCoupon.setText("0");
-            MsgBox.Show("Invalid","Coupons amount cannot be greater than total bill amount");
-
-        }
+//        if(dCouponAmount <= dRoundoffTotal )
+//        {
+//            edtCoupon.setText(String.format("%.2f",dCouponAmount));
+//        }else
+//        {
+//            edtCoupon.setText("0");
+//            MsgBox.Show("Invalid","Coupons amount cannot be greater than total bill amount");
+//
+//        }
     }
 
     public void showCreditCustomerDialog()

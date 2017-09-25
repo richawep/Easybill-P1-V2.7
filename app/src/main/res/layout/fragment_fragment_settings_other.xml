@@ -7,7 +7,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/tvOtherSettingHLine">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,7 +31,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="50dp"
-                        android:layout_marginTop="75dp"
+                        android:layout_marginTop="35dp"
                         android:layout_weight="1.2">
 
                         <LinearLayout
@@ -168,6 +169,60 @@
                                     android:text="Disable" />
                             </RadioGroup>
 
+                            <TextView
+                                android:id="@+id/tvPrintOwnerDetail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:text="Owner's Details Print" />
+
+                            <RadioGroup
+                                android:id="@+id/rgPrintOwnerDetail"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <RadioButton
+                                    android:id="@+id/rbPrintOwnerDetailEnable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Enable" />
+
+                                <RadioButton
+                                    android:id="@+id/rbPrintOwnerDetailDisable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Disable" />
+                            </RadioGroup>
+
+                            <TextView
+                                android:id="@+id/tvBillAmountRoundOff"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:text="Bill Amount Round off" />
+
+                            <RadioGroup
+                                android:id="@+id/rgBillAmountRoundOff"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <RadioButton
+                                    android:id="@+id/rbBillAmountRoundOffEnable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Enable" />
+
+                                <RadioButton
+                                    android:id="@+id/rbBillAmountRoundOffDisable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Disable" />
+                            </RadioGroup>
+
+
+
                         </LinearLayout>
                     </FrameLayout>
 
@@ -175,7 +230,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginRight="20dp"
-                        android:layout_marginTop="75dp"
+                        android:layout_marginTop="35dp"
                         android:layout_weight="0.8">
 
                         <LinearLayout
@@ -320,6 +375,58 @@
                             </RadioGroup>
 
                             <TextView
+                                android:id="@+id/tvHeaderBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:text="Header Print Bold" />
+
+                            <RadioGroup
+                                android:id="@+id/rgHeaderBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <RadioButton
+                                    android:id="@+id/rbHeaderBoldEnable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Enable" />
+
+                                <RadioButton
+                                    android:id="@+id/rbHeaderBoldDisable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Disable" />
+                            </RadioGroup>
+
+                            <TextView
+                                android:id="@+id/tvPrintService"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="15dp"
+                                android:text="Service Name Print" />
+
+                            <RadioGroup
+                                android:id="@+id/rgPrintService"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <RadioButton
+                                    android:id="@+id/rbPrintServiceEnable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Enable" />
+
+                                <RadioButton
+                                    android:id="@+id/rbPrintServiceDisable"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Disable" />
+                            </RadioGroup>
+
+                            <TextView
                                 android:id="@+id/tvEnvrionment"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -358,14 +465,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
                                 android:text="Print Preview "
-                                android:visibility="invisible" />
+                                android:visibility="gone" />
 
                             <RadioGroup
                                 android:id="@+id/rgPrintPreview"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
-                                android:visibility="invisible">
+                                android:visibility="gone">
 
                                 <RadioButton
                                     android:id="@+id/rbPrintPreviewEnable"
@@ -386,14 +493,14 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="15dp"
                                 android:text="Tax Type"
-                                android:visibility="invisible" />
+                                android:visibility="gone" />
 
                             <RadioGroup
                                 android:id="@+id/rgTaxType"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:orientation="horizontal"
-                                android:visibility="invisible">
+                                android:visibility="gone">
 
                                 <RadioButton
                                     android:id="@+id/rbTaxTypeItemwise"

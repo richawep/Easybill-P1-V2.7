@@ -90,9 +90,9 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     DatabaseHandler dbItems = new DatabaseHandler(ItemManagementActivity.this);
     MessageDialog MsgBox;
     int ROWCLICKEVENT = 0;
-    EditText /*txtLongName,*/ txtShortName, txtBarcode, txtDineIn1, txtDineIn2, txtDineIn3, txtStock;
+    EditText /*txtLongName,*/ txtShortName,  txtDineIn1, txtDineIn2, txtDineIn3, txtStock;
     WepEditText txtLongName;
-    AutoCompleteTextView AutoCompleteItemLongName;
+    AutoCompleteTextView AutoCompleteItemLongName,AutoCompleteItemBarcode;
     Spinner spnrDepartment, spnrCategory, spnrKitchen,  spnrOptionalTax1, spnrOptionalTax2;
     CheckBox chkPriceChange, chkDiscountEnable, chkBillWithStock;
     RadioButton rbForwardTax, rbReverseTax;
@@ -126,6 +126,7 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     private Toolbar toolbar;
     String businessDate = "";
     String itemName_beforeChange_in_update="";
+    String itembarCode_beforeChange_in_update="";
     ItemOutwardAdapter itemListAdapter = null;
     private ListView listViewItems;
     ArrayList<ItemOutward> dataList = null;
@@ -237,7 +238,7 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
                     if (choice.equalsIgnoreCase("nonGST") || (choice.equalsIgnoreCase("NilRate")) ||
                             (choice.equalsIgnoreCase("Exempt"))) {
                         MsgBox.Show("Note", "For NilRate, nonGST, Exempt, tax will be 0");
-                                edtItemCGSTTax.setText("0.00");
+                        edtItemCGSTTax.setText("0.00");
                         edtItemCGSTTax.setEnabled(false);
                         edtItemSGSTTax.setText("0.00");
                         edtItemSGSTTax.setEnabled(false);
@@ -482,16 +483,16 @@ protected void onPostExecute(Void aVoid) {
         }
         });*/
 
-        SetGSTView();
-        DisplayItemList();
+            SetGSTView();
+            DisplayItemList();
 
-        tvFileName.setPaintFlags(tvFileName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            tvFileName.setPaintFlags(tvFileName.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
 
         } catch (Exception exp) {
-        Toast.makeText(myContext, "OnCreate:" + exp.getMessage(), Toast.LENGTH_SHORT).show();
-        exp.printStackTrace();
+            Toast.makeText(myContext, "OnCreate:" + exp.getMessage(), Toast.LENGTH_SHORT).show();
+            exp.printStackTrace();
         }
-        }
+    }
 
 
 
@@ -512,65 +513,74 @@ protected void onPostExecute(Void aVoid) {
         }
     }
     private void SetGSTView()
-        {
+    {
         Cursor crsrSettings = dbItems.getBillSetting();
         LinearLayout linear_HSN_OUT = (LinearLayout) findViewById(R.id.linear_HSN_OUT);
         if (crsrSettings.moveToFirst()) {
-        if(HSNEnable_out == null ) {
-        linear_HSN_OUT.setVisibility(View.INVISIBLE);
+            if(HSNEnable_out == null ) {
+                linear_HSN_OUT.setVisibility(View.INVISIBLE);
+            }
+            else if(HSNEnable_out.equalsIgnoreCase("0") ) {
+                linear_HSN_OUT.setVisibility(View.INVISIBLE);
+            }
+            else {
+                linear_HSN_OUT.setVisibility(View.VISIBLE);
+            }
         }
-        else if(HSNEnable_out.equalsIgnoreCase("0") ) {
-        linear_HSN_OUT.setVisibility(View.INVISIBLE);
-        }
-        else {
-        linear_HSN_OUT.setVisibility(View.VISIBLE);
-        }
-        }
-        }
+    }
 
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         String str = charSequence.toString();
         View view = getCurrentFocus();
         if(view== null)
-        return;
+            return;
         switch(view.getId()){
-        case R.id.etItemLongName:
-        tx = txtLongName.getText().toString();
-        tx = AutoCompleteItemLongName.getText().toString();
-        break;
-        case R.id.etItemDineInPrice1:
-        tx = txtDineIn1.getText().toString();
-        break;
-        case R.id.etItemDineInPrice2:
-        tx = txtDineIn2.getText().toString();
-        break;
-        case R.id.etItemDineInPrice3:
-        tx = txtDineIn3.getText().toString();
-        break;
-        case R.id.etItemStock:
-        tx = txtStock.getText().toString();
-        break;
-        case R.id.etHSNCode:
-        tx = etHSN.getText().toString();
-        break;
-        case R.id.edtMenuCode:
-        tx = edtMenuCode.getText().toString();
-        break;
-        case R.id.edtItemCGSTTax:
-        tx = edtItemCGSTTax.getText().toString();
-        break;
-        case R.id.edtItemSGSTTax:
-        tx = edtItemSGSTTax.getText().toString();
-        break;
-        case R.id.edtIGSTTax:
-        tx = edtIGSTTax.getText().toString();
-        break;
+            case R.id.etItemLongName:
+                tx = txtLongName.getText().toString();
+                // tx = AutoCompleteItemLongName.getText().toString();
+                break;
+            case R.id.AutoCompleteItemLongName:
+                // tx = txtLongName.getText().toString();
+                tx = AutoCompleteItemLongName.getText().toString();
+                break;
+            case R.id.etItemDineInPrice1:
+                tx = txtDineIn1.getText().toString();
+                break;
+            case R.id.etItemDineInPrice2:
+                tx = txtDineIn2.getText().toString();
+                break;
+            case R.id.etItemDineInPrice3:
+                tx = txtDineIn3.getText().toString();
+                break;
+            case R.id.etItemStock:
+                tx = txtStock.getText().toString();
+                break;
+            case R.id.etHSNCode:
+                tx = etHSN.getText().toString();
+                break;
+            case R.id.edtMenuCode:
+                tx = edtMenuCode.getText().toString();
+                break;
+            case R.id.edtItemCGSTTax:
+                tx = edtItemCGSTTax.getText().toString();
+                break;
+            case R.id.edtItemSGSTTax:
+                tx = edtItemSGSTTax.getText().toString();
+                break;
+            case R.id.edtIGSTTax:
+                tx = edtIGSTTax.getText().toString();
+                break;
+            case R.id.etItemDiscount:
+                tx = etItemDiscount.getText().toString();
+                break;
 
         }
-        }
-public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+    }
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
 
-public void afterTextChanged(Editable editable) {    }
+    public void afterTextChanged(Editable editable) {
+
+    }
 
 
     private  void clickEvent()
@@ -617,13 +627,56 @@ public void afterTextChanged(Editable editable) {    }
                 }
             }
         });
+
+        AutoCompleteItemBarcode.setOnTouchListener(new View.OnTouchListener(){
+            //@Override
+            public boolean onTouch(View v, MotionEvent event){
+                AutoCompleteItemBarcode.showDropDown();
+                return false;
+            }
+        });
+        AutoCompleteItemBarcode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String itemBarCode = AutoCompleteItemBarcode.getText().toString();
+                Cursor cursorItem = dbItems.getItemDetail_ByBarCode(itemBarCode);
+                if(cursorItem!=null && cursorItem.moveToFirst())
+                {
+                    ItemOutward item = new ItemOutward();
+                    item.setMenuCode(cursorItem.getInt(cursorItem.getColumnIndex("MenuCode")));
+                    item.setItemName(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
+                    item.setDineIn1(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice1")))));
+                    item.setDineIn2(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice2")))));
+                    item.setDineIn3(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice3")))));
+                    item.setStock(  Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("Quantity")))));
+                    item.setDeptCode(cursorItem.getInt(cursorItem.getColumnIndex("DeptCode")));
+                    item.setCategCode(cursorItem.getInt(cursorItem.getColumnIndex("CategCode")));
+                    item.setKitchenCode(cursorItem.getInt(cursorItem.getColumnIndex("KitchenCode")));
+                    item.setBarCode(cursorItem.getString(cursorItem.getColumnIndex("ItemBarcode")));
+                    item.setImageUri(cursorItem.getString(cursorItem.getColumnIndex("ImageUri")));
+                    item.setUOM(cursorItem.getString(cursorItem.getColumnIndex("UOM")));
+                    item.setCGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("CGSTRate")))));
+                    item.setSGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("SGSTRate")))));
+                    item.setIGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("IGSTRate")))));
+                    item.setCessRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("cessRate")))));
+                    item.setItemId(cursorItem.getInt(cursorItem.getColumnIndex("ItemId")));
+                    item.setHSN(cursorItem.getString(cursorItem.getColumnIndex("HSNCode")));
+                    item.setTaxationType(cursorItem.getString(cursorItem.getColumnIndex("TaxationType")));
+                    item.setItemDiscount(Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("DiscountPercent")))));
+                    listItemClickEvent(item);
+                }else
+                {
+                    Log.d("ItemManagement","No Such item present");
+                }
+            }
+        });
     }
-private void InitializeViewVariables() {
+    private void InitializeViewVariables() {
         EditTextInputHandler etInputValidate = new EditTextInputHandler();
 
         txtLongName = (WepEditText) findViewById(R.id.etItemLongName);
         AutoCompleteItemLongName = (AutoCompleteTextView) findViewById(R.id.AutoCompleteItemLongName);
-        txtBarcode = (EditText) findViewById(R.id.etItemBarcode);
+        AutoCompleteItemBarcode = (AutoCompleteTextView) findViewById(R.id.AutoCompleteItemBarcode);
         txtDineIn1 = (EditText) findViewById(R.id.etItemDineInPrice1);
         etInputValidate.ValidateDecimalInput(txtDineIn1);
         txtDineIn2 = (EditText) findViewById(R.id.etItemDineInPrice2);
@@ -692,48 +745,48 @@ public void onFocusChange(View v, boolean hasFocus) {
         spnrDepartment = (Spinner) findViewById(R.id.spnrItemDeptCode);
         spnrDepartment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-public void onItemSelected(AdapterView<?> arg0, View arg1,
-        int arg2, long arg3) {
-        if (ROWCLICKEVENT == 0)
-        {
-        if(!spnrDepartment.getSelectedItem().toString().equalsIgnoreCase("Select")) {
-        int deptid = dbItems.getDepartmentIdByName(labelsDept.get(spnrDepartment.getSelectedItemPosition()));
-        ArrayList<String> categName = dbItems.getCategoryNameByDeptCode(String.valueOf(deptid));
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int arg2, long arg3) {
+                if (ROWCLICKEVENT == 0)
+                {
+                    if(!spnrDepartment.getSelectedItem().toString().equalsIgnoreCase("Select")) {
+                        int deptid = dbItems.getDepartmentIdByName(labelsDept.get(spnrDepartment.getSelectedItemPosition()));
+                        ArrayList<String> categName = dbItems.getCategoryNameByDeptCode(String.valueOf(deptid));
                     /*int categid = getIndexCateg(categName + "");
                     spnrCategory.setSelection(categid);*/
-        loadSpinnerData_cat(categName);
-        }
-        else
-        {
-        loadSpinnerData1();
-        }
-        }
-        else
-        {
-        // setting it to 0;
-        ROWCLICKEVENT =0;
-        }
-        }
+                        loadSpinnerData_cat(categName);
+                    }
+                    else
+                    {
+                        loadSpinnerData1();
+                    }
+                }
+                else
+                {
+                    // setting it to 0;
+                    ROWCLICKEVENT =0;
+                }
+            }
 
-public void onNothingSelected(AdapterView<?> arg0) {
-        // TODO Auto-generated method stub
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
 
-        }
+            }
         });
 
 
         spnrCategory = (Spinner) findViewById(R.id.spnrItemCategCode);
         spnrCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-@Override
-public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        int p = position;
-        String item = parent.getSelectedItem().toString();
-        }
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int p = position;
+                String item = parent.getSelectedItem().toString();
+            }
 
-@Override
-public void onNothingSelected(AdapterView<?> parent) {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-        }
+            }
         });
         spnrKitchen = (Spinner) findViewById(R.id.spnrItemKitchenCode);
         spnrOptionalTax1 = (Spinner) findViewById(R.id.spnrItemOptionalTax1);
@@ -746,7 +799,7 @@ public void onNothingSelected(AdapterView<?> parent) {
 
         rbForwardTax = (RadioButton) findViewById(R.id.rbForwardTax);
         rbReverseTax =
-        (RadioButton) findViewById(R.id.rbReverseTax);
+                (RadioButton) findViewById(R.id.rbReverseTax);
 
         btnGenerateCSV = (WepButton) findViewById(R.id.btnGenerateCSV);
         btnAdd = (WepButton) findViewById(R.id.btnAddItem);
@@ -756,41 +809,41 @@ public void onNothingSelected(AdapterView<?> parent) {
         btnImageBrowse = (WepButton) findViewById(R.id.btnImageBrowse);
 
         btnImageBrowse.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-        Browse(v);
-        }
+            @Override
+            public void onClick(View v) {
+                Browse(v);
+            }
         });
         btnAdd.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-        AddItem(v);
-        }
+            @Override
+            public void onClick(View v) {
+                AddItem(v);
+            }
         });
         btnEdit.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-        EditItem(v);
-        }
+            @Override
+            public void onClick(View v) {
+                EditItem(v);
+            }
         });
         btnClearItem.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-        ClearItem(v);
-        }
+            @Override
+            public void onClick(View v) {
+                ClearItem(v);
+            }
         });
         btnCloseItem.setOnClickListener(new View.OnClickListener() {
-@Override
-public void onClick(View v) {
-        CloseItem(v);
-        }
+            @Override
+            public void onClick(View v) {
+                CloseItem(v);
+            }
         });
         btnGenerateCSV.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            generateCSV();
-                }
-                });
+            @Override
+            public void onClick(View v) {
+                generateCSV();
+            }
+        });
 
         tblItems = (TableLayout) findViewById(R.id.tblItem);
 
@@ -823,84 +876,85 @@ public void onClick(View v) {
 
         listViewItems = (ListView) findViewById(R.id.listViewItems);
         listViewItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        listItemClickEvent(itemListAdapter.getItems(position));
-        }});
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                listItemClickEvent(itemListAdapter.getItems(position));
+            }});
 
         txtDineIn1.addTextChangedListener(this);
         txtDineIn2.addTextChangedListener(this);
         txtDineIn3.addTextChangedListener(this);
         txtStock.addTextChangedListener(this);
         txtLongName.addTextChangedListener(this);
-    AutoCompleteItemLongName.addTextChangedListener(this);
+        AutoCompleteItemLongName.addTextChangedListener(this);
         edtMenuCode.addTextChangedListener(this);
         etHSN.addTextChangedListener(this);
         edtItemCGSTTax.addTextChangedListener(this);
         edtItemSGSTTax.addTextChangedListener(this);
         edtIGSTTax.addTextChangedListener(this);
+        etItemDiscount.addTextChangedListener(this);
 
         edtItemSGSTTax.addTextChangedListener(new TextWatcher() {
-@Override
-public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        }
+            }
 
-@Override
-public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-        }
+            }
 
-@Override
-public void afterTextChanged(Editable s) {
-        String SGST = edtItemSGSTTax.getText().toString();
-        String CGST = edtItemCGSTTax.getText().toString();
-        if(SGST.equals("")){
-        //edtItemSGSTTax.setText("0");
-        SGST = ("0");
-        }
-        if(CGST.equals("")){
-        //edtItemCGSTTax.setText("0");
-        CGST = ("0");}
+            @Override
+            public void afterTextChanged(Editable s) {
+                String SGST = edtItemSGSTTax.getText().toString();
+                String CGST = edtItemCGSTTax.getText().toString();
+                if(SGST.equals("")){
+                    //edtItemSGSTTax.setText("0");
+                    SGST = ("0");
+                }
+                if(CGST.equals("")){
+                    //edtItemCGSTTax.setText("0");
+                    CGST = ("0");}
 
-        double sgst_d = Double.parseDouble(SGST);
-        double cgst_d = Double.parseDouble(CGST);
-        double igst_d = sgst_d+cgst_d;
-        edtIGSTTax.setText(String.format("%.2f",igst_d));
+                double sgst_d = Double.parseDouble(SGST);
+                double cgst_d = Double.parseDouble(CGST);
+                double igst_d = sgst_d+cgst_d;
+                edtIGSTTax.setText(String.format("%.2f",igst_d));
 
-        }
+            }
         });
         edtItemCGSTTax.addTextChangedListener(new TextWatcher() {
-@Override
-public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
-        }
+            }
 
-@Override
-public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-        }
+            }
 
-@Override
-public void afterTextChanged(Editable s) {
-        String SGST = edtItemSGSTTax.getText().toString();
-        String CGST = edtItemCGSTTax.getText().toString();
-        if(CGST.equals("")) {
-        //edtItemCGSTTax.setText("0");
-        CGST = ("0");
-        }
-        if(SGST.equals("")) {
-        //edtItemSGSTTax.setText("0");
-        SGST = ("0");
-        }
+            @Override
+            public void afterTextChanged(Editable s) {
+                String SGST = edtItemSGSTTax.getText().toString();
+                String CGST = edtItemCGSTTax.getText().toString();
+                if(CGST.equals("")) {
+                    //edtItemCGSTTax.setText("0");
+                    CGST = ("0");
+                }
+                if(SGST.equals("")) {
+                    //edtItemSGSTTax.setText("0");
+                    SGST = ("0");
+                }
 
-        double sgst_d = Double.parseDouble(SGST);
-        double cgst_d = Double.parseDouble(CGST);
-        double igst_d = sgst_d+cgst_d;
-        edtIGSTTax.setText(String.format("%.2f",igst_d));
+                double sgst_d = Double.parseDouble(SGST);
+                double cgst_d = Double.parseDouble(CGST);
+                double igst_d = sgst_d+cgst_d;
+                edtIGSTTax.setText(String.format("%.2f",igst_d));
 
-        }
+            }
         });
-        }
+    }
 
 
 
@@ -1002,156 +1056,156 @@ public void afterTextChanged(Editable s) {
     }
 
     /**
- * performing button onclick upload csv file from external or SDCard
- */
+     * performing button onclick upload csv file from external or SDCard
+     */
 
-private void setCVSFile() {
+    private void setCVSFile() {
         btnUploadExcel.setOnClickListener(new View.OnClickListener() {
-public void onClick(View v) {
-        Intent intent = new Intent(myContext, FilePickerActivity.class);
-        intent.putExtra("contentType", "csv");
-        startActivityForResult(intent, FilePickerActivity.FILE_PICKER_CODE);
-        }
+            public void onClick(View v) {
+                Intent intent = new Intent(myContext, FilePickerActivity.class);
+                intent.putExtra("contentType", "csv");
+                startActivityForResult(intent, FilePickerActivity.FILE_PICKER_CODE);
+            }
         });
-        }
+    }
 
-/**
- * performing button onclick save csv file to data base and dispaly on UI
- */
+    /**
+     * performing button onclick save csv file to data base and dispaly on UI
+     */
 
-private void parseCVSFile() {
+    private void parseCVSFile() {
         btnSaveExcel.setOnClickListener(new View.OnClickListener() {
-    public void onClick(View v) {
-        try {
-        AssetManager manager = myContext.getAssets();
-        if (strUploadFilepath.equalsIgnoreCase("")) {
-        Toast.makeText(getApplicationContext(), "No File Found", Toast.LENGTH_SHORT).show();
-        } else {
-        String path = strUploadFilepath;
-        FileInputStream inputStream = new FileInputStream(path);
-        buffer = new BufferedReader(new InputStreamReader(inputStream));
-        setCSVFileToDB(dataList);
-        }
-        } catch (IOException e) {
-        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-        e.printStackTrace();
-        } finally {
-        tvFileName.setText(getResources().getString(R.string.select_filename));
-        strUploadFilepath = "";
-        }
-        }
+            public void onClick(View v) {
+                try {
+                    AssetManager manager = myContext.getAssets();
+                    if (strUploadFilepath.equalsIgnoreCase("")) {
+                        Toast.makeText(getApplicationContext(), "No File Found", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String path = strUploadFilepath;
+                        FileInputStream inputStream = new FileInputStream(path);
+                        buffer = new BufferedReader(new InputStreamReader(inputStream));
+                        setCSVFileToDB(dataList);
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                } finally {
+                    tvFileName.setText(getResources().getString(R.string.select_filename));
+                    strUploadFilepath = "";
+                }
+            }
         });
-        }
+    }
 
-/**
- * Display exiting data as well as new data from data base
- *
- * @param inwardItemList - List of ItemInward
- */
+    /**
+     * Display exiting data as well as new data from data base
+     *
+     * @param inwardItemList - List of ItemInward
+     */
 
-private void setCSVFileToDB(ArrayList<ItemOutward> inwardItemList) {
+    private void setCSVFileToDB(ArrayList<ItemOutward> inwardItemList) {
 
         if (inwardItemList.size() > 0) {
-        showCSVAlertMessage();
+            showCSVAlertMessage();
         } else {
-        downloadCSVData();
+            downloadCSVData();
         }
-        }
+    }
 
-/**
- * Ask User permission to dispaly old data or new data from CSV file
- */
+    /**
+     * Ask User permission to dispaly old data or new data from CSV file
+     */
 
-private void showCSVAlertMessage() {
+    private void showCSVAlertMessage() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(myContext)
                 .setTitle("Replace Item")
                 .setIcon(R.drawable.ic_launcher)
                 .setMessage(" Are you sure you want to Replace all the existing Items, if any")
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                downloadCSVData();
-                dialog.dismiss();
-            }
-        })
-        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
-        dialog.dismiss();
-        //ClearItemTable();
-        DisplayItemList();
-        }
-        });
+                        downloadCSVData();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        //ClearItemTable();
+                        DisplayItemList();
+                    }
+                });
         AlertDialog alert = builder.create();
         alert.show();
-        }
+    }
 
-/**
- * Download all data in Background then it will be return to UI
- */
+    /**
+     * Download all data in Background then it will be return to UI
+     */
 
-private void downloadCSVData() {
+    private void downloadCSVData() {
         new AsyncTask<Void, Void, Void>() {
-        ProgressDialog pd;
+            ProgressDialog pd;
 
-@Override
-protected void onPreExecute() {
-        super.onPreExecute();
-        pd = new ProgressDialog(ItemManagementActivity.this);
-        pd.setMessage("Loading...");
-        pd.setCancelable(false);
-        pd.show();
-        }
-
-@Override
-protected Void doInBackground(Void... params) {
-        readCSVValue(mCurrentTime);
-        return null;
-        }
-
-@Override
-protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        try {
-            if (mFlag) {
-                   MsgBox.Show("Note", mUserCSVInvalidValue);
-            }else if(mUserCSVInvalidValue.equals(""))
-            {
-                Toast.makeText(getApplicationContext(), "Items Imported Successfully", Toast.LENGTH_LONG).show();
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pd = new ProgressDialog(ItemManagementActivity.this);
+                pd.setMessage("Loading...");
+                pd.setCancelable(false);
+                pd.show();
             }
-            DisplayItemList();
-            loadAutoCompleteData_ItemNames();
-            ResetItem();
-            //ClearItemTable();
 
-            pd.dismiss();
-            } catch (Exception e) {
-            e.printStackTrace();
-            //Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            @Override
+            protected Void doInBackground(Void... params) {
+                readCSVValue(mCurrentTime);
+                return null;
             }
-        }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                try {
+                    if (mFlag) {
+                        MsgBox.Show("Note", mUserCSVInvalidValue);
+                    }else if(mUserCSVInvalidValue.equals(""))
+                    {
+                        Toast.makeText(getApplicationContext(), "Items Imported Successfully", Toast.LENGTH_LONG).show();
+                    }
+                    DisplayItemList();
+                    loadAutoCompleteData_ItemNames();
+                    ResetItem();
+                    //ClearItemTable();
+
+                    pd.dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
         }.execute();
-        }
+    }
 
-/**
- * Read response from CSV file and set data to in Data base
- * checking All possible validation
- *
- * @param currentDate - need to current date
- */
+    /**
+     * Read response from CSV file and set data to in Data base
+     * checking All possible validation
+     *
+     * @param currentDate - need to current date
+     */
 
-        private void readCSVValue(String currentDate) {
+    private void readCSVValue(String currentDate) {
 
-            mUserCSVInvalidValue = "";
+        mUserCSVInvalidValue = "";
         String checkUOMTypye = "Pk Lt Ml Gm Kg Bg Bx No Mt Dz Sa St Bt Pl Pc";
         String[] checkSupplyType = {"G", "S"};
         String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT,DEPARTMENT CODE,CATEGORY CODE";
         boolean flag;
-            boolean   mCSVHashCheckflag = false;
+        boolean   mCSVHashCheckflag = false;
         try {
-        String line;
-        String chechCSVHeaderLine;
-        chechCSVHeaderLine = buffer.readLine();
+            String line;
+            String chechCSVHeaderLine;
+            chechCSVHeaderLine = buffer.readLine();
 
 
             mFlag = false;
@@ -1165,425 +1219,425 @@ protected void onPostExecute(Void aVoid) {
                 return;
             }
 
-        //dataList.clear();
-        mHashMapItemCode.clear();
+            //dataList.clear();
+            mHashMapItemCode.clear();
 
-        while ((line = buffer.readLine()) != null)
-        {
-            final String[] colums = line.split("\\r\\n\\r\\n", 15);
-            if(colums.length ==0)
-                continue;
-            else if (colums.length !=15)
+            while ((line = buffer.readLine()) != null)
             {
-                mFlag = true;
-                mUserCSVInvalidValue = getResources().getString(R.string.insufficient_information);
-                break;
-            }
-            if (colums[0] != null&& colums[0].trim().length() > 0  ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[0],"Int");
-            if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
-            mMenuCode = Integer.parseInt(colums[0]);
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.menu_code_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            if (colums[0].trim().length() > 0) {
-            mUserCSVInvalidValue = getResources().getString(R.string.menu_code_empty) + colums[1];
-            break;
-            } else {
-            mUserCSVInvalidValue = getResources().getString(R.string.please_enter_item_name);
-            break;
-            }
-            }
-            if ( colums[1] != null && colums[1].length() > 0 && colums[1].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[1],"String");
-            if (mCheckCSVValueType == CHECK_STRING_VALUE) {
-                if(colums[1].length()>20)
-                    mItemName = colums[1].substring(0,21).toUpperCase();
-                else
-                    mItemName = colums[1].toUpperCase();
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.item_name_invalid) + colums[0];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.item_name_empty) + colums[0];
-            break;
-            }
-
-            if (colums[2] != null && colums[2].length() > 0 && colums[2].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[2],"String");
-            if (mCheckCSVValueType == CHECK_STRING_VALUE) {
-
-            if (checkSupplyType[0].equals(colums[2])) {
-            mSupplyType = colums[2];
-            } else if (checkSupplyType[1].equals(colums[2])) {
-            mSupplyType = colums[2];
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.supply_type_invalid) + colums[1] + "e.g " + checkSupplyType;
-            break;
-            }
-
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.supply_type_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.supply_type_empty) + colums[1];
-            break;
-            }
-
-            if (colums[3] != null && colums[3].length() > 0 && colums[3].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[3],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[3],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mRate1 = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[3])));
-                if(!(mRate1> 0 && mRate1 <999999998)){
+                final String[] colums = line.split("\\r\\n\\r\\n", 15);
+                if(colums.length ==0)
+                    continue;
+                else if (colums.length !=15)
+                {
                     mFlag = true;
-                    mUserCSVInvalidValue = "Please enter rate1 between 0 and 999999998 for item " +colums[1];
+                    mUserCSVInvalidValue = getResources().getString(R.string.insufficient_information);
                     break;
                 }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.rate_1_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.rate_1_empty) + colums[1];
-            break;
-            }
-
-            if (colums[4] != null && colums[4].length() > 0 && colums[4].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[4],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[4],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-            mRate2 = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[4])));
-                if(!(mRate2> 0 && mRate2 <999999998)){
+                if (colums[0] != null&& colums[0].trim().length() > 0  ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[0],"Int");
+                    if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
+                        mMenuCode = Integer.parseInt(colums[0]);
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.menu_code_invalid) + colums[1];
+                        break;
+                    }
+                } else {
                     mFlag = true;
-                    mUserCSVInvalidValue = "Please enter rate2 between 0 and 999999998 for item "+ colums[1];
+                    if (colums[0].trim().length() > 0) {
+                        mUserCSVInvalidValue = getResources().getString(R.string.menu_code_empty) + colums[1];
+                        break;
+                    } else {
+                        mUserCSVInvalidValue = getResources().getString(R.string.please_enter_item_name);
+                        break;
+                    }
+                }
+                if ( colums[1] != null && colums[1].length() > 0 && colums[1].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[1],"String");
+                    if (mCheckCSVValueType == CHECK_STRING_VALUE) {
+                        if(colums[1].length()>20)
+                            mItemName = colums[1].substring(0,21).toUpperCase();
+                        else
+                            mItemName = colums[1].toUpperCase();
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.item_name_invalid) + colums[0];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.item_name_empty) + colums[0];
                     break;
                 }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.rate_2_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.rate_2_empty) + colums[1];
-            break;
-            }
 
-            if (colums[5] != null && colums[5].length() > 0 && colums[5].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[5],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[5],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mRate3 = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[5])));
-                if(!(mRate3> 0 && mRate3 <999999998)){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter rate3 between 0 and 999999998 for item " +colums[1];
-                    break;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.rate_3_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.rate_3_empty) + colums[1];
-            break;
-            }
+                if (colums[2] != null && colums[2].length() > 0 && colums[2].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[2],"String");
+                    if (mCheckCSVValueType == CHECK_STRING_VALUE) {
 
-            if (colums[6] != null && colums[6].length() > 0 && colums[6].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[6],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[5],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mQuantity = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[6])));
-                if(mQuantity>9999.99 || mQuantity<0){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter quantity between 0 and 9999.99 for item " + colums[1];
-                    return;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.quantity_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.quantity_empty) + colums[1];
-            break;
-            }
-
-            if (colums[7] != null && colums[7].length() > 0 && colums[7].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[7],"String");
-            if (mCheckCSVValueType == CHECK_STRING_VALUE) {
-
-            if (colums[7].trim().length() == 2 && checkUOMTypye.contains(colums[7])) {
-            mUOM = colums[7];
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.uom_invalid) + colums[1] + "e.g " + checkUOMTypye;
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.uom_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.uom_empty) + colums[1];
-            break;
-            }
-
-            if (colums[8] != null && colums[8].length() > 0 && colums[8].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[8],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[8],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1==CHECK_INTEGER_VALUE) {
-                mCGSTRate = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[8])));
-                if(mCGSTRate>99.99 || mCGSTRate<0){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter CGST Rate between 0 and 99.99 for item " + colums[1];
-                    return;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.cgst_rate_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.cgst_rate_empty) + colums[1];
-            break;
-            }
-
-            if (colums[9] != null && colums[9].length() > 0 && colums[9].trim().length() > 0 ) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[9],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[9],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mSGSTRate =Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[9])));
-                if(mSGSTRate>99.99 || mSGSTRate<0){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter SGST Rate between 0 and 99.99 for item " + colums[1];
-                    return;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.sgst_rate_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.sgst_rate_empty) + colums[1];
-            break;
-            }
-            if (mCGSTRate+mSGSTRate <0 || mCGSTRate+mSGSTRate >99.99)
-            {
-                mFlag = true;
-                mUserCSVInvalidValue = "Please note sum of SGST Rate and CGST Rate should between 0 and 99.99 for item " + colums[1];
-                return;
-            }
-            if (colums[10] != null && colums[10].length() > 0 && colums[10].trim().length() > 0) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[10],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[10],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mIGSTRate = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[10])));
-                if(mIGSTRate>99.99 || mIGSTRate<0){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter IGST Rate between 0 and 99.99 for item " + colums[1];
-                    return;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.igst_rate_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.igst_rate_empty) + colums[1];
-            break;
-            }
-
-            if (mCGSTRate+mSGSTRate !=mIGSTRate)
-            {
-                mFlag = true;
-                mUserCSVInvalidValue = "Please note sum of SGST Rate and CGST Rate should between equal to IGST Rate for item " + colums[1];
-                return;
-            }
-            if (colums[11] != null && colums[11].length() > 0 && colums[11].trim().length() > 0) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[11],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[11],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mCESSRate = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[11])));
-                if(mCESSRate>99.99 || mCESSRate<0){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter cess Rate between 0 and 99.99 for item " + colums[1];
-                    return;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.cess_rate_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.cess_rate_empty) + colums[1];
-            break;
-            }
-
-            if (colums[12] != null && colums[12].length() > 0 && colums[12].trim().length() > 0) {
-            mCheckCSVValueType = checkCSVTypeValue1(colums[12],"Double");
-            int mCheckCSVValueType1 = checkCSVTypeValue1(colums[12],"Int");
-            if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
-                mDiscount = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[12])));
-                if(mDiscount>99.99 || mDiscount<0){
-                    mFlag = true;
-                    mUserCSVInvalidValue = "Please enter discount between 0 and 99.99 for item " + colums[1];
-                    return;
-                }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.discount_invalid) + colums[1];
-            break;
-            }
-            } else {
-            mFlag = true;
-            mUserCSVInvalidValue = getResources().getString(R.string.discount_empty) + colums[1];
-            break;
-            }
-            if (colums[13] != null && colums[13].trim().length() > 0) {
-                mCheckCSVValueType = checkCSVTypeValue1(colums[13], "Int");
-                if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
-                    if (mDepartmentCodeList != null && mDepartmentCodeList.size() > 0) {
-                        if (mDepartmentCodeList.contains(Integer.parseInt(colums[13]))) {
-                            mDeptCode = Integer.parseInt(colums[13]);
+                        if (checkSupplyType[0].equals(colums[2])) {
+                            mSupplyType = colums[2];
+                        } else if (checkSupplyType[1].equals(colums[2])) {
+                            mSupplyType = colums[2];
                         } else {
                             mFlag = true;
-                            mUserCSVInvalidValue = "This department code " + colums[13] + " is not present in the database for Item Name " + colums[1];
+                            mUserCSVInvalidValue = getResources().getString(R.string.supply_type_invalid) + colums[1] + "e.g " + checkSupplyType;
+                            break;
+                        }
+
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.supply_type_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.supply_type_empty) + colums[1];
+                    break;
+                }
+
+                if (colums[3] != null && colums[3].length() > 0 && colums[3].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[3],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[3],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mRate1 = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[3])));
+                        if(!(mRate1> 0 && mRate1 <999999998)){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter rate1 between 0 and 999999998 for item " +colums[1];
                             break;
                         }
                     } else {
                         mFlag = true;
-                        mUserCSVInvalidValue = getResources().getString(R.string.database_department_null);
+                        mUserCSVInvalidValue = getResources().getString(R.string.rate_1_invalid) + colums[1];
                         break;
                     }
-
                 } else {
                     mFlag = true;
-                    mUserCSVInvalidValue = getResources().getString(R.string.department_code_invalid) + " " + colums[1];
+                    mUserCSVInvalidValue = getResources().getString(R.string.rate_1_empty) + colums[1];
                     break;
                 }
-            } else {
-                mDeptCode = 0;
-                mCategCode = 0;
-            }
 
-            boolean categoryFlag = false;
-
-            if (colums[14] != null && colums[14].trim().length() > 0) {
-                mCheckCSVValueType = checkCSVTypeValue1(colums[14], "Int");
-                if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
-
-                    if (mCategoryCodeList != null && mCategoryCodeList.size() > 0) {
-
-                        if (mDeptCode == 0) {
+                if (colums[4] != null && colums[4].length() > 0 && colums[4].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[4],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[4],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mRate2 = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[4])));
+                        if(!(mRate2> 0 && mRate2 <999999998)){
                             mFlag = true;
-                            mUserCSVInvalidValue = "Item Name " + mItemName + " can not have category code " + colums[14] + " without department";
+                            mUserCSVInvalidValue = "Please enter rate2 between 0 and 999999998 for item "+ colums[1];
                             break;
                         }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.rate_2_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.rate_2_empty) + colums[1];
+                    break;
+                }
 
-                        if (mCategoryCodeList.containsKey(Integer.parseInt(colums[14]))) {
-                            categoryFlag = true;
+                if (colums[5] != null && colums[5].length() > 0 && colums[5].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[5],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[5],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mRate3 = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[5])));
+                        if(!(mRate3> 0 && mRate3 <999999998)){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter rate3 between 0 and 999999998 for item " +colums[1];
+                            break;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.rate_3_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.rate_3_empty) + colums[1];
+                    break;
+                }
+
+                if (colums[6] != null && colums[6].length() > 0 && colums[6].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[6],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[5],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mQuantity = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[6])));
+                        if(mQuantity>9999.99 || mQuantity<0){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter quantity between 0 and 9999.99 for item " + colums[1];
+                            return;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.quantity_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.quantity_empty) + colums[1];
+                    break;
+                }
+
+                if (colums[7] != null && colums[7].length() > 0 && colums[7].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[7],"String");
+                    if (mCheckCSVValueType == CHECK_STRING_VALUE) {
+
+                        if (colums[7].trim().length() == 2 && checkUOMTypye.contains(colums[7])) {
+                            mUOM = colums[7];
                         } else {
                             mFlag = true;
-                            mUserCSVInvalidValue = "This category code " + colums[14] + " is not present in the database for Item Name " + colums[1];
+                            mUserCSVInvalidValue = getResources().getString(R.string.uom_invalid) + colums[1] + "e.g " + checkUOMTypye;
+                            break;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.uom_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.uom_empty) + colums[1];
+                    break;
+                }
+
+                if (colums[8] != null && colums[8].length() > 0 && colums[8].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[8],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[8],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1==CHECK_INTEGER_VALUE) {
+                        mCGSTRate = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[8])));
+                        if(mCGSTRate>99.99 || mCGSTRate<0){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter CGST Rate between 0 and 99.99 for item " + colums[1];
+                            return;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.cgst_rate_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.cgst_rate_empty) + colums[1];
+                    break;
+                }
+
+                if (colums[9] != null && colums[9].length() > 0 && colums[9].trim().length() > 0 ) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[9],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[9],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mSGSTRate =Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[9])));
+                        if(mSGSTRate>99.99 || mSGSTRate<0){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter SGST Rate between 0 and 99.99 for item " + colums[1];
+                            return;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.sgst_rate_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.sgst_rate_empty) + colums[1];
+                    break;
+                }
+                if (mCGSTRate+mSGSTRate <0 || mCGSTRate+mSGSTRate >99.99)
+                {
+                    mFlag = true;
+                    mUserCSVInvalidValue = "Please note sum of SGST Rate and CGST Rate should between 0 and 99.99 for item " + colums[1];
+                    return;
+                }
+                if (colums[10] != null && colums[10].length() > 0 && colums[10].trim().length() > 0) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[10],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[10],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mIGSTRate = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[10])));
+                        if(mIGSTRate>99.99 || mIGSTRate<0){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter IGST Rate between 0 and 99.99 for item " + colums[1];
+                            return;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.igst_rate_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.igst_rate_empty) + colums[1];
+                    break;
+                }
+
+                if (mCGSTRate+mSGSTRate !=mIGSTRate)
+                {
+                    mFlag = true;
+                    mUserCSVInvalidValue = "Please note sum of SGST Rate and CGST Rate should between equal to IGST Rate for item " + colums[1];
+                    return;
+                }
+                if (colums[11] != null && colums[11].length() > 0 && colums[11].trim().length() > 0) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[11],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[11],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mCESSRate = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[11])));
+                        if(mCESSRate>99.99 || mCESSRate<0){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter cess Rate between 0 and 99.99 for item " + colums[1];
+                            return;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.cess_rate_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.cess_rate_empty) + colums[1];
+                    break;
+                }
+
+                if (colums[12] != null && colums[12].length() > 0 && colums[12].trim().length() > 0) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[12],"Double");
+                    int mCheckCSVValueType1 = checkCSVTypeValue1(colums[12],"Int");
+                    if (mCheckCSVValueType == CHECK_DOUBLE_VALUE || mCheckCSVValueType1 == CHECK_INTEGER_VALUE) {
+                        mDiscount = Double.parseDouble(String.format("%.2f",Double.parseDouble(colums[12])));
+                        if(mDiscount>99.99 || mDiscount<0){
+                            mFlag = true;
+                            mUserCSVInvalidValue = "Please enter discount between 0 and 99.99 for item " + colums[1];
+                            return;
+                        }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.discount_invalid) + colums[1];
+                        break;
+                    }
+                } else {
+                    mFlag = true;
+                    mUserCSVInvalidValue = getResources().getString(R.string.discount_empty) + colums[1];
+                    break;
+                }
+                if (colums[13] != null && colums[13].trim().length() > 0) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[13], "Int");
+                    if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
+                        if (mDepartmentCodeList != null && mDepartmentCodeList.size() > 0) {
+                            if (mDepartmentCodeList.contains(Integer.parseInt(colums[13]))) {
+                                mDeptCode = Integer.parseInt(colums[13]);
+                            } else {
+                                mFlag = true;
+                                mUserCSVInvalidValue = "This department code " + colums[13] + " is not present in the database for Item Name " + colums[1];
+                                break;
+                            }
+                        } else {
+                            mFlag = true;
+                            mUserCSVInvalidValue = getResources().getString(R.string.database_department_null);
                             break;
                         }
 
-                        if (categoryFlag) {
-                            for (Map.Entry map : mCategoryCodeList.entrySet()) {
-                                if (map.getKey().equals(Integer.parseInt(colums[14])) && map.getValue().equals(mDeptCode)) {
-                                    mCategCode = Integer.parseInt(colums[14]);
-                                }
+                    } else {
+                        mFlag = true;
+                        mUserCSVInvalidValue = getResources().getString(R.string.department_code_invalid) + " " + colums[1];
+                        break;
+                    }
+                } else {
+                    mDeptCode = 0;
+                    mCategCode = 0;
+                }
+
+                boolean categoryFlag = false;
+
+                if (colums[14] != null && colums[14].trim().length() > 0) {
+                    mCheckCSVValueType = checkCSVTypeValue1(colums[14], "Int");
+                    if (mCheckCSVValueType == CHECK_INTEGER_VALUE) {
+
+                        if (mCategoryCodeList != null && mCategoryCodeList.size() > 0) {
+
+                            if (mDeptCode == 0) {
+                                mFlag = true;
+                                mUserCSVInvalidValue = "Item Name " + mItemName + " can not have category code " + colums[14] + " without department";
+                                break;
                             }
 
+                            if (mCategoryCodeList.containsKey(Integer.parseInt(colums[14]))) {
+                                categoryFlag = true;
+                            } else {
+                                mFlag = true;
+                                mUserCSVInvalidValue = "This category code " + colums[14] + " is not present in the database for Item Name " + colums[1];
+                                break;
+                            }
+
+                            if (categoryFlag) {
+                                for (Map.Entry map : mCategoryCodeList.entrySet()) {
+                                    if (map.getKey().equals(Integer.parseInt(colums[14])) && map.getValue().equals(mDeptCode)) {
+                                        mCategCode = Integer.parseInt(colums[14]);
+                                    }
+                                }
+
+                            } else {
+                                mFlag = true;
+                                mUserCSVInvalidValue = "Category code " + colums[14] + " is not linked to department code " + mDeptCode + " for Item Name " + mItemName;
+                                break;
+                            }
                         } else {
                             mFlag = true;
-                            mUserCSVInvalidValue = "Category code " + colums[14] + " is not linked to department code " + mDeptCode + " for Item Name " + mItemName;
+                            mUserCSVInvalidValue = getResources().getString(R.string.database_category_null);
                             break;
                         }
+
                     } else {
                         mFlag = true;
-                        mUserCSVInvalidValue = getResources().getString(R.string.database_category_null);
+                        mUserCSVInvalidValue = getResources().getString(R.string.category_code_invalid) + " " + colums[1];
                         break;
                     }
 
                 } else {
+                    mCategCode = 0;
+                }
+
+                ItemOutward item_add = new ItemOutward(mMenuCode, mItemName, mRate1, mRate2, mRate3, mQuantity,
+                        mDeptCode, mCategCode, mKitchenCode, mbarCode, mImageUri, mMenuCode,
+                        mCGSTRate, mSGSTRate, mIGSTRate, mCESSRate, mUOM, mHSN, mtaxationType, mSupplyType,mDiscount);
+
+
+                for (Map.Entry<Integer, ItemOutward> entry : mHashMapItemCode.entrySet()) {
+                    //  String key = entry.getKey();
+                    //  ItemOutward itemOutward = new ItemOutward()
+                    ItemOutward entryValue = entry.getValue();
+                    if (mHashMapItemCode.containsKey(mMenuCode) ) {
+                        mCSVHashCheckflag = true;
+                        break;
+
+                    }else if (entryValue.getItemName().equalsIgnoreCase(mItemName)) {
+                        mCSVHashCheckflag = true;
+                        break;
+                    }
+                }
+                if(!mCSVHashCheckflag)
+                {
+                    mHashMapItemCode.put(mMenuCode, item_add);
+                }else
+                {
+                    //MsgBox.Show("Error","Either itemName or MenuCode is already present in CSV file");
                     mFlag = true;
-                    mUserCSVInvalidValue = getResources().getString(R.string.category_code_invalid) + " " + colums[1];
-                    break;
+                    mUserCSVInvalidValue = "Either itemName "+item_add.getItemName()+" or MenuCode "+mMenuCode+" is already present in CSV file";
+                    mHashMapItemCode.clear();
+                    return;
                 }
-
-            } else {
-                mCategCode = 0;
+                Log.d("welcome", "readCSVValue: " + dataList);
             }
-
-            ItemOutward item_add = new ItemOutward(mMenuCode, mItemName, mRate1, mRate2, mRate3, mQuantity,
-            mDeptCode, mCategCode, mKitchenCode, mbarCode, mImageUri, mMenuCode,
-            mCGSTRate, mSGSTRate, mIGSTRate, mCESSRate, mUOM, mHSN, mtaxationType, mSupplyType,mDiscount);
-
-
-            for (Map.Entry<Integer, ItemOutward> entry : mHashMapItemCode.entrySet()) {
-            //  String key = entry.getKey();
-            //  ItemOutward itemOutward = new ItemOutward()
-            ItemOutward entryValue = entry.getValue();
-            if (mHashMapItemCode.containsKey(mMenuCode) ) {
-                mCSVHashCheckflag = true;
-                break;
-
-            }else if (entryValue.getItemName().equalsIgnoreCase(mItemName)) {
-                mCSVHashCheckflag = true;
-                break;
-                }
-            }
-            if(!mCSVHashCheckflag)
-            {
-                mHashMapItemCode.put(mMenuCode, item_add);
-            }else
-            {
-                //MsgBox.Show("Error","Either itemName or MenuCode is already present in CSV file");
-                mFlag = true;
-                mUserCSVInvalidValue = "Either itemName "+item_add.getItemName()+" or MenuCode "+mMenuCode+" is already present in CSV file";
-                mHashMapItemCode.clear();
-                return;
-            }
-            Log.d("welcome", "readCSVValue: " + dataList);
-        }
         /*if(mUserCSVInvalidValue.equals(""))
             mCSVHashCheckflag = true;*/
 
-        if(!mCSVHashCheckflag && !mFlag)
-        {
-            saveCSVinDatabase();
+            if(!mCSVHashCheckflag && !mFlag)
+            {
+                saveCSVinDatabase();
 
-        }
+            }
 
         } catch (Exception exp) {
             mCSVHashCheckflag = true;
             exp.printStackTrace();
         }
-        }
+    }
 
 
     private void saveCSVinDatabase() {
@@ -1610,7 +1664,7 @@ protected void onPostExecute(Void aVoid) {
     }
 
 
-private void checkCSVItemName() {
+    private void checkCSVItemName() {
 
         /*ItemOutward itemOutward1 = new ItemOutward(mMenuCode, mItemName, mRate1, mRate2, mRate3, mQuantity,
                 mDeptCode, mCategCode, mKitchenCode, mbarCode, mImageUri, mItemId,
@@ -1647,51 +1701,51 @@ private void checkCSVItemName() {
         ArrayList<ItemOutward> finalValidCSVList = new ArrayList<>(mHashMapItemName.values());
 
 
-        }
+    }
 
-/**
- * checking types of data validation(Integer , Double , String)
- *
- * @param value - csv value
- */
+    /**
+     * checking types of data validation(Integer , Double , String)
+     *
+     * @param value - csv value
+     */
 
-public static int checkCSVTypeValue(String value) {
+    public static int checkCSVTypeValue(String value) {
         int flag;
         try {
-        Integer.parseInt(value);
-        flag = 0;
-        return flag;
+            Integer.parseInt(value);
+            flag = 0;
+            return flag;
         } catch (NumberFormatException nfe) {
-        // nfe.printStackTrace();
+            // nfe.printStackTrace();
         }
         try {
-        Double.parseDouble(value);
-        flag = 1;
+            Double.parseDouble(value);
+            flag = 1;
         } catch (NumberFormatException e) {
-        e.printStackTrace();
-        flag = 2;
+            e.printStackTrace();
+            flag = 2;
         }
         return flag;
-        }
-public static int checkCSVTypeValue1(String value,String dataType) {
+    }
+    public static int checkCSVTypeValue1(String value,String dataType) {
         int flag =2;
         try {
-        switch(dataType)
-        {
-        case "Int" : Integer.parseInt(value);
-        flag = 0;
-        break;
-        case "Double" :  Double.parseDouble(value);
-        flag = 1;
-        break;
-default: flag = 2;
-        }
+            switch(dataType)
+            {
+                case "Int" : Integer.parseInt(value);
+                    flag = 0;
+                    break;
+                case "Double" :  Double.parseDouble(value);
+                    flag = 1;
+                    break;
+                default: flag = 2;
+            }
         } catch (Exception nfe) {
-       // nfe.printStackTrace();
+            // nfe.printStackTrace();
         }
         finally
         {return flag;}
-        }
+    }
 
 
     private void listItemClickEvent(ItemOutward item) {
@@ -1699,7 +1753,8 @@ default: flag = 2;
         txtLongName.setText(item.getItemName());
         AutoCompleteItemLongName.setText(item.getItemName());
         itemName_beforeChange_in_update = item.getItemName();
-        txtBarcode.setText(item.getBarCode());
+        itembarCode_beforeChange_in_update = item.getBarCode();
+        AutoCompleteItemBarcode.setText(item.getBarCode());
         txtDineIn1.setText(String.format("%.2f",item.getDineIn1()));
         txtDineIn2.setText(String.format("%.2f",item.getDineIn2()));
         txtDineIn3.setText(String.format("%.2f",item.getDineIn3()));
@@ -1711,38 +1766,38 @@ default: flag = 2;
         String deptName = "Select";
         int deptid = 0;
         if (crsrDept.moveToFirst()) {
-        deptName = crsrDept.getString(crsrDept.getColumnIndex("DeptName"));
-        deptid = getIndexDept(deptName + "");
-        spnrDepartment.setSelection(deptid);
+            deptName = crsrDept.getString(crsrDept.getColumnIndex("DeptName"));
+            deptid = getIndexDept(deptName + "");
+            spnrDepartment.setSelection(deptid);
         } else {
 
-        deptid = getIndexDept(deptName + "");
-        spnrDepartment.setSelection(deptid);
+            deptid = getIndexDept(deptName + "");
+            spnrDepartment.setSelection(deptid);
         }
 
         ArrayList<String> listCateg = dbItems.getCategoryNameByDeptCode(String.valueOf(deptid));
         loadSpinnerData_cat(listCateg);
         if (deptid ==0) {
-        spnrCategory.setSelection(0);
+            spnrCategory.setSelection(0);
         }else {
-        Cursor crsrCateg = dbItems.getCategory(Integer.valueOf(item.getCategCode()));
-        String categName = "";
-        if (crsrCateg.moveToFirst()) {
-        categName = crsrCateg.getString(crsrCateg.getColumnIndex("CategName"));
-        }
-        boolean bool = false;
-        int i =0;
-        for( i =0; !categName.equals("")&&bool == false && i<listCateg.size();i++)
-        {
-        if(categName.equalsIgnoreCase(listCateg.get(i)))
-        bool = true;
-        }
-        if(bool) // true
-        {
-        spnrCategory.setSelection(i-1);
-        }
-        else
-        spnrCategory.setSelection(0);
+            Cursor crsrCateg = dbItems.getCategory(Integer.valueOf(item.getCategCode()));
+            String categName = "";
+            if (crsrCateg.moveToFirst()) {
+                categName = crsrCateg.getString(crsrCateg.getColumnIndex("CategName"));
+            }
+            boolean bool = false;
+            int i =0;
+            for( i =0; !categName.equals("")&&bool == false && i<listCateg.size();i++)
+            {
+                if(categName.equalsIgnoreCase(listCateg.get(i)))
+                    bool = true;
+            }
+            if(bool) // true
+            {
+                spnrCategory.setSelection(i-1);
+            }
+            else
+                spnrCategory.setSelection(0);
         }
 
         spnrKitchen.setSelection((item.getKitchenCode()) );
@@ -1750,10 +1805,10 @@ default: flag = 2;
 
         imgItemImage.setImageURI(null);
         if (!strImageUri.equalsIgnoreCase("")) { // &&
-        // strImageUri.contains("\\")){
-        imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
+            // strImageUri.contains("\\")){
+            imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
         } else {
-        imgItemImage.setImageResource(R.drawable.img_noimage);
+            imgItemImage.setImageResource(R.drawable.img_noimage);
         }
         edtItemCGSTTax.setText(String.format("%.2f",item.getCGSTRate()));
         edtItemSGSTTax.setText(String.format("%.2f",item.getSGSTRate()));
@@ -1820,13 +1875,13 @@ default: flag = 2;
         crsrAdapterData = dbItems.getAllKitchen();
         Log.d("Kitchen", "Rows:" + String.valueOf(crsrAdapterData.getCount()));
         if (crsrAdapterData.moveToFirst()) {
-        adapKitCode.add("Select");
-        do {
-        adapKitCode.add(crsrAdapterData.getString(1));
-        } while (crsrAdapterData.moveToNext());
+            adapKitCode.add("Select");
+            do {
+                adapKitCode.add(crsrAdapterData.getString(1));
+            } while (crsrAdapterData.moveToNext());
         }else
         {
-        adapKitCode.add("Select");
+            adapKitCode.add("Select");
         }
 
         // Add Tax to adapter
@@ -1834,9 +1889,9 @@ default: flag = 2;
         crsrAdapterData = dbItems.getAllTaxConfig();
         Log.d("Tax", "Rows:" + String.valueOf(crsrAdapterData.getCount()));
         if (crsrAdapterData.moveToFirst()) {
-        do {
-        adapTax.add(crsrAdapterData.getString(1));
-        } while (crsrAdapterData.moveToNext());
+            do {
+                adapTax.add(crsrAdapterData.getString(1));
+            } while (crsrAdapterData.moveToNext());
         }
 
         // Add Tax to adapter
@@ -1844,55 +1899,55 @@ default: flag = 2;
         crsrAdapterData = dbItems.getAllDiscountConfig();
         Log.d("Discount", "Rows:" + String.valueOf(crsrAdapterData.getCount()));
         if (crsrAdapterData.moveToFirst()) {
-        do {
-        adapDiscount.add(crsrAdapterData.getString(1));
-        } while (crsrAdapterData.moveToNext());
+            do {
+                adapDiscount.add(crsrAdapterData.getString(1));
+            } while (crsrAdapterData.moveToNext());
         }
-        }
+    }
 
 
-        void DisplayItemList()
-        {
+    void DisplayItemList()
+    {
         dataList = new ArrayList<ItemOutward>();
         Cursor cursorItem = dbItems.getAllItems();
 
         while(cursorItem!=null && cursorItem.moveToNext())
         {
-        ItemOutward item = new ItemOutward();
-        item.setMenuCode(cursorItem.getInt(cursorItem.getColumnIndex("MenuCode")));
-        item.setItemName(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
-        item.setDineIn1(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice1")))));
-        item.setDineIn2(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice2")))));
-        item.setDineIn3(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice3")))));
-        item.setStock(  Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("Quantity")))));
-        item.setDeptCode(cursorItem.getInt(cursorItem.getColumnIndex("DeptCode")));
-        item.setCategCode(cursorItem.getInt(cursorItem.getColumnIndex("CategCode")));
-        item.setKitchenCode(cursorItem.getInt(cursorItem.getColumnIndex("KitchenCode")));
-        item.setBarCode(cursorItem.getString(cursorItem.getColumnIndex("ItemBarcode")));
-        item.setImageUri(cursorItem.getString(cursorItem.getColumnIndex("ImageUri")));
-        item.setUOM(cursorItem.getString(cursorItem.getColumnIndex("UOM")));
-        item.setCGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("CGSTRate")))));
-        item.setSGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("SGSTRate")))));
-        item.setIGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("IGSTRate")))));
-        item.setCessRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("cessRate")))));
-        item.setItemId(cursorItem.getInt(cursorItem.getColumnIndex("ItemId")));
-        item.setHSN(cursorItem.getString(cursorItem.getColumnIndex("HSNCode")));
-        item.setTaxationType(cursorItem.getString(cursorItem.getColumnIndex("TaxationType")));
-        item.setItemDiscount(Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("DiscountPercent")))));
+            ItemOutward item = new ItemOutward();
+            item.setMenuCode(cursorItem.getInt(cursorItem.getColumnIndex("MenuCode")));
+            item.setItemName(cursorItem.getString(cursorItem.getColumnIndex("ItemName")));
+            item.setDineIn1(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice1")))));
+            item.setDineIn2(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice2")))));
+            item.setDineIn3(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("DineInPrice3")))));
+            item.setStock(  Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("Quantity")))));
+            item.setDeptCode(cursorItem.getInt(cursorItem.getColumnIndex("DeptCode")));
+            item.setCategCode(cursorItem.getInt(cursorItem.getColumnIndex("CategCode")));
+            item.setKitchenCode(cursorItem.getInt(cursorItem.getColumnIndex("KitchenCode")));
+            item.setBarCode(cursorItem.getString(cursorItem.getColumnIndex("ItemBarcode")));
+            item.setImageUri(cursorItem.getString(cursorItem.getColumnIndex("ImageUri")));
+            item.setUOM(cursorItem.getString(cursorItem.getColumnIndex("UOM")));
+            item.setCGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("CGSTRate")))));
+            item.setSGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("SGSTRate")))));
+            item.setIGSTRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("IGSTRate")))));
+            item.setCessRate(Float.parseFloat(String.format("%.2f",cursorItem.getFloat(cursorItem.getColumnIndex("cessRate")))));
+            item.setItemId(cursorItem.getInt(cursorItem.getColumnIndex("ItemId")));
+            item.setHSN(cursorItem.getString(cursorItem.getColumnIndex("HSNCode")));
+            item.setTaxationType(cursorItem.getString(cursorItem.getColumnIndex("TaxationType")));
+            item.setItemDiscount(Float.parseFloat(String.format("%.2f",cursorItem.getDouble(cursorItem.getColumnIndex("DiscountPercent")))));
 
-        dataList.add(item);
+            dataList.add(item);
         }
         if (itemListAdapter == null) {
-        itemListAdapter = new ItemOutwardAdapter(ItemManagementActivity.this, dataList,dbItems);
-        listViewItems.setAdapter(itemListAdapter);
+            itemListAdapter = new ItemOutwardAdapter(ItemManagementActivity.this, dataList,dbItems, AutoCompleteItemLongName, AutoCompleteItemBarcode);
+            listViewItems.setAdapter(itemListAdapter);
         } else {
-        itemListAdapter.notifyNewDataAdded(dataList);
+            itemListAdapter.notifyNewDataAdded(dataList);
         }
 
 
-        }
+    }
 
-@SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
 //    private void DisplayItems() {
 //        Cursor crsrItems = null;
 //
@@ -2133,7 +2188,7 @@ default: flag = 2;
 //                                itemName_beforeChange_in_update = txtLongName.getText().toString();
 //                                Log.d("Richa1",itemName_beforeChange_in_update);
 //                                //txtShortName.setText(ShortName.getText());
-//                                txtBarcode.setText(Barcode.getText());
+//                                AutoCompleteItemBarcode.setText(Barcode.getText());
 //                                txtDineIn1.setText(DineIn1.getText());
 //                                txtDineIn2.setText(DineIn2.getText());
 //                                txtDineIn3.setText(DineIn3.getText());
@@ -2299,7 +2354,7 @@ default: flag = 2;
 //                                edtMenuCode.setText(MenuCode.getText());
 //                                txtLongName.setText(LongName.getText());
 //                                //txtShortName.setText(ShortName.getText());
-//                                txtBarcode.setText(Barcode.getText());
+//                                AutoCompleteItemBarcode.setText(Barcode.getText());
 //                                *//*txtDineIn1.setText(DineIn1.getText());
 //                                txtDineIn2.setText(DineIn2.getText());
 //                                txtDineIn3.setText(DineIn3.getText());
@@ -2397,119 +2452,124 @@ default: flag = 2;
 //
 //    }
 
-private int getIndex_uom(String substring){
+    private int getIndex_uom(String substring){
 
         int index = 0;
         for (int i = 0; index==0 && i < spnrMOU.getCount(); i++){
 
-        if (spnrMOU.getItemAtPosition(i).toString().contains(substring)){
-        index = i;
-        }
+            if (spnrMOU.getItemAtPosition(i).toString().contains(substring)){
+                index = i;
+            }
 
         }
 
         return index;
 
-        }
+    }
 
-private int getIndex_taxationType(String substring){
+    private int getIndex_taxationType(String substring){
 
         int index = 0;
         for (int i = 0; i < spnrtaxationtype.getCount(); i++){
 
-        if (spnrtaxationtype.getItemAtPosition(i).toString().contains(substring)){
-        index = i;
-        break;
-        }
+            if (spnrtaxationtype.getItemAtPosition(i).toString().contains(substring)){
+                index = i;
+                break;
+            }
 
         }
 
         return index;
 
-        }
+    }
 
-public int getIndexDept(String item)
-        {
+    public int getIndexDept(String item)
+    {
         for (int i = 0; i < labelsDept.size(); i++)
         {
-        String auction = labelsDept.get(i);
-        if (item.equals(auction))
-        {
-        return i;
-        }
+            String auction = labelsDept.get(i);
+            if (item.equals(auction))
+            {
+                return i;
+            }
         }
         return -1;
-        }
+    }
 
-public int getIndexCateg(String item)
-        {
+    public int getIndexCateg(String item)
+    {
         for (int i = 0; i < labelsCateg.size(); i++)
         {
-        String auction = labelsCateg.get(i);
-        if (item.equals(auction))
-        {
-        return i;
-        }
+            String auction = labelsCateg.get(i);
+            if (item.equals(auction))
+            {
+                return i;
+            }
         }
         return -1;
-        }
+    }
 
 
 
-private boolean IsItemExists(String ItemFullName, int MenuCode, String barcode, int type) {
+    private boolean IsItemExists(String ItemFullName, int MenuCode, String barcode, int type) {
         boolean isItemExists = false;
 
         if(type==1){
-        for (ItemOutward item : dataList) {
-        if ( item.getMenuCode() == (MenuCode) && !item.getItemName().equalsIgnoreCase(ItemFullName.toUpperCase())){
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Menu Code "+MenuCode+" already present for item "+item.getItemName() );
-        isItemExists = true;
-        break;
-        }
-        else if (item.getItemName().equalsIgnoreCase(ItemFullName.toUpperCase()) && item.getMenuCode() != (MenuCode)){
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with Menu Code "+item.getMenuCode());
-        isItemExists = true;
-        break;
-        }else if (item.getItemName().equalsIgnoreCase(ItemFullName.toUpperCase()) && item.getMenuCode() == (MenuCode)){
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with Menu Code "+item.getMenuCode()+
-        "\n Therefore you cannot add it again");
-        isItemExists = true;
-        break;
-        }/*else if (!barcode.equals("") && item.getBarCode().equalsIgnoreCase(barcode))
-                {
+            for (ItemOutward item : dataList) {
+                if ( item.getMenuCode() == (MenuCode) && !item.getItemName().equalsIgnoreCase(ItemFullName.toUpperCase())){
                     MsgBox = new MessageDialog(myContext);
-                    MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with BarCode "+barcode);
+                    MsgBox.Show("Inconsistent"," Menu Code "+MenuCode+" already present for item "+item.getItemName() );
                     isItemExists = true;
                     break;
-                }*/
-        }
+                }
+                else if (item.getItemName().equalsIgnoreCase(ItemFullName.toUpperCase()) && item.getMenuCode() != (MenuCode)){
+                    MsgBox = new MessageDialog(myContext);
+                    MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with Menu Code "+item.getMenuCode());
+                    isItemExists = true;
+                    break;
+                }else if (item.getItemName().equalsIgnoreCase(ItemFullName.toUpperCase()) && item.getMenuCode() == (MenuCode)){
+                    MsgBox = new MessageDialog(myContext);
+                    MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with Menu Code "+item.getMenuCode()+
+                            "\n Therefore you cannot add it again");
+                    isItemExists = true;
+                    break;
+                }else if (!barcode.equals("") && item.getBarCode().equalsIgnoreCase(barcode)&& item.getItemName() != (ItemFullName))
+                {
+                    //System.out.println("Richa : Duplicate Barcode ");
+                    MsgBox = new MessageDialog(myContext);
+                    MsgBox.Show("Inconsistent"," Item "+item.getItemName() +" already present with BarCode "+barcode);
+                    isItemExists = true;
+                    break;
+                }
+                else
+                {
+                    // System.out.println("Richa : No duplicacy ");
+                }
+            }
         }else if(type ==2)
         {
-        List<String> itemlist = dbItems.getAllItemsNames();
-        List<String> menuCodelist = dbItems.getAllMenuCode();
-        for (ItemOutward item : dataList) {
-        if(itemName_beforeChange_in_update.equalsIgnoreCase(ItemFullName))
-        {
-        if(item.getMenuCode()==MenuCode && !item.getItemName().equalsIgnoreCase(ItemFullName)){
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Menu Code "+MenuCode+" already present for item "+item.getItemName() );
-        isItemExists = true;
-        break;
-        }
-        }
-        else
-        {
-        // itemname is either the new name or existing name
-        if(itemlist.contains(ItemFullName))
-        {
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with Menu Code "+item.getMenuCode());
-        isItemExists = true;
-        break;
-        }/*else if ( menuCodelist.contains(String.valueOf(MenuCode))){
+            List<String> itemlist = dbItems.getAllItemsNames();
+            List<String> menuCodelist = dbItems.getAllMenuCode();
+            for (ItemOutward item : dataList) {
+                if(itemName_beforeChange_in_update.equalsIgnoreCase(ItemFullName))
+                {
+                    if(item.getMenuCode()==MenuCode && !item.getItemName().equalsIgnoreCase(ItemFullName)){
+                        MsgBox = new MessageDialog(myContext);
+                        MsgBox.Show("Inconsistent"," Menu Code "+MenuCode+" already present for item "+item.getItemName() );
+                        isItemExists = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    // itemname is either the new name or existing name
+                    if(itemlist.contains(ItemFullName))
+                    {
+                        MsgBox = new MessageDialog(myContext);
+                        MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present with Menu Code "+item.getMenuCode());
+                        isItemExists = true;
+                        break;
+                    }/*else if ( menuCodelist.contains(String.valueOf(MenuCode))){
                         MsgBox = new MessageDialog(myContext);
                         MsgBox.Show("Inconsistent"," Menu Code "+MenuCode+" already present for item "+item.getItemName() );
                         isItemExists = true;
@@ -2522,19 +2582,39 @@ private boolean IsItemExists(String ItemFullName, int MenuCode, String barcode, 
                         break;
                     }*/
 
-        }
-        }
-        }
+                }
+                if(itembarCode_beforeChange_in_update.equalsIgnoreCase(barcode))
+                {
+                    if((item.getMenuCode()==MenuCode && !item.getBarCode().equalsIgnoreCase(barcode))|| (item.getItemName()== ItemFullName && !item.getBarCode().equalsIgnoreCase(barcode))){
+                        MsgBox = new MessageDialog(myContext);
+                        MsgBox.Show("Inconsistent","This Barcode has been already used " );
+                        isItemExists = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    // itemname is either the new name or existing name
+                    itemlist = dbItems.getAllItemsBarCode();
+                    if(itemlist.contains(barcode))
+                    {
+                        MsgBox = new MessageDialog(myContext);
+                        MsgBox.Show("Inconsistent",barcode+"  already present for Item "+item.getItemName());
+                        isItemExists = true;
+                        break;
+                    }
+                }
+            }}
         return isItemExists;
-        }
+    }
 
-private void InsertItem(String LongName, String ShortName, float DineInPrice1, float DineInPrice2,
-        float DineInPrice3, float TakeAwayPrice, float PickUpPrice, float DeliveryPrice, float Stock,
-        int PriceChange, int DiscountEnable, int BillWithStock, int TaxType, int DeptCode, int CategCode,
-        int KitchenCode, int SalesTaxId, int AdditionalTaxId, int OptionalTaxId1, int OptionalTaxId2, int DiscId,
-        String ItemBarcode, String ImageUri , Float frate, Float fquantity,String hsnCode, float IGSTRate,
-        float CGSTRate, float SGSTRate,
-        String g_s, String MOU_str, String taxationtype, float SalesTaxPercent, float ServiceTaxPercent, int MenuCode) {
+    private void InsertItem(String LongName, String ShortName, float DineInPrice1, float DineInPrice2,
+                            float DineInPrice3, float TakeAwayPrice, float PickUpPrice, float DeliveryPrice, float Stock,
+                            int PriceChange, int DiscountEnable, int BillWithStock, int TaxType, int DeptCode, int CategCode,
+                            int KitchenCode, int SalesTaxId, int AdditionalTaxId, int OptionalTaxId1, int OptionalTaxId2, int DiscId,
+                            String ItemBarcode, String ImageUri , Float frate, Float fquantity,String hsnCode, float IGSTRate,
+                            float CGSTRate, float SGSTRate,
+                            String g_s, String MOU_str, String taxationtype, float SalesTaxPercent, float ServiceTaxPercent, int MenuCode) {
 
         long lRowId = 0;
         float cgsttax=0,sgsttax=0;
@@ -2563,18 +2643,18 @@ private void InsertItem(String LongName, String ShortName, float DineInPrice1, f
         lRowId = dbItems.addItem(objItem);*/
 
         Log.d("Item", "Row Id:" + String.valueOf(lRowId));
-        }
+    }
 
-        private void ReadData(int Type) {
+    private void ReadData(int Type) {
         String strMenuCode = "", strLongName = "", strShortName = "", strBarcode = "";
         int iDeptCode = 0, iCategCode = 0, iKitchenCode = 0, iSalesTaxId = 0, iAdditionalTaxId = 0, iOptionalTaxId1 = 0,
-        iOptionalTaxId2 = 0, iDiscountId = 0, iPriceChange = 0, iDiscountEnable = 0, iBillWithStock = 0,iTaxType = 0;
+                iOptionalTaxId2 = 0, iDiscountId = 0, iPriceChange = 0, iDiscountEnable = 0, iBillWithStock = 0,iTaxType = 0;
         double fDineIn1 = 0, fDineIn2 = 0, fDineIn3 = 0, fTakeAway = 0, fPickUp = 0, fDelivery = 0, fStock = 0, itemDiscount;
 
         strMenuCode = edtMenuCode.getText().toString();
         strLongName = txtLongName.getText().toString().toUpperCase();
         strLongName = AutoCompleteItemLongName.getText().toString().toUpperCase();
-        strBarcode = txtBarcode.getText().toString();
+        strBarcode = AutoCompleteItemBarcode.getText().toString();
 
         fDineIn1 = Double.parseDouble(String.format("%.2f",Double.parseDouble(txtDineIn1.getText().toString())));
         fDineIn2 = Double.parseDouble(String.format("%.2f",Double.parseDouble(txtDineIn2.getText().toString())));
@@ -2586,9 +2666,9 @@ private void InsertItem(String LongName, String ShortName, float DineInPrice1, f
         fStock = Double.parseDouble(String.format("%.2f",Double.parseDouble((txtStock.getText().toString()))));
 
         if(!spnrDepartment.getSelectedItem().toString().equalsIgnoreCase("Select"))
-        iDeptCode = dbItems.getDepartmentIdByName(labelsDept.get(spnrDepartment.getSelectedItemPosition()));
+            iDeptCode = dbItems.getDepartmentIdByName(labelsDept.get(spnrDepartment.getSelectedItemPosition()));
         if(!spnrCategory.getSelectedItem().toString().equalsIgnoreCase("Select department first"))
-        iCategCode = dbItems.getCategoryIdByName(String.valueOf(spnrCategory.getSelectedItem()));
+            iCategCode = dbItems.getCategoryIdByName(String.valueOf(spnrCategory.getSelectedItem()));
         iKitchenCode = spnrKitchen.getSelectedItemPosition() ;
 
 
@@ -2619,16 +2699,16 @@ private void InsertItem(String LongName, String ShortName, float DineInPrice1, f
 
         //Cursor crsrSettings = dbItems.getBillSetting();
         if(crsrSettings.getString(crsrSettings.getColumnIndex("ItemNoReset")).equalsIgnoreCase("0")) {
-        iMenuCode = dbItems.getItemMenuCode();
-        iMenuCode++;
+            iMenuCode = dbItems.getItemMenuCode();
+            iMenuCode++;
         } else {
-        iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
+            iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
 
         }
 
         if (fgsttax >= 0 && fquantity >= 0) {
-        // Type 1 - addItem, Type 2 - updateItem
-        if (Type == 1) {
+            // Type 1 - addItem, Type 2 - updateItem
+            if (Type == 1) {
 
                 /*InsertItem(strLongName, strLongName, fDineIn1, fDineIn2, fDineIn3, fTakeAway, fPickUp, fDelivery,
                         fStock, iPriceChange, iDiscountEnable, iBillWithStock, iTaxType, iDeptCode, iCategCode,
@@ -2637,83 +2717,83 @@ private void InsertItem(String LongName, String ShortName, float DineInPrice1, f
                         MOU_str, taxationtype_str,
                         fSalesTax, fServiceTax, iMenuCode);*/
 
-        ItemOutward item_add = new ItemOutward(iMenuCode,strLongName, fDineIn1, fDineIn2,fDineIn3,fStock,
-        iDeptCode,iCategCode,iKitchenCode, strBarcode,strImageUri,iMenuCode, fCGSTTax,fSGSTTax,fIGSTTax,fcessTax,
-        MOU_str, hsnCode,taxationtype_str, g_s ,itemDiscount) ;
-        long lRowId = dbItems.addItem(item_add);
-        if (lRowId>0)
-        {
-        Log.d("Item Management : ", strLongName+" added sucessfully at Row Id:" + String.valueOf(lRowId));
+                ItemOutward item_add = new ItemOutward(iMenuCode,strLongName, fDineIn1, fDineIn2,fDineIn3,fStock,
+                        iDeptCode,iCategCode,iKitchenCode, strBarcode,strImageUri,iMenuCode, fCGSTTax,fSGSTTax,fIGSTTax,fcessTax,
+                        MOU_str, hsnCode,taxationtype_str, g_s ,itemDiscount) ;
+                long lRowId = dbItems.addItem(item_add);
+                if (lRowId>0)
+                {
+                    Log.d("Item Management : ", strLongName+" added sucessfully at Row Id:" + String.valueOf(lRowId));
 
-        // inserting new item stock in OutwardStock Table
-        double rate =0;
-        if(Double.parseDouble(txtDineIn1.getText().toString()) >0)
-        rate = Double.parseDouble(txtDineIn1.getText().toString());
-        else if(Double.parseDouble(txtDineIn2.getText().toString()) >0)
-        rate = Double.parseDouble(txtDineIn2.getText().toString());
-        else if(Double.parseDouble(txtDineIn3.getText().toString()) >0)
-        rate = Double.parseDouble(txtDineIn3.getText().toString());
+                    // inserting new item stock in OutwardStock Table
+                    double rate =0;
+                    if(Double.parseDouble(txtDineIn1.getText().toString()) >0)
+                        rate = Double.parseDouble(txtDineIn1.getText().toString());
+                    else if(Double.parseDouble(txtDineIn2.getText().toString()) >0)
+                        rate = Double.parseDouble(txtDineIn2.getText().toString());
+                    else if(Double.parseDouble(txtDineIn3.getText().toString()) >0)
+                        rate = Double.parseDouble(txtDineIn3.getText().toString());
 
-        double quantity =Double.parseDouble(txtStock.getText().toString());
+                    double quantity =Double.parseDouble(txtStock.getText().toString());
 
-        StockOutwardMaintain stock_outward = new StockOutwardMaintain(myContext, dbItems);
-        stock_outward.addItemToStock_Outward( businessDate, iMenuCode,
-        strLongName,quantity, rate );
-        }
-        else
-        Log.d("Item Management : ", strLongName+" cannot be added in Item Outward database");
-        }
-        else if (Type == 2)
-        {
-        int iRowId = dbItems.updateItem(Integer.parseInt(edtMenuCode.getText().toString()), strLongName, strShortName, strBarcode,
-        iDeptCode, iCategCode, iKitchenCode, fDineIn1, fDineIn2, fDineIn3, fTakeAway, fPickUp, fDelivery,
-        iSalesTaxId, iAdditionalTaxId, iOptionalTaxId1, iOptionalTaxId2, iDiscountId, fStock, iPriceChange,
-        iDiscountEnable, iBillWithStock, strImageUri, iTaxType, frate, hsnCode, g_s, MOU_str,
-        taxationtype_str, fIGSTTax, fCGSTTax, fSGSTTax,fcessTax,
-        fSalesTax, fServiceTax, Integer.valueOf(strItemId), itemDiscount);
-        if (iRowId > 0)
-        {
-        Log.d("Item Management : ", "Updated Rows: " + String.valueOf(iRowId));
-        // updating outwardStock table
-        double rate =0;
-        if(Double.parseDouble(txtDineIn1.getText().toString()) >0)
-        rate = Double.parseDouble(txtDineIn1.getText().toString());
-        else if(Double.parseDouble(txtDineIn2.getText().toString()) >0)
-        rate = Double.parseDouble(txtDineIn2.getText().toString());
-        else if(Double.parseDouble(txtDineIn3.getText().toString()) >0)
-        rate = Double.parseDouble(txtDineIn3.getText().toString());
+                    StockOutwardMaintain stock_outward = new StockOutwardMaintain(myContext, dbItems);
+                    stock_outward.addItemToStock_Outward( businessDate, iMenuCode,
+                            strLongName,quantity, rate );
+                }
+                else
+                    Log.d("Item Management : ", strLongName+" cannot be added in Item Outward database");
+            }
+            else if (Type == 2)
+            {
+                int iRowId = dbItems.updateItem(Integer.parseInt(edtMenuCode.getText().toString()), strLongName, strShortName, strBarcode,
+                        iDeptCode, iCategCode, iKitchenCode, fDineIn1, fDineIn2, fDineIn3, fTakeAway, fPickUp, fDelivery,
+                        iSalesTaxId, iAdditionalTaxId, iOptionalTaxId1, iOptionalTaxId2, iDiscountId, fStock, iPriceChange,
+                        iDiscountEnable, iBillWithStock, strImageUri, iTaxType, frate, hsnCode, g_s, MOU_str,
+                        taxationtype_str, fIGSTTax, fCGSTTax, fSGSTTax,fcessTax,
+                        fSalesTax, fServiceTax, Integer.valueOf(strItemId), itemDiscount);
+                if (iRowId > 0)
+                {
+                    Log.d("Item Management : ", "Updated Rows: " + String.valueOf(iRowId));
+                    // updating outwardStock table
+                    double rate =0;
+                    if(Double.parseDouble(txtDineIn1.getText().toString()) >0)
+                        rate = Double.parseDouble(txtDineIn1.getText().toString());
+                    else if(Double.parseDouble(txtDineIn2.getText().toString()) >0)
+                        rate = Double.parseDouble(txtDineIn2.getText().toString());
+                    else if(Double.parseDouble(txtDineIn3.getText().toString()) >0)
+                        rate = Double.parseDouble(txtDineIn3.getText().toString());
 
-        double quantity =Double.parseDouble(txtStock.getText().toString());
+                    double quantity =Double.parseDouble(txtStock.getText().toString());
 
-        StockOutwardMaintain stock_outward = new StockOutwardMaintain(myContext, dbItems);
-        stock_outward.updateOpeningStock_Outward( businessDate, Integer.parseInt(strMenuCode),
-        strLongName,quantity, rate );
-        stock_outward.updateClosingStock_Outward( businessDate, Integer.parseInt(strMenuCode),
-        strLongName,quantity);
-        }else
-        {
-        Log.d("Item Management : ", " Item data cannot be updated" );
-        }
+                    StockOutwardMaintain stock_outward = new StockOutwardMaintain(myContext, dbItems);
+                    stock_outward.updateOpeningStock_Outward( businessDate, Integer.parseInt(strMenuCode),
+                            strLongName,quantity, rate );
+                    stock_outward.updateClosingStock_Outward( businessDate, Integer.parseInt(strMenuCode),
+                            strLongName,quantity);
+                }else
+                {
+                    Log.d("Item Management : ", " Item data cannot be updated" );
+                }
 
-        }
+            }
         }
         else {
-        ResetItem();
-        Toast.makeText(myContext, " Negative Values not allowed for GST Tax and Quantity", Toast.LENGTH_SHORT).show();
+            ResetItem();
+            Toast.makeText(myContext, " Negative Values not allowed for GST Tax and Quantity", Toast.LENGTH_SHORT).show();
         }
-        }
+    }
 
 
-private void ResetItem() {
+    private void ResetItem() {
         tx = "";
         mFlag = false;
         mUserCSVInvalidValue = "";
         strItemId = "";
         strImageUri = "";
         txtLongName.setText("");
-    AutoCompleteItemLongName.setText("");
+        AutoCompleteItemLongName.setText("");
         //txtShortName.setText("");
-        txtBarcode.setText("");
+        AutoCompleteItemBarcode.setText("");
         txtDineIn1.setText("0.00");
         txtDineIn2.setText("0.00");
         txtDineIn3.setText("0.00");
@@ -2734,6 +2814,7 @@ private void ResetItem() {
         etHSN.setText("");
         etGstTax.setText("0.00");
         itemName_beforeChange_in_update="";
+        itembarCode_beforeChange_in_update="";
         spnrMOU.setSelection(0);
         spnrG_S.setSelection(0);
         spnrCategory.setSelection(0);
@@ -2747,95 +2828,103 @@ private void ResetItem() {
         fDiscount = 0;
         imgItemImage.setImageResource(R.drawable.img_noimage);
 
-        }
+    }
 
-public void Browse(View v) {
+    public void Browse(View v) {
         Intent intent = new Intent(myContext, FilePickerActivity.class);
         intent.putExtra("contentType","image");
         startActivityForResult(intent, FilePickerActivity.PICK_IMAGE_CODE);
-        }
+    }
 
-@Override
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
-        if (requestCode == FilePickerActivity.FILE_PICKER_CODE)
-        {
-        strImageUri = data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH);
-        Log.d("FilePicker Result", "Path + FileName:" + strImageUri);
-        // Toast.makeText(myContext, "Image Path:" + strImageUri,
-        // Toast.LENGTH_LONG).show();
-        if(!strImageUri.equalsIgnoreCase(""))
-        {
-        imgItemImage.setImageURI(null);
-        imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
+            if (requestCode == FilePickerActivity.FILE_PICKER_CODE)
+            {
+                strImageUri = data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH);
+                Log.d("FilePicker Result", "Path + FileName:" + strImageUri);
+                // Toast.makeText(myContext, "Image Path:" + strImageUri,
+                // Toast.LENGTH_LONG).show();
+                if(!strImageUri.equalsIgnoreCase(""))
+                {
+                    imgItemImage.setImageURI(null);
+                    imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
+                }
+                else
+                {
+                    imgItemImage.setImageResource(R.drawable.img_noimage);
+                }
+                strUploadFilepath = data.getStringExtra(UploadFilePickerActivity.EXTRA_FILE_PATH);
+                tvFileName.setText(strUploadFilepath.substring(strUploadFilepath.lastIndexOf("/")+1));
+            }
+            else if (requestCode == FilePickerActivity.PICK_IMAGE_CODE)
+            {
+                strImageUri = data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH);
+                Log.d("FilePicker Result", "Path + FileName:" + strImageUri);
+                // Toast.makeText(myContext, "Image Path:" + strImageUri,
+                // Toast.LENGTH_LONG).show();
+                if(!strImageUri.equalsIgnoreCase("")) {
+                    imgItemImage.setImageURI(null);
+                    imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
+                }else{
+                    imgItemImage.setImageResource(R.drawable.img_noimage);
+                }
+                strUploadFilepath = data.getStringExtra(UploadFilePickerActivity.EXTRA_FILE_PATH);
+                tvFileName.setText(strUploadFilepath.substring(strUploadFilepath.lastIndexOf("/")+1));
+            }
         }
-        else
-        {
-        imgItemImage.setImageResource(R.drawable.img_noimage);
-        }
-        strUploadFilepath = data.getStringExtra(UploadFilePickerActivity.EXTRA_FILE_PATH);
-        tvFileName.setText(strUploadFilepath.substring(strUploadFilepath.lastIndexOf("/")+1));
-        }
-        else if (requestCode == FilePickerActivity.PICK_IMAGE_CODE)
-        {
-        strImageUri = data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH);
-        Log.d("FilePicker Result", "Path + FileName:" + strImageUri);
-        // Toast.makeText(myContext, "Image Path:" + strImageUri,
-        // Toast.LENGTH_LONG).show();
-        if(!strImageUri.equalsIgnoreCase("")) {
-        imgItemImage.setImageURI(null);
-        imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
-        }else{
-        imgItemImage.setImageResource(R.drawable.img_noimage);
-        }
-        strUploadFilepath = data.getStringExtra(UploadFilePickerActivity.EXTRA_FILE_PATH);
-        tvFileName.setText(strUploadFilepath.substring(strUploadFilepath.lastIndexOf("/")+1));
-        }
-        }
-        }
+    }
 
-public void AddItem(View v) {
+    public void AddItem(View v) {
 
         if (txtLongName.getText().toString().equalsIgnoreCase("")) {
         /*MsgBox.Show("Warning", "Please Enter Item Name");
         return;*/
         }
         if (AutoCompleteItemLongName.getText().toString().equalsIgnoreCase("")) {
-        MsgBox.Show("Warning", "Please Enter Item Name");
-        return;
+            MsgBox.Show("Warning", "Please Enter Item Name");
+            return;
         }
 
         if (spnrMOU.getSelectedItem().toString().equalsIgnoreCase("") ||spnrMOU.getSelectedItem().toString().equalsIgnoreCase("Select") ) {
-        MsgBox.Show("Warning", "Please Select Item UOM");
-        return;
+            MsgBox.Show("Warning", "Please Select Item UOM");
+            return;
         }
 
 
         if(crsrSettings.getString(crsrSettings.getColumnIndex("ItemNoReset")).equalsIgnoreCase("1")) {
-        if (edtMenuCode.getText().toString().equalsIgnoreCase("")) {
-        MsgBox.Show("Warning", "Please Enter Item Code");
-        return;
-        }
-        else {
-        iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
-        String ItemFullName = txtLongName.getText().toString().toUpperCase();
-         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
-        if(IsItemExists( ItemFullName,  iMenuCode,txtBarcode.getText().toString().trim(),1))
-        {
-        return;
-        }
-        }
+            if (edtMenuCode.getText().toString().equalsIgnoreCase("")) {
+                MsgBox.Show("Warning", "Please Enter Item Code");
+                return;
+            }
+            else {
+                iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
+                String ItemFullName = txtLongName.getText().toString().toUpperCase();
+                ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
+                if(IsItemExists( ItemFullName,  iMenuCode,AutoCompleteItemBarcode.getText().toString().trim(),1))
+                {
+                    return;
+                }
+            }
         }else
         {
-        String ItemFullName = txtLongName.getText().toString().toUpperCase();
-         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
-        List<String> itemlist = dbItems.getAllItemsNames();
-        if(itemlist.contains(ItemFullName))
-        {
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present ");
-        return;
-        }
+            String ItemFullName = txtLongName.getText().toString().toUpperCase();
+            ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
+            List<String> itemlist = dbItems.getAllItemsNames();
+            if(itemlist.contains(ItemFullName))
+            {
+                MsgBox = new MessageDialog(myContext);
+                MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present ");
+                return;
+            }
+            String ItemBarCode = AutoCompleteItemBarcode.getText().toString();
+            List<String> itemlist_barcode = dbItems.getAllItemsBarCode();
+            if(itemlist_barcode.contains(ItemBarCode))
+            {
+                MsgBox = new MessageDialog(myContext);
+                MsgBox.Show("Inconsistent"," This barcode is already present for another item  ");
+                return;
+            }
         }
         /*else
         }
@@ -2846,37 +2935,37 @@ public void AddItem(View v) {
         }*/
 
         if (txtDineIn1.getText().toString().equalsIgnoreCase("")) {
-        txtDineIn1.setText("0.00");
+            txtDineIn1.setText("0.00");
         }
 
         if (txtDineIn2.getText().toString().equalsIgnoreCase("")) {
-        txtDineIn2.setText("0.00");
+            txtDineIn2.setText("0.00");
         }
 
         if (txtDineIn3.getText().toString().equalsIgnoreCase("")) {
-        txtDineIn3.setText("0.00");
+            txtDineIn3.setText("0.00");
         }
 
         if (txtStock.getText().toString().equalsIgnoreCase("")) {
-        txtStock.setText("0.00");
+            txtStock.setText("0.00");
         }else
         {
-        double stock = Double.parseDouble(txtStock.getText().toString());
-        if(stock>9999.99){
-        MsgBox.Show("Warning","Please enter quantity between 0 and 9999.99");
-        return;
-        }
+            double stock = Double.parseDouble(txtStock.getText().toString());
+            if(stock>9999.99){
+                MsgBox.Show("Warning","Please enter quantity between 0 and 9999.99");
+                return;
+            }
         }
 
         if (etItemDiscount.getText().toString().equalsIgnoreCase("")) {
-        etItemDiscount.setText("0.00");
+            etItemDiscount.setText("0.00");
         }else
         {
-        double discount = Double.parseDouble(etItemDiscount.getText().toString());
-        if(discount>99.99){
-        MsgBox.Show("Warning","Please enter discount between 0 and 99.99");
-        return;
-        }
+            double discount = Double.parseDouble(etItemDiscount.getText().toString());
+            if(discount>99.99){
+                MsgBox.Show("Warning","Please enter discount between 0 and 99.99");
+                return;
+            }
         }
         /*if (etRate.getText().toString().equals(""))
         {
@@ -2898,88 +2987,88 @@ public void AddItem(View v) {
 
         String salesTax_str = edtItemCGSTTax.getText().toString();
         if (salesTax_str.equalsIgnoreCase("")) {
-        edtItemCGSTTax.setText("0");
+            edtItemCGSTTax.setText("0");
         }else if (Double.parseDouble(salesTax_str)< 0 || Double.parseDouble(salesTax_str)>99.99)
         {
-        MsgBox.Show("Warning","Please enter CGST Rate between 0 and 99.99");
-        return;
+            MsgBox.Show("Warning","Please enter CGST Rate between 0 and 99.99");
+            return;
         }
 
         String serviceTax_str = edtItemSGSTTax.getText().toString();
         if (serviceTax_str.equalsIgnoreCase("")) {
-        edtItemSGSTTax.setText("0");
+            edtItemSGSTTax.setText("0");
         }else if (Double.parseDouble(serviceTax_str) <0 || Double.parseDouble(serviceTax_str)> 99.99)
         {
-        MsgBox.Show("Warning","Please enter SGST Rate between 0 and 99.99");
-        return;
+            MsgBox.Show("Warning","Please enter SGST Rate between 0 and 99.99");
+            return;
         }
 
         String IGST_str = edtIGSTTax.getText().toString();
         if (IGST_str.equalsIgnoreCase("")) {
-        edtIGSTTax.setText("0");
+            edtIGSTTax.setText("0");
         }else if (Double.parseDouble(IGST_str) <0 || Double.parseDouble(IGST_str)> 99.99)
         {
-        MsgBox.Show("Warning","Please enter IGST Rate between 0 and 99.99");
-        return;
+            MsgBox.Show("Warning","Please enter IGST Rate between 0 and 99.99");
+            return;
         }
 
         String cess_str = edtcessTax.getText().toString();
         if (cess_str.equalsIgnoreCase("")) {
-        edtIGSTTax.setText("0");
+            edtIGSTTax.setText("0");
         }else if (Double.parseDouble(cess_str) <0 || Double.parseDouble(cess_str)> 99.99)
         {
-        MsgBox.Show("Warning","Please enter cess Rate between 0 and 99.99");
-        return;
+            MsgBox.Show("Warning","Please enter cess Rate between 0 and 99.99");
+            return;
         }
 
 
         new AsyncTask<Void,Void,Void>(){
-        ProgressDialog pd;
+            ProgressDialog pd;
 
-@Override
-protected void onPreExecute() {
-        super.onPreExecute();
-        pd = new ProgressDialog(ItemManagementActivity.this);
-        pd.setMessage("Loading...");
-        pd.setCancelable(false);
-        pd.show();
-        }
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                pd = new ProgressDialog(ItemManagementActivity.this);
+                pd.setMessage("Loading...");
+                pd.setCancelable(false);
+                pd.show();
+            }
 
-@Override
-protected Void doInBackground(Void... params) {
+            @Override
+            protected Void doInBackground(Void... params) {
 
-        try {
-        ReadData(1); // 2 - updateItem
-        //ResetItem();
-        //ClearItemTable();
-        //DisplayItems();
-        } catch (Exception exp) {
-        //Toast.makeText(myContext, exp.getMessage(), Toast.LENGTH_SHORT).show();
-        exp.printStackTrace();
-        }
-        return null;
-        }
+                try {
+                    ReadData(1); // 2 - updateItem
+                    //ResetItem();
+                    //ClearItemTable();
+                    //DisplayItems();
+                } catch (Exception exp) {
+                    //Toast.makeText(myContext, exp.getMessage(), Toast.LENGTH_SHORT).show();
+                    exp.printStackTrace();
+                }
+                return null;
+            }
 
-@Override
-protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        try{
-        ResetItem();
-            loadAutoCompleteData_ItemNames();
-        //ClearItemTable();
-        DisplayItemList();
-        //Toast.makeText(myContext, "Item Added Successfully", Toast.LENGTH_LONG).show();
-        pd.dismiss();
-        }catch (Exception e){
-        Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-        e.printStackTrace();
-        }
-        }
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                try{
+                    ResetItem();
+                    loadAutoCompleteData_ItemNames();
+                    //ClearItemTable();
+                    DisplayItemList();
+                    //Toast.makeText(myContext, "Item Added Successfully", Toast.LENGTH_LONG).show();
+                    pd.dismiss();
+                }catch (Exception e){
+                    Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
+                }
+            }
         }.execute();
 
-        }
+    }
 
-public void EditItem(View v) {
+    public void EditItem(View v) {
         try {
             /*Date d = new SimpleDateFormat("dd-MM-yyyy").parse(businessDate);
             int invoiceno = dbItems.getLastBillNoforDate(String.valueOf(d.getTime()));
@@ -2993,178 +3082,186 @@ public void EditItem(View v) {
             }*/
 
 
-        if (txtLongName.getText().toString().equalsIgnoreCase("")) {
+            if (txtLongName.getText().toString().equalsIgnoreCase("")) {
         /*MsgBox.Show("Warning", "Please Enter Item Name");
         return;*/
-        }
-        if (AutoCompleteItemLongName.getText().toString().equalsIgnoreCase("")) {
-        MsgBox.Show("Warning", "Please Enter Item Name");
-        return;
-        }
+            }
+            if (AutoCompleteItemLongName.getText().toString().equalsIgnoreCase("")) {
+                MsgBox.Show("Warning", "Please Enter Item Name");
+                return;
+            }
 
-        if (spnrMOU.getSelectedItem().toString().equalsIgnoreCase("") || spnrMOU.getSelectedItem().toString().equalsIgnoreCase("Select")) {
-        MsgBox.Show("Warning", "Please Select Item UOM");
-        return;
-        }
-
-
-        if (crsrSettings.getString(crsrSettings.getColumnIndex("ItemNoReset")).equalsIgnoreCase("1")) {
-        if (edtMenuCode.getText().toString().equalsIgnoreCase("")) {
-        MsgBox.Show("Warning", "Please Enter Item Code");
-        return;
-        } else {
-        iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
-        iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
-        String ItemFullName = txtLongName.getText().toString().toUpperCase();
-         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
-        if(IsItemExists( ItemFullName,  iMenuCode,txtBarcode.getText().toString().trim(),2))
-        {
-        return;
-        }
-        }
-        }else
-        {
-        String ItemFullName = txtLongName.getText().toString().toUpperCase();
-         ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
-        List<String> itemlist = dbItems.getAllItemsNames();
-        if(itemlist.contains(ItemFullName) && !itemName_beforeChange_in_update.equalsIgnoreCase(ItemFullName))
-        {
-        MsgBox = new MessageDialog(myContext);
-        MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present ");
-        return;
-        }
-        }
-
-        if (txtDineIn1.getText().toString().equalsIgnoreCase("")) {
-        txtDineIn1.setText("0.00");
-        }
-
-        if (txtDineIn2.getText().toString().equalsIgnoreCase("")) {
-        txtDineIn2.setText("0.00");
-        }
-
-        if (txtDineIn3.getText().toString().equalsIgnoreCase("")) {
-        txtDineIn3.setText("0.00");
-        }
-
-        if (txtStock.getText().toString().equalsIgnoreCase("")) {
-        txtStock.setText("0.00");
-        }else
-        {
-        double stock = Double.parseDouble(txtStock.getText().toString());
-        if(stock>9999.99){
-        MsgBox.Show("Warning","Please enter quantity between 0 and 9999.99");
-        return;
-        }
-        }
-        if (etItemDiscount.getText().toString().equalsIgnoreCase("")) {
-        etItemDiscount.setText("0.00");
-        }else
-        {
-        double discount = Double.parseDouble(etItemDiscount.getText().toString());
-        if(discount>99.99){
-        MsgBox.Show("Warning","Please enter discount between 0 and 99.99");
-        return;
-        }
-        }
+            if (spnrMOU.getSelectedItem().toString().equalsIgnoreCase("") || spnrMOU.getSelectedItem().toString().equalsIgnoreCase("Select")) {
+                MsgBox.Show("Warning", "Please Select Item UOM");
+                return;
+            }
 
 
-        String CGSTTax_str = edtItemCGSTTax.getText().toString();
-        if (CGSTTax_str.equalsIgnoreCase("")) {
-        edtItemCGSTTax.setText("0");
-        }else if (Double.parseDouble(CGSTTax_str)< 0 || Double.parseDouble(CGSTTax_str)>99.99)
-        {
-        MsgBox.Show("Warning","Please enter CST Rate between 0 and 99.99");
-        return;
-        }
+            if (crsrSettings.getString(crsrSettings.getColumnIndex("ItemNoReset")).equalsIgnoreCase("1")) {
+                if (edtMenuCode.getText().toString().equalsIgnoreCase("")) {
+                    MsgBox.Show("Warning", "Please Enter Item Code");
+                    return;
+                } else {
+                    iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
+                    iMenuCode = Integer.valueOf(edtMenuCode.getText().toString());
+                    String ItemFullName = txtLongName.getText().toString().toUpperCase();
+                    ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
+                    if(IsItemExists( ItemFullName,  iMenuCode,AutoCompleteItemBarcode.getText().toString().trim(),2))
+                    {
+                        return;
+                    }
+                }
+            }else
+            {
+                String ItemFullName = txtLongName.getText().toString().toUpperCase();
+                ItemFullName = AutoCompleteItemLongName.getText().toString().toUpperCase();
+                List<String> itemlist = dbItems.getAllItemsNames();
+                if(itemlist.contains(ItemFullName) && !itemName_beforeChange_in_update.equalsIgnoreCase(ItemFullName))
+                {
+                    MsgBox = new MessageDialog(myContext);
+                    MsgBox.Show("Inconsistent"," Item "+ItemFullName +" already present ");
+                    return;
+                }
+                String ItemBarCode = AutoCompleteItemBarcode.getText().toString();
+                itemlist = dbItems.getAllItemsBarCode();
+                if(itemlist.contains(ItemBarCode) && !itembarCode_beforeChange_in_update.equalsIgnoreCase(ItemBarCode))
+                {
+                    MsgBox = new MessageDialog(myContext);
+                    MsgBox.Show("Inconsistent"," This barcode is already present ");
+                    return;
+                }
+            }
 
-        String SGSTTax_str = edtItemSGSTTax.getText().toString();
-        if (SGSTTax_str.equalsIgnoreCase("")) {
-        edtItemSGSTTax.setText("0");
-        }else if (Double.parseDouble(SGSTTax_str) <0 || Double.parseDouble(SGSTTax_str)> 99.99)
-        {
-        MsgBox.Show("Warning","Please enter SGST Rate between 0 and 99.99");
-        return;
-        }
-        String IGSTTax_str = edtIGSTTax.getText().toString();
-        if (IGSTTax_str.equalsIgnoreCase("")) {
-        edtIGSTTax.setText("0.00");
-        }else if (Double.parseDouble(IGSTTax_str) <0 || Double.parseDouble(IGSTTax_str)> 99.99)
-        {
-        MsgBox.Show("Warning","Please enter IGST Rate between 0 and 99.99");
-        return;
-        }
+            if (txtDineIn1.getText().toString().equalsIgnoreCase("")) {
+                txtDineIn1.setText("0.00");
+            }
 
-        String cess_str = edtcessTax.getText().toString();
-        if (cess_str.equalsIgnoreCase("")) {
-        edtIGSTTax.setText("0");
-        }else if (Double.parseDouble(cess_str) <0 || Double.parseDouble(cess_str)> 99.99)
-        {
-        MsgBox.Show("Warning","Please enter cess Rate between 0 and 99.99");
-        return;
-        }
+            if (txtDineIn2.getText().toString().equalsIgnoreCase("")) {
+                txtDineIn2.setText("0.00");
+            }
+
+            if (txtDineIn3.getText().toString().equalsIgnoreCase("")) {
+                txtDineIn3.setText("0.00");
+            }
+
+            if (txtStock.getText().toString().equalsIgnoreCase("")) {
+                txtStock.setText("0.00");
+            }else
+            {
+                double stock = Double.parseDouble(txtStock.getText().toString());
+                if(stock>9999.99){
+                    MsgBox.Show("Warning","Please enter quantity between 0 and 9999.99");
+                    return;
+                }
+            }
+            if (etItemDiscount.getText().toString().equalsIgnoreCase("")) {
+                etItemDiscount.setText("0.00");
+            }else
+            {
+                double discount = Double.parseDouble(etItemDiscount.getText().toString());
+                if(discount>99.99){
+                    MsgBox.Show("Warning","Please enter discount between 0 and 99.99");
+                    return;
+                }
+            }
 
 
-        new AsyncTask<Void, Void, Void>() {
-        ProgressDialog pd;
+            String CGSTTax_str = edtItemCGSTTax.getText().toString();
+            if (CGSTTax_str.equalsIgnoreCase("")) {
+                edtItemCGSTTax.setText("0");
+            }else if (Double.parseDouble(CGSTTax_str)< 0 || Double.parseDouble(CGSTTax_str)>99.99)
+            {
+                MsgBox.Show("Warning","Please enter CST Rate between 0 and 99.99");
+                return;
+            }
 
-@Override
-protected void onPreExecute() {
-        super.onPreExecute();
-        pd = new ProgressDialog(ItemManagementActivity.this);
-        pd.setMessage("Loading...");
-        pd.setCancelable(false);
-        pd.show();
-        }
+            String SGSTTax_str = edtItemSGSTTax.getText().toString();
+            if (SGSTTax_str.equalsIgnoreCase("")) {
+                edtItemSGSTTax.setText("0");
+            }else if (Double.parseDouble(SGSTTax_str) <0 || Double.parseDouble(SGSTTax_str)> 99.99)
+            {
+                MsgBox.Show("Warning","Please enter SGST Rate between 0 and 99.99");
+                return;
+            }
+            String IGSTTax_str = edtIGSTTax.getText().toString();
+            if (IGSTTax_str.equalsIgnoreCase("")) {
+                edtIGSTTax.setText("0.00");
+            }else if (Double.parseDouble(IGSTTax_str) <0 || Double.parseDouble(IGSTTax_str)> 99.99)
+            {
+                MsgBox.Show("Warning","Please enter IGST Rate between 0 and 99.99");
+                return;
+            }
 
-@Override
-protected Void doInBackground(Void... params) {
+            String cess_str = edtcessTax.getText().toString();
+            if (cess_str.equalsIgnoreCase("")) {
+                edtIGSTTax.setText("0");
+            }else if (Double.parseDouble(cess_str) <0 || Double.parseDouble(cess_str)> 99.99)
+            {
+                MsgBox.Show("Warning","Please enter cess Rate between 0 and 99.99");
+                return;
+            }
 
-        try {
-        ReadData(2); // 2 - updateItem
-        //ResetItem();
+
+            new AsyncTask<Void, Void, Void>() {
+                ProgressDialog pd;
+
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    pd = new ProgressDialog(ItemManagementActivity.this);
+                    pd.setMessage("Loading...");
+                    pd.setCancelable(false);
+                    pd.show();
+                }
+
+                @Override
+                protected Void doInBackground(Void... params) {
+
+                    try {
+                        ReadData(2); // 2 - updateItem
+                        //ResetItem();
 //                    ClearItemTable();
 //                    DisplayItems();
-        } catch (Exception exp) {
-        exp.printStackTrace();
-        //Toast.makeText(myContext, exp.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-        return null;
-        }
+                    } catch (Exception exp) {
+                        exp.printStackTrace();
+                        //Toast.makeText(myContext, exp.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    return null;
+                }
 
-@Override
-protected void onPostExecute(Void aVoid) {
-        super.onPostExecute(aVoid);
-        try {
-        ResetItem();
-            loadAutoCompleteData_ItemNames();
-        //ClearItemTable();
-        DisplayItemList();
-        Toast.makeText(myContext, "Item Updated Successfully", Toast.LENGTH_LONG).show();
-        pd.dismiss();
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    try {
+                        ResetItem();
+                        loadAutoCompleteData_ItemNames();
+                        //ClearItemTable();
+                        DisplayItemList();
+                        Toast.makeText(myContext, "Item Updated Successfully", Toast.LENGTH_LONG).show();
+                        pd.dismiss();
 
-        } catch (Exception e) {
-        Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-        e.printStackTrace();
-        }
-        }
-        }.execute();
+                    } catch (Exception e) {
+                        Toast.makeText(myContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+            }.execute();
         }catch(Exception e)
         {
-        e.printStackTrace();
+            e.printStackTrace();
         }
-        }
+    }
 
-public void ClearItem(View v) {
+    public void ClearItem(View v) {
         ResetItem();
         //loadAutoCompleteData();
         //loadSpinnerData1();
-        }
+    }
 
-public void CloseItem(View v) {
+    public void CloseItem(View v) {
         dbItems.CloseDatabase();
         this.finish();
-        }
+    }
 
     private void loadAutoCompleteData_ItemNames() {
         List ItemName_list = dbItems.getAllItemsName();
@@ -3174,6 +3271,12 @@ public void CloseItem(View v) {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         AutoCompleteItemLongName.setAdapter(dataAdapter);
+
+        List ItemBarcode_list = dbItems.getAllItemsBarCode();
+        ArrayAdapter<String> dataAdapter_barCode = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, ItemBarcode_list);
+        dataAdapter_barCode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        AutoCompleteItemBarcode.setAdapter(dataAdapter_barCode);
+
     }
     private void loadSpinnerData() {
         labelsDept = dbItems.getAllDeptforCateg();
@@ -3183,17 +3286,17 @@ public void CloseItem(View v) {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         spnrDepartment.setAdapter(dataAdapter);
-        }
+    }
 
     private void loadSpinnerData1() {
         if (spnrDepartment.getSelectedItem().toString().equals("Select"))
         {
-        labelsCateg = new ArrayList<String>();
-        labelsCateg.add("Select department first");
+            labelsCateg = new ArrayList<String>();
+            labelsCateg.add("Select department first");
         }
         else
         {
-        labelsCateg = dbItems.getAllCategforDept();
+            labelsCateg = dbItems.getAllCategforDept();
         }
 
         // Creating adapter for spinner
@@ -3202,11 +3305,11 @@ public void CloseItem(View v) {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         spnrCategory.setAdapter(dataAdapter);
-        }
+    }
     private void loadSpinnerData_cat(ArrayList<String>categName) {
         if (categName.size() ==0)
         {
-        return;
+            return;
         }
         // Creating adapter for spinner
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, categName);
@@ -3214,7 +3317,7 @@ public void CloseItem(View v) {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         spnrCategory.setAdapter(dataAdapter);
-        }
+    }
 
     private void loadSpinnerData1_old() {
         labelsCateg = dbItems.getAllCategforDept();
@@ -3224,7 +3327,7 @@ public void CloseItem(View v) {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // attaching data adapter to spinner
         spnrCategory.setAdapter(dataAdapter);
-        }
+    }
 
 
     private void DisplayItems_old() {
@@ -3235,441 +3338,442 @@ public void CloseItem(View v) {
         TableRow rowItems = null;
 
         TextView tvSno, tvMenuCode, tvLongName, tvShortName, tvDineIn1, tvDineIn2, tvDineIn3, tvTakeAway, tvPickUp, tvDelivery,
-        tvStock, tvPriceChange, tvDiscountEnable, tvBillWithStock, tvTaxType, tvDeptCode, tvCategCode,
-        tvKitchenCode, tvSalesTaxId, tvAdditionalTaxId, tvOptionalTaxId1, tvOptionalTaxId2, tvDiscountId,
-        tvItemBarcode, tvImageUri, tvSpace, tvDeptName, tvCategName, tvItemId;
+                tvStock, tvPriceChange, tvDiscountEnable, tvBillWithStock, tvTaxType, tvDeptCode, tvCategCode,
+                tvKitchenCode, tvSalesTaxId, tvAdditionalTaxId, tvOptionalTaxId1, tvOptionalTaxId2, tvDiscountId,
+                tvItemBarcode, tvImageUri, tvSpace, tvDeptName, tvCategName, tvItemId;
         TextView tvHSNCode_out,tvMOU,tvRate,tvGSTRate,tvSupplyType;
         ImageView imgIcon;
         ImageButton btnItemDelete;
         int i = 1;
         if (crsrItems.moveToFirst()) {
-        do {
-        rowItems = new TableRow(myContext);
-        rowItems.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-        rowItems.setBackgroundResource(R.drawable.row_background);
+            do {
+                rowItems = new TableRow(myContext);
+                rowItems.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                rowItems.setBackgroundResource(R.drawable.row_background);
 
-        tvSno = new TextView(myContext);
-        tvSno.setTextSize(18);
-        tvSno.setGravity(1);
-        tvSno.setWidth(80);
-        tvSno.setText(String.valueOf(i));
-        rowItems.addView(tvSno);
+                tvSno = new TextView(myContext);
+                tvSno.setTextSize(18);
+                tvSno.setGravity(1);
+                tvSno.setWidth(80);
+                tvSno.setText(String.valueOf(i));
+                rowItems.addView(tvSno);
 
-        tvMenuCode = new TextView(myContext);
-        tvMenuCode.setTextSize(0);
-        tvMenuCode.setText(crsrItems.getString(crsrItems.getColumnIndex("MenuCode")));
-        rowItems.addView(tvMenuCode);
+                tvMenuCode = new TextView(myContext);
+                tvMenuCode.setTextSize(0);
+                tvMenuCode.setText(crsrItems.getString(crsrItems.getColumnIndex("MenuCode")));
+                rowItems.addView(tvMenuCode);
 
-        tvLongName = new TextView(myContext);
-        tvLongName.setTextSize(18);
-        tvLongName.setWidth(300);
-        tvLongName.setText(crsrItems.getString(crsrItems.getColumnIndex("LongName")).toUpperCase());
-        rowItems.addView(tvLongName);
+                tvLongName = new TextView(myContext);
+                tvLongName.setTextSize(18);
+                tvLongName.setWidth(300);
+                tvLongName.setText(crsrItems.getString(crsrItems.getColumnIndex("LongName")).toUpperCase());
+                rowItems.addView(tvLongName);
 
-        tvShortName = new TextView(myContext);
-        tvShortName.setTextSize(18);
-        //tvShortName.setText(crsrItems.getString(crsrItems.getColumnIndex("ShortName")));
-        rowItems.addView(tvShortName);
+                tvShortName = new TextView(myContext);
+                tvShortName.setTextSize(18);
+                //tvShortName.setText(crsrItems.getString(crsrItems.getColumnIndex("ShortName")));
+                rowItems.addView(tvShortName);
 
-        tvDineIn1 = new TextView(myContext);
-        tvDineIn1.setGravity(1);
-        tvDineIn1.setWidth(80);
-        tvDineIn1.setText(crsrItems.getString(crsrItems.getColumnIndex("DineInPrice1")));
-        rowItems.addView(tvDineIn1);
+                tvDineIn1 = new TextView(myContext);
+                tvDineIn1.setGravity(1);
+                tvDineIn1.setWidth(80);
+                tvDineIn1.setText(crsrItems.getString(crsrItems.getColumnIndex("DineInPrice1")));
+                rowItems.addView(tvDineIn1);
 
-        tvDineIn2 = new TextView(myContext);
-        tvDineIn2.setGravity(1);
-        tvDineIn2.setWidth(80);
-        tvDineIn2.setText(crsrItems.getString(crsrItems.getColumnIndex("DineInPrice2")));
-        rowItems.addView(tvDineIn2);
+                tvDineIn2 = new TextView(myContext);
+                tvDineIn2.setGravity(1);
+                tvDineIn2.setWidth(80);
+                tvDineIn2.setText(crsrItems.getString(crsrItems.getColumnIndex("DineInPrice2")));
+                rowItems.addView(tvDineIn2);
 
-        tvDineIn3 = new TextView(myContext);
-        tvDineIn3.setGravity(1);
-        tvDineIn3.setWidth(80);
-        tvDineIn3.setText(crsrItems.getString(crsrItems.getColumnIndex("DineInPrice3")));
-        rowItems.addView(tvDineIn3);
+                tvDineIn3 = new TextView(myContext);
+                tvDineIn3.setGravity(1);
+                tvDineIn3.setWidth(80);
+                tvDineIn3.setText(crsrItems.getString(crsrItems.getColumnIndex("DineInPrice3")));
+                rowItems.addView(tvDineIn3);
 
-        tvTakeAway = new TextView(myContext);
-        tvTakeAway.setGravity(1);
-        tvTakeAway.setText(crsrItems.getString(crsrItems.getColumnIndex("TakeAwayPrice")));
-        rowItems.addView(tvTakeAway);
+                tvTakeAway = new TextView(myContext);
+                tvTakeAway.setGravity(1);
+                tvTakeAway.setText(crsrItems.getString(crsrItems.getColumnIndex("TakeAwayPrice")));
+                rowItems.addView(tvTakeAway);
 
-        tvPickUp = new TextView(myContext);
-        tvPickUp.setGravity(1);
-        tvPickUp.setText(crsrItems.getString(crsrItems.getColumnIndex("PickUpPrice")));
-        rowItems.addView(tvPickUp);
+                tvPickUp = new TextView(myContext);
+                tvPickUp.setGravity(1);
+                tvPickUp.setText(crsrItems.getString(crsrItems.getColumnIndex("PickUpPrice")));
+                rowItems.addView(tvPickUp);
 
-        tvDelivery = new TextView(myContext);
-        tvDelivery.setGravity(1);
-        tvDelivery.setText(crsrItems.getString(crsrItems.getColumnIndex("DeliveryPrice")));
-        rowItems.addView(tvDelivery);
+                tvDelivery = new TextView(myContext);
+                tvDelivery.setGravity(1);
+                tvDelivery.setText(crsrItems.getString(crsrItems.getColumnIndex("DeliveryPrice")));
+                rowItems.addView(tvDelivery);
 
-        tvStock = new TextView(myContext);
-        tvStock.setGravity(1);
-        tvStock.setWidth(110);
-        tvStock.setText(crsrItems.getString(crsrItems.getColumnIndex("Quantity")));
-        rowItems.addView(tvStock);
+                tvStock = new TextView(myContext);
+                tvStock.setGravity(1);
+                tvStock.setWidth(110);
+                tvStock.setText(crsrItems.getString(crsrItems.getColumnIndex("Quantity")));
+                rowItems.addView(tvStock);
 
-        tvPriceChange = new TextView(myContext);
-        tvPriceChange.setText(crsrItems.getString(crsrItems.getColumnIndex("PriceChange")).equalsIgnoreCase("1")
-        ? "Yes" : "No");
-        rowItems.addView(tvPriceChange);
+                tvPriceChange = new TextView(myContext);
+                tvPriceChange.setText(crsrItems.getString(crsrItems.getColumnIndex("PriceChange")).equalsIgnoreCase("1")
+                        ? "Yes" : "No");
+                rowItems.addView(tvPriceChange);
 
-        tvDiscountEnable = new TextView(myContext);
-        tvDiscountEnable
-        .setText(crsrItems.getString(crsrItems.getColumnIndex("DiscountEnable")).equalsIgnoreCase("1")
-        ? "Yes" : "No");
-        rowItems.addView(tvDiscountEnable);
+                tvDiscountEnable = new TextView(myContext);
+                tvDiscountEnable
+                        .setText(crsrItems.getString(crsrItems.getColumnIndex("DiscountEnable")).equalsIgnoreCase("1")
+                                ? "Yes" : "No");
+                rowItems.addView(tvDiscountEnable);
 
-        tvBillWithStock = new TextView(myContext);
-        tvBillWithStock
-        .setText(crsrItems.getString(crsrItems.getColumnIndex("BillWithStock")).equalsIgnoreCase("1")
-        ? "Yes" : "No");
-        rowItems.addView(tvBillWithStock);
+                tvBillWithStock = new TextView(myContext);
+                tvBillWithStock
+                        .setText(crsrItems.getString(crsrItems.getColumnIndex("BillWithStock")).equalsIgnoreCase("1")
+                                ? "Yes" : "No");
+                rowItems.addView(tvBillWithStock);
 
-        tvTaxType = new TextView(myContext);
-        tvTaxType.setText(crsrItems.getString(crsrItems.getColumnIndex("TaxType")).equalsIgnoreCase("1")
-        ? "Forward Tax" : "Reverse Tax");
-        rowItems.addView(tvTaxType);
+                tvTaxType = new TextView(myContext);
+                tvTaxType.setText(crsrItems.getString(crsrItems.getColumnIndex("TaxType")).equalsIgnoreCase("1")
+                        ? "Forward Tax" : "Reverse Tax");
+                rowItems.addView(tvTaxType);
 
-        tvDeptCode = new TextView(myContext);
-        tvDeptCode.setText(crsrItems.getString(crsrItems.getColumnIndex("DeptCode")));
-        rowItems.addView(tvDeptCode);
+                tvDeptCode = new TextView(myContext);
+                tvDeptCode.setText(crsrItems.getString(crsrItems.getColumnIndex("DeptCode")));
+                rowItems.addView(tvDeptCode);
 
-        tvCategCode = new TextView(myContext);
-        tvCategCode.setText(crsrItems.getString(crsrItems.getColumnIndex("CategCode")));
-        rowItems.addView(tvCategCode);
+                tvCategCode = new TextView(myContext);
+                tvCategCode.setText(crsrItems.getString(crsrItems.getColumnIndex("CategCode")));
+                rowItems.addView(tvCategCode);
 
-        tvKitchenCode = new TextView(myContext);
-        tvKitchenCode.setText(crsrItems.getString(crsrItems.getColumnIndex("KitchenCode")));
-        rowItems.addView(tvKitchenCode);
+                tvKitchenCode = new TextView(myContext);
+                tvKitchenCode.setText(crsrItems.getString(crsrItems.getColumnIndex("KitchenCode")));
+                rowItems.addView(tvKitchenCode);
 
-        tvSalesTaxId = new TextView(myContext);
-        tvSalesTaxId.setText(crsrItems.getString(crsrItems.getColumnIndex("SalesTaxId")));
-        rowItems.addView(tvSalesTaxId);
+                tvSalesTaxId = new TextView(myContext);
+                tvSalesTaxId.setText(crsrItems.getString(crsrItems.getColumnIndex("SalesTaxId")));
+                rowItems.addView(tvSalesTaxId);
 
-        tvAdditionalTaxId = new TextView(myContext);
-        tvAdditionalTaxId.setText(crsrItems.getString(crsrItems.getColumnIndex("AdditionalTaxId")));
-        rowItems.addView(tvAdditionalTaxId);
+                tvAdditionalTaxId = new TextView(myContext);
+                tvAdditionalTaxId.setText(crsrItems.getString(crsrItems.getColumnIndex("AdditionalTaxId")));
+                rowItems.addView(tvAdditionalTaxId);
 
-        tvOptionalTaxId1 = new TextView(myContext);
-        tvOptionalTaxId1.setText(crsrItems.getString(crsrItems.getColumnIndex("OptionalTaxId1")));
-        rowItems.addView(tvOptionalTaxId1);
+                tvOptionalTaxId1 = new TextView(myContext);
+                tvOptionalTaxId1.setText(crsrItems.getString(crsrItems.getColumnIndex("OptionalTaxId1")));
+                rowItems.addView(tvOptionalTaxId1);
 
-        tvOptionalTaxId2 = new TextView(myContext);
-        tvOptionalTaxId2.setText(crsrItems.getString(crsrItems.getColumnIndex("OptionalTaxId2")));
-        rowItems.addView(tvOptionalTaxId2);
+                tvOptionalTaxId2 = new TextView(myContext);
+                tvOptionalTaxId2.setText(crsrItems.getString(crsrItems.getColumnIndex("OptionalTaxId2")));
+                rowItems.addView(tvOptionalTaxId2);
 
-        tvDiscountId = new TextView(myContext);
-        tvDiscountId.setText(crsrItems.getString(crsrItems.getColumnIndex("DiscId")));
-        rowItems.addView(tvDiscountId);
+                tvDiscountId = new TextView(myContext);
+                tvDiscountId.setText(crsrItems.getString(crsrItems.getColumnIndex("DiscId")));
+                rowItems.addView(tvDiscountId);
 
-        tvItemBarcode = new TextView(myContext);
-        tvItemBarcode.setText(crsrItems.getString(crsrItems.getColumnIndex("ItemBarcode")));
-        rowItems.addView(tvItemBarcode);
+                tvItemBarcode = new TextView(myContext);
+                tvItemBarcode.setText(crsrItems.getString(crsrItems.getColumnIndex("ItemBarcode")));
+                rowItems.addView(tvItemBarcode);
 
-        tvImageUri = new TextView(myContext);
-        tvImageUri.setText(crsrItems.getString(crsrItems.getColumnIndex("ImageUri")));
-        rowItems.addView(tvImageUri);
+                tvImageUri = new TextView(myContext);
+                tvImageUri.setText(crsrItems.getString(crsrItems.getColumnIndex("ImageUri")));
+                rowItems.addView(tvImageUri);
 
-        imgIcon = new ImageView(myContext);
-        imgIcon.setLayoutParams(new TableRow.LayoutParams(50, 40));
-        imgIcon.setImageURI(null);
-        if (!crsrItems.getString(crsrItems.getColumnIndex("ImageUri")).equalsIgnoreCase("")) { // &&
-        // strImageUri.contains("\\")){
-        imgIcon.setImageURI(Uri.fromFile(new File(crsrItems.getString(crsrItems.getColumnIndex("ImageUri")))));
+                imgIcon = new ImageView(myContext);
+                imgIcon.setLayoutParams(new TableRow.LayoutParams(50, 40));
+                imgIcon.setImageURI(null);
+                if (!crsrItems.getString(crsrItems.getColumnIndex("ImageUri")).equalsIgnoreCase("")) { // &&
+                    // strImageUri.contains("\\")){
+                    imgIcon.setImageURI(Uri.fromFile(new File(crsrItems.getString(crsrItems.getColumnIndex("ImageUri")))));
+                } else {
+                    imgIcon.setImageResource(R.drawable.img_noimage);
+                }
+                rowItems.addView(imgIcon);
+
+                tvSupplyType = new TextView(myContext);
+                tvSupplyType.setGravity(1);
+                tvSupplyType.setWidth(110);
+                tvSupplyType.setText(crsrItems.getString(crsrItems.getColumnIndex("SupplyType")));
+                rowItems.addView(tvSupplyType);
+
+                tvGSTRate = new TextView(myContext);
+                tvGSTRate.setGravity(1);
+                tvGSTRate.setWidth(110);
+                Float fGSTRate =0.0f;
+                String IGSTRate_str = crsrItems.getString(crsrItems.getColumnIndex("IGSTRate"));
+                if ((IGSTRate_str != null)&&Float.parseFloat(IGSTRate_str) == 0)
+                {
+                    String CGSTRate_str = crsrItems.getString(crsrItems.getColumnIndex("CGSTRate"));
+                    if((CGSTRate_str!= null )&&(Float.parseFloat(IGSTRate_str)> 0)) {
+                        Float fCgst = Float.parseFloat(CGSTRate_str);
+                        fGSTRate = 2 * fCgst;
+                    }
+                    else
+                    {
+                        fGSTRate = Float.parseFloat(IGSTRate_str);
+                    }
+                }
+                else
+                {
+                    fGSTRate = Float.parseFloat(IGSTRate_str);
+                }
+                tvGSTRate.setText(fGSTRate.toString());
+                rowItems.addView(tvGSTRate);
+
+                tvRate = new TextView(myContext);
+                tvRate.setGravity(1);
+                tvRate.setWidth(80);
+                tvRate.setText(crsrItems.getString(crsrItems.getColumnIndex("Rate")));
+                rowItems.addView(tvRate);
+
+                tvMOU = new TextView(myContext);
+                tvMOU.setGravity(1);
+                tvMOU.setWidth(110);
+                tvMOU.setText(crsrItems.getString(crsrItems.getColumnIndex("MOU")));
+                rowItems.addView(tvMOU);
+
+                tvHSNCode_out = new TextView(myContext);
+                tvHSNCode_out.setGravity(1);
+                tvHSNCode_out.setWidth(110);
+                tvHSNCode_out.setText(crsrItems.getString(crsrItems.getColumnIndex("HSNCode")));
+                rowItems.addView(tvHSNCode_out);
+
+                // For Space purpose
+                tvSpace = new TextView(myContext);
+                tvSpace.setText("                ");
+                rowItems.addView(tvSpace);
+
+                // Delete
+                int res = getResources().getIdentifier("delete", "drawable", this.getPackageName());
+                btnItemDelete = new ImageButton(myContext);
+                btnItemDelete.setImageResource(res);
+                btnItemDelete.setLayoutParams(new TableRow.LayoutParams(60, 40));
+                //btnItemDelete.setOnClickListener(mListener);
+                rowItems.addView(btnItemDelete);
+
+                // For Space purpose
+                tvSpace = new TextView(myContext);
+                tvSpace.setText("              ");
+                rowItems.addView(tvSpace);
+
+                rowItems.setOnClickListener(new View.OnClickListener() {
+
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+
+                        if (String.valueOf(v.getTag()) == "TAG") {
+                            TableRow Row = (TableRow) v;
+
+                            TextView MenuCode = (TextView) Row.getChildAt(1);
+                            TextView LongName = (TextView) Row.getChildAt(2);
+                            TextView ShortName = (TextView) Row.getChildAt(3);
+                            TextView DineIn1 = (TextView) Row.getChildAt(4);
+                            TextView DineIn2 = (TextView) Row.getChildAt(5);
+                            TextView DineIn3 = (TextView) Row.getChildAt(6);
+                            TextView TakeAway = (TextView) Row.getChildAt(7);
+                            TextView PickUp = (TextView) Row.getChildAt(8);
+                            TextView Delivery = (TextView) Row.getChildAt(9);
+                            TextView Stock = (TextView) Row.getChildAt(10);
+                            TextView PriceChange = (TextView) Row.getChildAt(11);
+                            TextView DiscountEnable = (TextView) Row.getChildAt(12);
+                            TextView BillWithStock = (TextView) Row.getChildAt(13);
+                            TextView TaxType = (TextView) Row.getChildAt(14);
+                            TextView DeptCode = (TextView) Row.getChildAt(15);
+                            TextView CategCode = (TextView) Row.getChildAt(16);
+                            TextView KitchenCode = (TextView) Row.getChildAt(17);
+                            TextView SalesTaxId = (TextView) Row.getChildAt(18);
+                            TextView AdditionalTaxId = (TextView) Row.getChildAt(19);
+                            TextView OptionalTaxId1 = (TextView) Row.getChildAt(20);
+                            TextView OptionalTaxId2 = (TextView) Row.getChildAt(21);
+                            TextView DiscountId = (TextView) Row.getChildAt(22);
+                            TextView Barcode = (TextView) Row.getChildAt(23);
+                            TextView ImageUri = (TextView) Row.getChildAt(24);
+                            TextView SupplyType = (TextView) Row.getChildAt(25);
+                            TextView GSTRate = (TextView) Row.getChildAt(26);
+                            TextView Rate = (TextView) Row.getChildAt(27);
+                            TextView MOU = (TextView) Row.getChildAt(28);
+                            TextView HSNCode_out = (TextView) Row.getChildAt(29);
+
+                            edtMenuCode.setText(MenuCode.getText().toString());
+                            txtLongName.setText(LongName.getText());
+                            AutoCompleteItemLongName.setText(LongName.getText());
+                            // txtShortName.setText(ShortName.getText());
+                            AutoCompleteItemBarcode.setText(Barcode.getText());
+                            txtDineIn1.setText(DineIn1.getText());
+                            txtDineIn2.setText(DineIn2.getText());
+                            txtDineIn3.setText(DineIn3.getText());
+                            txtStock.setText(Stock.getText());
+                            strImageUri = ImageUri.getText().toString();
+
+                            // gst
+                            etGstTax.setText(GSTRate.getText());
+                            etRate.setText(Rate.getText());
+                            etHSN.setText(HSNCode_out.getText());
+                            spnrG_S.setSelection(Integer.parseInt(SupplyType.getText().toString()));
+                            //spnrMOU.
+
+                            // gst end
+                            Cursor crsrDept = dbItems.getDepartment(Integer.valueOf(DeptCode.getText().toString()));
+                            if(crsrDept.moveToFirst()) {
+                                String deptName = crsrDept.getString(crsrDept.getColumnIndex("DeptName"));
+                                int deptid = getIndexDept(deptName + "");
+                                spnrDepartment.setSelection(deptid);
+                            } else {
+                                String deptName = "Select";
+                                int deptid = getIndexDept(deptName + "");
+                                spnrDepartment.setSelection(deptid);
+                            }
+                            //spnrDepartment.setSelection(Integer.parseInt(DeptCode.getText().toString()));
+                            Cursor crsrCateg = dbItems.getCategory(Integer.valueOf(CategCode.getText().toString()));
+                            if(crsrCateg.moveToFirst()) {
+                                String categName = crsrCateg.getString(crsrCateg.getColumnIndex("CategName"));
+                                int categid = getIndexCateg(categName + "");
+                                spnrCategory.setSelection(categid);
+                            } else {
+                                String categName = "Select";
+                                int categid = getIndexCateg(categName + "");
+                                spnrCategory.setSelection(categid);
+                            }
+                            //spnrCategory.setSelection(Integer.parseInt(CategCode.getText().toString()));
+                            spnrKitchen.setSelection(Integer.parseInt(KitchenCode.getText().toString()) - 1);
+                            spnrOptionalTax1.setSelection(Integer.parseInt(OptionalTaxId1.getText().toString()) - 1);
+                            spnrOptionalTax2.setSelection(Integer.parseInt(OptionalTaxId2.getText().toString()) - 1);
+
+
+                            if (PriceChange.getText().toString().equalsIgnoreCase("Yes")) {
+                                chkPriceChange.setChecked(true);
+                            } else {
+                                chkPriceChange.setChecked(false);
+                            }
+                            if (DiscountEnable.getText().toString().equalsIgnoreCase("Yes")) {
+                                chkDiscountEnable.setChecked(true);
+                            } else {
+                                chkDiscountEnable.setChecked(false);
+                            }
+                            if (BillWithStock.getText().toString().equalsIgnoreCase("Yes")) {
+                                chkBillWithStock.setChecked(true);
+                            } else {
+                                chkBillWithStock.setChecked(false);
+                            }
+
+                            if (TaxType.getText().toString().equalsIgnoreCase("Forward Tax")) {
+                                rbForwardTax.setChecked(true);
+                            } else if (TaxType.getText().toString().equalsIgnoreCase("Reverse Tax")) {
+                                rbReverseTax.setChecked(true);
+                            }
+
+                            imgItemImage.setImageURI(null);
+                            if (!strImageUri.equalsIgnoreCase("")) { // &&
+                                // strImageUri.contains("\\")){
+                                imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
+                            } else {
+                                imgItemImage.setImageResource(R.drawable.img_noimage);
+                            }
+                            btnAdd.setEnabled(false);
+                            btnEdit.setEnabled(true);
+                        }
+                    }
+                });
+
+                rowItems.setTag("TAG");
+
+                tblItems.addView(rowItems, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                i++;
+            } while (crsrItems.moveToNext());
         } else {
-        imgIcon.setImageResource(R.drawable.img_noimage);
+            Log.d("DisplayItem", "No Item found");
         }
-        rowItems.addView(imgIcon);
+    }
 
-        tvSupplyType = new TextView(myContext);
-        tvSupplyType.setGravity(1);
-        tvSupplyType.setWidth(110);
-        tvSupplyType.setText(crsrItems.getString(crsrItems.getColumnIndex("SupplyType")));
-        rowItems.addView(tvSupplyType);
-
-        tvGSTRate = new TextView(myContext);
-        tvGSTRate.setGravity(1);
-        tvGSTRate.setWidth(110);
-        Float fGSTRate =0.0f;
-        String IGSTRate_str = crsrItems.getString(crsrItems.getColumnIndex("IGSTRate"));
-        if ((IGSTRate_str != null)&&Float.parseFloat(IGSTRate_str) == 0)
-        {
-        String CGSTRate_str = crsrItems.getString(crsrItems.getColumnIndex("CGSTRate"));
-        if((CGSTRate_str!= null )&&(Float.parseFloat(IGSTRate_str)> 0)) {
-        Float fCgst = Float.parseFloat(CGSTRate_str);
-        fGSTRate = 2 * fCgst;
-        }
-        else
-        {
-        fGSTRate = Float.parseFloat(IGSTRate_str);
-        }
-        }
-        else
-        {
-        fGSTRate = Float.parseFloat(IGSTRate_str);
-        }
-        tvGSTRate.setText(fGSTRate.toString());
-        rowItems.addView(tvGSTRate);
-
-        tvRate = new TextView(myContext);
-        tvRate.setGravity(1);
-        tvRate.setWidth(80);
-        tvRate.setText(crsrItems.getString(crsrItems.getColumnIndex("Rate")));
-        rowItems.addView(tvRate);
-
-        tvMOU = new TextView(myContext);
-        tvMOU.setGravity(1);
-        tvMOU.setWidth(110);
-        tvMOU.setText(crsrItems.getString(crsrItems.getColumnIndex("MOU")));
-        rowItems.addView(tvMOU);
-
-        tvHSNCode_out = new TextView(myContext);
-        tvHSNCode_out.setGravity(1);
-        tvHSNCode_out.setWidth(110);
-        tvHSNCode_out.setText(crsrItems.getString(crsrItems.getColumnIndex("HSNCode")));
-        rowItems.addView(tvHSNCode_out);
-
-        // For Space purpose
-        tvSpace = new TextView(myContext);
-        tvSpace.setText("                ");
-        rowItems.addView(tvSpace);
-
-        // Delete
-        int res = getResources().getIdentifier("delete", "drawable", this.getPackageName());
-        btnItemDelete = new ImageButton(myContext);
-        btnItemDelete.setImageResource(res);
-        btnItemDelete.setLayoutParams(new TableRow.LayoutParams(60, 40));
-        //btnItemDelete.setOnClickListener(mListener);
-        rowItems.addView(btnItemDelete);
-
-        // For Space purpose
-        tvSpace = new TextView(myContext);
-        tvSpace.setText("              ");
-        rowItems.addView(tvSpace);
-
-        rowItems.setOnClickListener(new View.OnClickListener() {
-
-public void onClick(View v) {
-        // TODO Auto-generated method stub
-
-        if (String.valueOf(v.getTag()) == "TAG") {
-        TableRow Row = (TableRow) v;
-
-        TextView MenuCode = (TextView) Row.getChildAt(1);
-        TextView LongName = (TextView) Row.getChildAt(2);
-        TextView ShortName = (TextView) Row.getChildAt(3);
-        TextView DineIn1 = (TextView) Row.getChildAt(4);
-        TextView DineIn2 = (TextView) Row.getChildAt(5);
-        TextView DineIn3 = (TextView) Row.getChildAt(6);
-        TextView TakeAway = (TextView) Row.getChildAt(7);
-        TextView PickUp = (TextView) Row.getChildAt(8);
-        TextView Delivery = (TextView) Row.getChildAt(9);
-        TextView Stock = (TextView) Row.getChildAt(10);
-        TextView PriceChange = (TextView) Row.getChildAt(11);
-        TextView DiscountEnable = (TextView) Row.getChildAt(12);
-        TextView BillWithStock = (TextView) Row.getChildAt(13);
-        TextView TaxType = (TextView) Row.getChildAt(14);
-        TextView DeptCode = (TextView) Row.getChildAt(15);
-        TextView CategCode = (TextView) Row.getChildAt(16);
-        TextView KitchenCode = (TextView) Row.getChildAt(17);
-        TextView SalesTaxId = (TextView) Row.getChildAt(18);
-        TextView AdditionalTaxId = (TextView) Row.getChildAt(19);
-        TextView OptionalTaxId1 = (TextView) Row.getChildAt(20);
-        TextView OptionalTaxId2 = (TextView) Row.getChildAt(21);
-        TextView DiscountId = (TextView) Row.getChildAt(22);
-        TextView Barcode = (TextView) Row.getChildAt(23);
-        TextView ImageUri = (TextView) Row.getChildAt(24);
-        TextView SupplyType = (TextView) Row.getChildAt(25);
-        TextView GSTRate = (TextView) Row.getChildAt(26);
-        TextView Rate = (TextView) Row.getChildAt(27);
-        TextView MOU = (TextView) Row.getChildAt(28);
-        TextView HSNCode_out = (TextView) Row.getChildAt(29);
-
-        edtMenuCode.setText(MenuCode.getText().toString());
-        txtLongName.setText(LongName.getText());
-            AutoCompleteItemLongName.setText(LongName.getText());
-        // txtShortName.setText(ShortName.getText());
-        txtBarcode.setText(Barcode.getText());
-        txtDineIn1.setText(DineIn1.getText());
-        txtDineIn2.setText(DineIn2.getText());
-        txtDineIn3.setText(DineIn3.getText());
-        txtStock.setText(Stock.getText());
-        strImageUri = ImageUri.getText().toString();
-
-        // gst
-        etGstTax.setText(GSTRate.getText());
-        etRate.setText(Rate.getText());
-        etHSN.setText(HSNCode_out.getText());
-        spnrG_S.setSelection(Integer.parseInt(SupplyType.getText().toString()));
-        //spnrMOU.
-
-        // gst end
-        Cursor crsrDept = dbItems.getDepartment(Integer.valueOf(DeptCode.getText().toString()));
-        if(crsrDept.moveToFirst()) {
-        String deptName = crsrDept.getString(crsrDept.getColumnIndex("DeptName"));
-        int deptid = getIndexDept(deptName + "");
-        spnrDepartment.setSelection(deptid);
-        } else {
-        String deptName = "Select";
-        int deptid = getIndexDept(deptName + "");
-        spnrDepartment.setSelection(deptid);
-        }
-        //spnrDepartment.setSelection(Integer.parseInt(DeptCode.getText().toString()));
-        Cursor crsrCateg = dbItems.getCategory(Integer.valueOf(CategCode.getText().toString()));
-        if(crsrCateg.moveToFirst()) {
-        String categName = crsrCateg.getString(crsrCateg.getColumnIndex("CategName"));
-        int categid = getIndexCateg(categName + "");
-        spnrCategory.setSelection(categid);
-        } else {
-        String categName = "Select";
-        int categid = getIndexCateg(categName + "");
-        spnrCategory.setSelection(categid);
-        }
-        //spnrCategory.setSelection(Integer.parseInt(CategCode.getText().toString()));
-        spnrKitchen.setSelection(Integer.parseInt(KitchenCode.getText().toString()) - 1);
-        spnrOptionalTax1.setSelection(Integer.parseInt(OptionalTaxId1.getText().toString()) - 1);
-        spnrOptionalTax2.setSelection(Integer.parseInt(OptionalTaxId2.getText().toString()) - 1);
-
-
-        if (PriceChange.getText().toString().equalsIgnoreCase("Yes")) {
-        chkPriceChange.setChecked(true);
-        } else {
-        chkPriceChange.setChecked(false);
-        }
-        if (DiscountEnable.getText().toString().equalsIgnoreCase("Yes")) {
-        chkDiscountEnable.setChecked(true);
-        } else {
-        chkDiscountEnable.setChecked(false);
-        }
-        if (BillWithStock.getText().toString().equalsIgnoreCase("Yes")) {
-        chkBillWithStock.setChecked(true);
-        } else {
-        chkBillWithStock.setChecked(false);
-        }
-
-        if (TaxType.getText().toString().equalsIgnoreCase("Forward Tax")) {
-        rbForwardTax.setChecked(true);
-        } else if (TaxType.getText().toString().equalsIgnoreCase("Reverse Tax")) {
-        rbReverseTax.setChecked(true);
-        }
-
-        imgItemImage.setImageURI(null);
-        if (!strImageUri.equalsIgnoreCase("")) { // &&
-        // strImageUri.contains("\\")){
-        imgItemImage.setImageURI(Uri.fromFile(new File(strImageUri)));
-        } else {
-        imgItemImage.setImageResource(R.drawable.img_noimage);
-        }
-        btnAdd.setEnabled(false);
-        btnEdit.setEnabled(true);
-        }
-        }
-        });
-
-        rowItems.setTag("TAG");
-
-        tblItems.addView(rowItems, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-        i++;
-        } while (crsrItems.moveToNext());
-        } else {
-        Log.d("DisplayItem", "No Item found");
-        }
-        }
-
-@Override
-public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
-        AlertDialog.Builder AuthorizationDialog = new AlertDialog.Builder(myContext);
-        AuthorizationDialog
-        .setTitle("Are you sure you want to exit ?")
-        .setIcon(R.drawable.ic_launcher)
-        .setNegativeButton("No", null)
-        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-public void onClick(DialogInterface dialog, int which) {
+            AlertDialog.Builder AuthorizationDialog = new AlertDialog.Builder(myContext);
+            AuthorizationDialog
+                    .setTitle("Are you sure you want to exit ?")
+                    .setIcon(R.drawable.ic_launcher)
+                    .setNegativeButton("No", null)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
                             /*Intent returnIntent =new Intent();
                             setResult(Activity.RESULT_OK,returnIntent);*/
-        dbItems.CloseDatabase();
-        finish();
-        }
-        })
-        .show();
+                            dbItems.CloseDatabase();
+                            finish();
+                        }
+                    })
+                    .show();
         }
 
         return super.onKeyDown(keyCode, event);
-        }
+    }
 
-@Override
-public void onHomePressed() {
+    @Override
+    public void onHomePressed() {
         ActionBarUtils.navigateHome(this);
-        }
+    }
 
-@Override
-public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_with_delete, menu);
         for (int j = 0; j < menu.size(); j++) {
-        MenuItem item = menu.getItem(j);
-        item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            MenuItem item = menu.getItem(j);
+            item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
         return true;
-        }
+    }
 
 
-@Override
-public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == android.R.id.home)
         {
-        finish();
+            finish();
         }
         else if (id == R.id.action_home)
         {
-        onHomePressed();
+            onHomePressed();
         }
         else if (id == R.id.action_screen_shot)
         {
-        com.wep.common.app.ActionBarUtils.takeScreenshot(this,findViewById(android.R.id.content).getRootView());
+            com.wep.common.app.ActionBarUtils.takeScreenshot(this,findViewById(android.R.id.content).getRootView());
         }
         else if (id == R.id.action_clear)
         {
-        new AlertDialog.Builder(this)
-        .setTitle("Confirmation")
-        .setIcon(R.drawable.ic_launcher)
-        .setMessage("Are you sure to delete all the existing Items?")
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            new AlertDialog.Builder(this)
+                    .setTitle("Confirmation")
+                    .setIcon(R.drawable.ic_launcher)
+                    .setMessage("Are you sure to delete all the existing Items?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-public void onClick(DialogInterface dialog, int whichButton) {
-        //Toast.makeText(myContext, "clear", Toast.LENGTH_SHORT).show();
-        long lResult = dbItems.deleteAllOutwardItem();
-        if(lResult>0)
-        {
-        itemListAdapter.notifyDataSetChanged(dbItems.getAllItem());
-        dataList.clear();
-        ResetItem();
-        Toast.makeText(myContext, "Items Deleted Successfully", Toast.LENGTH_SHORT).show();
-        }
-        }})
-        .setNegativeButton(android.R.string.no, null).show();
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            //Toast.makeText(myContext, "clear", Toast.LENGTH_SHORT).show();
+                            long lResult = dbItems.deleteAllOutwardItem();
+                            if(lResult>0)
+                            {
+                                itemListAdapter.notifyDataSetChanged(dbItems.getAllItem());
+                                dataList.clear();
+                                loadAutoCompleteData_ItemNames();
+                                ResetItem();
+                                Toast.makeText(myContext, "Items Deleted Successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
         }
         return super.onOptionsItemSelected(item);
-        }
+    }
 
-@Override
-public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         txtLongName.clearFocus();
         txtLongName.setCursorVisible(false);
-    AutoCompleteItemLongName.clearFocus();
-    AutoCompleteItemLongName.setCursorVisible(false);
-        }
+        AutoCompleteItemLongName.clearFocus();
+        AutoCompleteItemLongName.setCursorVisible(false);
+    }
 
 
 
-@Override
-public boolean onKeyUp(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         /*char pressedKey = (char) event.getUnicodeChar();
         String Barcode = "" + pressedKey;
         Toast.makeText(getApplicationContext(), "barcode--->>>" + Barcode, Toast.LENGTH_SHORT).show();
@@ -3684,47 +3788,49 @@ public boolean onKeyUp(int keyCode, KeyEvent event) {
         Log.d("TAG",String.valueOf(event));*/
         if (dd<15 && dd >0)
         {
-        View v = getCurrentFocus();
-        System.out.println(v);
-        EditText etbar = (EditText)findViewById(R.id.etItemBarcode);
-        //EditText ed = (WepEditText)findViewById(v.getId());
+            View v = getCurrentFocus();
+            //System.out.println(v);
+            AutoCompleteTextView etbar = (AutoCompleteTextView)findViewById(R.id.AutoCompleteItemBarcode);
+            //EditText ed = (WepEditText)findViewById(v.getId());
 
-        if (v.getId()!= R.id.etItemBarcode)
-        {
+            if (v.getId()!= R.id.AutoCompleteItemBarcode)
+            {
 
-        switch (v.getId())
-        {
-        case R.id.etItemLongName :txtLongName.setText(tx);
-            AutoCompleteItemLongName.setText(tx);
-        break;
-        case R.id.etHSNCode:  etHSN.setText(tx);
-        break;
+                switch (v.getId())
+                {
+                    case R.id.etItemLongName :txtLongName.setText(tx);
+                        AutoCompleteItemLongName.setText(tx);
+                        break;
+                    case R.id.etHSNCode:  etHSN.setText(tx);
+                        break;
 
-        case R.id.etItemDineInPrice1:
-        case R.id.etItemDineInPrice2:
-        case R.id.etItemDineInPrice3:
-        case R.id.etItemStock:
-        case R.id.et_hsn:
-        case R.id.edtMenuCode:
-        case R.id.edtItemCGSTTax:
-        case R.id.edtItemSGSTTax:
-        case R.id.edtIGSTTax:
-        EditText ed = (EditText)findViewById(v.getId());
-        //String ed_str = ed.getText().toString();
-        ed.setText(tx);
-        }
-        String bar_str = etbar.getText().toString();
-        bar_str += (char)event.getUnicodeChar();
-        etbar.setText(bar_str);
+                    case R.id.etItemDineInPrice1:
+                    case R.id.etItemDineInPrice2:
+                    case R.id.etItemDineInPrice3:
+                    case R.id.etItemStock:
+                    case R.id.et_hsn:
+                    case R.id.edtMenuCode:
+                    case R.id.edtItemCGSTTax:
+                    case R.id.edtItemSGSTTax:
+                    case R.id.edtIGSTTax:
+                    case R.id.etItemDiscount:
+                        EditText ed = (EditText)findViewById(v.getId());
+                        //String ed_str = ed.getText().toString();
+                        ed.setText(tx);
+                }
+                String bar_str = etbar.getText().toString();
+                bar_str += (char)event.getUnicodeChar();
+                etbar.setText(bar_str);
+                etbar.showDropDown();
 
-        }
+            }
 
 
         }
         /*Toast.makeText(myContext, "keyUp:"+keyCode+" : "+dd, Toast.LENGTH_SHORT).show();*/
 
         return true;
-        }
+    }
 
 
-        }
+}

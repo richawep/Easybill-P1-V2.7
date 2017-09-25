@@ -268,14 +268,14 @@
                             android:text="Barcode"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                        <EditText
-                            android:id="@+id/etItemBarcode"
+                        <AutoCompleteTextView
+                            android:id="@+id/AutoCompleteItemBarcode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:hint="Item Barcode"
                             android:inputType="text"
-                            android:maxLength="20"
+                            android:drawableRight="@drawable/searchicon_img"
                             android:textSize="13dp" />
                     </LinearLayout>
                     <LinearLayout

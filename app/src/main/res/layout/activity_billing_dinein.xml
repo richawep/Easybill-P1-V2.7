@@ -23,8 +23,7 @@
             android:layout_alignParentTop="true"
             android:minHeight="35dp"
             android:orientation="horizontal"
-            android:padding="5dp"
-            android:weightSum="7">
+            android:padding="5dp">
 
             <EditText
                 android:id="@+id/tvSubUdfValue"
@@ -121,6 +120,21 @@
                 android:gravity="center"
                 android:onClick="MergeTable"
                 android:text="Merge Table"
+                android:textAllCaps="false"
+                android:textSize="@dimen/button_14sp_720dp_12sp_600dp"
+                android:theme="@style/WepButtonWithMarigin" />
+
+            <com.wep.common.app.views.WepButton
+                android:id="@+id/btn_PreviewBill"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/_10dp_720dp_7dp_600dp"
+                android:layout_weight="1"
+                android:background="@drawable/background_btn"
+                android:gravity="center"
+                android:onClick="previewBill"
+                android:text="Preview Bill"
                 android:textAllCaps="false"
                 android:textSize="@dimen/button_14sp_720dp_12sp_600dp"
                 android:theme="@style/WepButtonWithMarigin" />
@@ -1190,7 +1204,7 @@
                     android:background="@drawable/background_btn"
                     android:gravity="center"
                     android:onClick="printKOT"
-                    android:text="Print / Save KOT"
+                    android:text="@string/print_save_kot"
                     android:textAllCaps="false"
                     android:textSize="@dimen/button_14sp_720dp_12sp_600dp"
                     android:theme="@style/WepButtonWithMarigin" />

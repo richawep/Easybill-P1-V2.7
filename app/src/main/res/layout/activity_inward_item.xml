@@ -226,20 +226,27 @@
                             android:text="Item Name*"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
 
-                        <AutoCompleteTextView
-                            android:id="@+id/autocomplete_inw_ItemName"
+                        <ScrollView
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
                             android:layout_gravity="bottom"
                             android:layout_weight="1.5"
-                            android:completionThreshold="1"
-                            android:drawableRight="@drawable/searchicon_img"
                             android:gravity="center"
-                            android:hint="Item Name"
-                            android:inputType="text"
-                            android:maxLength="20"
-                            android:imeOptions="actionNext"
-                            android:textSize="13dp" />
+                            android:layout_height="match_parent">
+                            <AutoCompleteTextView
+                                android:id="@+id/autocomplete_inw_ItemName"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+
+                                android:layout_weight="1.5"
+                                android:completionThreshold="1"
+                                android:drawableRight="@drawable/searchicon_img"
+                                android:gravity="center"
+                                android:hint="Item Name"
+                                android:inputType="text"
+                                android:maxLength="20"
+                                android:imeOptions="actionNext"
+                                android:textSize="13dp" />
+                        </ScrollView>
 
                         <ImageView
                             android:layout_width="match_parent"

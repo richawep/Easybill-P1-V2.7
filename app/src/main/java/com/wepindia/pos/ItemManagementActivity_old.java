@@ -495,7 +495,7 @@ public class ItemManagementActivity_old extends WepBaseActivity  implements  Tex
         EditTextInputHandler etInputValidate = new EditTextInputHandler();
 
         txtLongName = (WepEditText) findViewById(R.id.etItemLongName);
-        txtBarcode = (EditText) findViewById(R.id.etItemBarcode);
+        txtBarcode = (EditText) findViewById(R.id.AutoCompleteItemBarcode);
         txtDineIn1 = (EditText) findViewById(R.id.etItemDineInPrice1);
         etInputValidate.ValidateDecimalInput(txtDineIn1);
         txtDineIn2 = (EditText) findViewById(R.id.etItemDineInPrice2);
@@ -930,7 +930,7 @@ public class ItemManagementActivity_old extends WepBaseActivity  implements  Tex
             dataList.add(item);
         }
         if (itemListAdapter == null) {
-            itemListAdapter = new ItemOutwardAdapter(ItemManagementActivity_old.this, dataList,dbItems);
+            itemListAdapter = new ItemOutwardAdapter(ItemManagementActivity_old.this, dataList,dbItems,null,null);
             listViewItems.setAdapter(itemListAdapter);
         } else {
             itemListAdapter.notifyNewDataAdded(dataList);
@@ -2702,10 +2702,10 @@ public class ItemManagementActivity_old extends WepBaseActivity  implements  Tex
         {
             View v = getCurrentFocus();
             System.out.println(v);
-            EditText etbar = (EditText)findViewById(R.id.etItemBarcode);
+            EditText etbar = (EditText)findViewById(R.id.AutoCompleteItemBarcode);
             //EditText ed = (WepEditText)findViewById(v.getId());
 
-            if (v.getId()!= R.id.etItemBarcode)
+            if (v.getId()!= R.id.AutoCompleteItemBarcode)
             {
 
                 switch (v.getId())

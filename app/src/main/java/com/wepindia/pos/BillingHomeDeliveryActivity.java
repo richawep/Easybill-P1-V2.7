@@ -100,6 +100,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
     DecimalFormat df_2, df_3;
     Pattern p = Pattern.compile("^(-?[0-9]+[\\.\\,][0-9]{1,2})?[0-9]*$");
     int CUSTOMER_FOUND =0;
+    int PRINTOWNERDETAIL = 0, BOLDHEADER = 0, PRINTSERVICE = 0, BILLAMOUNTROUNDOFF = 0;
 
     private final int CHECK_INTEGER_VALUE = 0;
     private final int CHECK_DOUBLE_VALUE = 1;
@@ -326,6 +327,34 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 }else {
                     relative_Interstate.setVisibility(View.VISIBLE);
                 }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintOwnerDetail")) == 1)) { // print owner detail
+                    PRINTOWNERDETAIL = 1;
+                }else
+                {
+                    PRINTOWNERDETAIL = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BoldHeader")) == 1)) { // bold header
+                    BOLDHEADER = 1;
+                }else
+                {
+                    BOLDHEADER = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintService")) == 1)) { // Service Name print
+                    PRINTSERVICE = 1;
+                }else
+                {
+                    PRINTSERVICE = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BillAmountRoundOff")) == 1)) { // Bill Amount Round Off
+                    BILLAMOUNTROUNDOFF = 1;
+                }else
+                {
+                    BILLAMOUNTROUNDOFF = 0;
+                }
             }
             GSTEnable = "1";
             Cursor crssOtherChrg = null;
@@ -345,7 +374,6 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 txtOthercharges.setText(String.format("%.2f", dOtherChrgs));
             }
 
-
             ControlsSetEnabled();
             loadAutoCompleteData();
             loadItems(0);
@@ -354,8 +382,6 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             int iBillNumber = db.getNewBillNumber();
             tvBillNumber.setText(String.valueOf(iBillNumber));
             if(FASTBILLINGMODE !=null) {
-
-
                 if (FASTBILLINGMODE.equalsIgnoreCase("1")) {
                     // setting visibility of buttons
                     boxDept.setVisibility(View.GONE);
@@ -5991,6 +6017,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             intentTender.putExtra("TaxType", taxType);// forward/reverse
             intentTender.putParcelableArrayListExtra("OrderList", orderItemList);
             intentTender.putExtra("USER_NAME", strUserName);
+            intentTender.putExtra("BillAmountRoundOff", BILLAMOUNTROUNDOFF);
             startActivityForResult(intentTender, 1);
         }
     }
@@ -6211,6 +6238,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                 {
                                     REVERSETAX = false;
                                 }
+
 
                             }catch(Exception e)
                             {
@@ -6465,7 +6493,9 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                         strOrderDelivered = data.getBooleanExtra("ORDER_DELIVERED",false);
                         dDiscPercent = data.getFloatExtra("DISCOUNT_PERCENTAGE", 0);
                         fCashPayment = data.getFloatExtra(PayBillActivity.TENDER_CASH_VALUE, 0);
+
                         fCardPayment = data.getFloatExtra(PayBillActivity.TENDER_CARD_VALUE, 0);
+
                         fCouponPayment = data.getFloatExtra(PayBillActivity.TENDER_COUPON_VALUE, 0);
                         fTotalDiscount = 0;
                         fTotalDiscount = data.getFloatExtra(PayBillActivity.DISCOUNT_AMOUNT, 0);
@@ -6660,6 +6690,20 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                     LoadModifyKOTItems(BillItems);
                                     String isPaid = data.getStringExtra("IS_PAID");
                                     if (isPaid != null && !isPaid.equals("YES")) {
+
+
+                                        if (BILLAMOUNTROUNDOFF == 1) {
+                                            String temp = tvBillAmount.getText().toString().trim();
+                                            double finalAmount = Double.parseDouble(tvBillAmount.getText().toString().trim());
+                                            double roundOffFinalAmount = 0;
+
+                                            if (!temp.contains(".00")){
+                                                roundOffFinalAmount = Math.round(finalAmount);
+                                                tvBillAmount.setText(String.valueOf(roundOffFinalAmount));
+                                                fRoundOfValue = Float.parseFloat("0" + temp.substring(temp.indexOf(".")));
+                                            }
+                                        }
+
                                         l(2, isPrintBill);
                                         //                                    if(isPrintBill==true)
                                         //                                    {
@@ -6691,6 +6735,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                         Log.d("BusinessDate Recieved: ", businessDate);
                                         Log.d("BusinessDate: ", String.valueOf(milli));
                                         Cursor cursorBillInfo = db.getBillDetail_counter(Integer.parseInt(strBillNo), String.valueOf(milli));
+                                        System.out.println("Cursor:"+cursorBillInfo.getCount());
                                         if (cursorBillInfo.moveToNext()) {
                                             fRoundOfValue = cursorBillInfo.getString(cursorBillInfo.getColumnIndex("TotalDiscountAmount"))== null?
                                                                 0: Float.parseFloat(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("RoundOff"))));
@@ -7336,6 +7381,19 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 MsgBox.Show("Warning", "Insert item before Print Bill");
                 return;
             } else {
+
+                if (BILLAMOUNTROUNDOFF == 1) {
+                    String temp = tvBillAmount.getText().toString().trim();
+                    double finalAmount = Double.parseDouble(tvBillAmount.getText().toString().trim());
+                    double roundOffFinalAmount = 0;
+
+                    if (!temp.contains(".00")){
+                        roundOffFinalAmount = Math.round(finalAmount);
+                        tvBillAmount.setText(String.valueOf(roundOffFinalAmount));
+                        fRoundOfValue = Float.parseFloat("0" + temp.substring(temp.indexOf(".")));
+                    }
+                }
+
                 l(2, true);
                 PrintNewBill();
                 Toast.makeText(myContext, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
@@ -7385,10 +7443,13 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     ArrayList<BillServiceTaxItem> billcessTaxItems = new ArrayList<BillServiceTaxItem>();
                     ArrayList<BillTaxSlab> billTaxSlabs = new ArrayList<BillTaxSlab>();
 
-
                     billcessTaxItems = cessTaxPrint();
                     //ArrayList<BillSubTaxItem> billSubTaxItems = subtaxPrint();
                     PrintKotBillItem item = new PrintKotBillItem();
+
+                    item.setPrintService(PRINTSERVICE);
+                    item.setBoldHeader(BOLDHEADER);
+                    item.setOwnerDetail(PRINTOWNERDETAIL);
 
                     Cursor crsrCustomer = dbBillScreen.getCustomer(Integer.valueOf(edtCustId.getText().toString()));
                     String CustDetails = "---";
@@ -7555,7 +7616,11 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                     item.setAddressLine3(addres3);
                                 }
                             }
-                            item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+                            item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                            item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                            item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                            item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                            item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
                         } else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
                         }
@@ -7591,8 +7656,16 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                             item.setAddressLine3(tokens[2]);
                             crsrHeaderFooterSetting = db.getBillSettings();
                             if(crsrHeaderFooterSetting.moveToNext()) {
-                                item.setHeaderLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText")));
-                                item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+                                item.setHeaderLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText1")));
+                                item.setHeaderLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText2")));
+                                item.setHeaderLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText3")));
+                                item.setHeaderLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText4")));
+                                item.setHeaderLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText5")));
+                                item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                                item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                                item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                                item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                                item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
                             }
                         } else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
@@ -7691,6 +7764,34 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             }else
             {
                 REVERSETAX = false;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintOwnerDetail")) == 1)) { // print owner detail
+                PRINTOWNERDETAIL = 1;
+            }else
+            {
+                PRINTOWNERDETAIL = 0;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BoldHeader")) == 1)) { // bold header
+                BOLDHEADER = 1;
+            }else
+            {
+                BOLDHEADER = 0;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintService")) == 1)) { // bold header
+                PRINTSERVICE = 1;
+            }else
+            {
+                PRINTSERVICE = 0;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BillAmountRoundOff")) == 1)) { // Bill Amount Round Off
+                BILLAMOUNTROUNDOFF = 1;
+            }else
+            {
+                BILLAMOUNTROUNDOFF = 0;
             }
 
             // Display items in table

@@ -422,7 +422,7 @@ public class CustomerOrdersActivity extends WepBaseActivity{
 
 	private void CalculateTotalAmount(){
 
-        double dBillTotal = 0, dSubTotal = 0, dTaxTotal = 0, dOtherChrgs = 0, dServiceTaxAmt = 0, dTaxAmt = 0, dSerTaxAmt = 0;
+        double dBillTotal = 0, dSubTotal = 0, dcessTotal = 0, dTaxTotal = 0, dOtherChrgs = 0, dServiceTaxAmt = 0, dTaxAmt = 0, dSerTaxAmt = 0;
         float dTaxPercent = 0, dSerTaxPercent = 0;
 
 		if(crsrPendingOrderItems.moveToFirst()){
@@ -434,6 +434,7 @@ public class CustomerOrdersActivity extends WepBaseActivity{
 						(crsrPendingOrderItems.getColumnIndex("ServiceTaxAmount"));
 
                 dSubTotal += crsrPendingOrderItems.getDouble(crsrPendingOrderItems.getColumnIndex("Amount"));
+                dcessTotal += crsrPendingOrderItems.getDouble(crsrPendingOrderItems.getColumnIndex("cessAmount"));
 
 			}while(crsrPendingOrderItems.moveToNext());
             // --------------------------------------
@@ -467,9 +468,9 @@ public class CustomerOrdersActivity extends WepBaseActivity{
 
             if(crsrSettings.getString(crsrSettings.getColumnIndex("Tax")).equalsIgnoreCase("1")) {
                 if (crsrSettings.getString(crsrSettings.getColumnIndex("TaxType")).equalsIgnoreCase("1")) {
-                    dBillTotal = dSubTotal + dTaxTotal + dServiceTaxAmt + dOtherChrgs;
+                    dBillTotal = dSubTotal + dTaxTotal + dServiceTaxAmt + dcessTotal+ dOtherChrgs;
                 } else {
-                    dBillTotal = dSubTotal + dTaxAmt + dSerTaxAmt + dOtherChrgs;
+                    dBillTotal = dSubTotal + dTaxAmt + dSerTaxAmt + dcessTotal +dOtherChrgs;
                 }
             }
             else
@@ -1223,7 +1224,6 @@ public class CustomerOrdersActivity extends WepBaseActivity{
             intentBillScreen.putExtra("IS_PAID", "YES");
         else
             intentBillScreen.putExtra("IS_PAID", "NO");
-
 
 
         if(FUNCTIONCALLED.equalsIgnoreCase("ok"))

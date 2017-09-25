@@ -10,7 +10,11 @@ public class PrintKotBillItem implements Serializable {
 
     private String billNo;
     private String tableNo;
+    private String waiterName;
     private int waiterNo;
+    private int boldHeader;
+    private int ownerDetail;
+    private int printService;
     private String orderBy;
     private String customerName;
     private String date;
@@ -20,8 +24,16 @@ public class PrintKotBillItem implements Serializable {
     private String addressLine1 = "";
     private String addressLine2 = "";
     private String addressLine3 = "";
-    private String HeaderLine = "";
-    private String footerLine = "";
+    private String HeaderLine1 = "";
+    private String HeaderLine2 = "";
+    private String HeaderLine3 = "";
+    private String HeaderLine4 = "";
+    private String HeaderLine5 = "";
+    private String footerLine1 = "";
+    private String footerLine2 = "";
+    private String footerLine3 = "";
+    private String footerLine4 = "";
+    private String footerLine5 = "";
     private ArrayList<BillKotItem> billKotItems;
     private ArrayList<BillTaxItem> billTaxItems;
     private ArrayList<BillServiceTaxItem> billServiceTaxItems;
@@ -50,14 +62,27 @@ public class PrintKotBillItem implements Serializable {
     public PrintKotBillItem() {
     }
 
-    public PrintKotBillItem(String billNo, String tableNo, int waiterNo, String orderBy, String customerName, String date,
-                            String time, double subTotal, double netTotal, String addressLine1, String addressLine2,
-                            String addressLine3, String footerLine,String HeaderLine, ArrayList<BillKotItem> billKotItems, ArrayList<BillTaxItem> billTaxItems,
-                            String BillingMode, String PaymentStatus, String TotalSalesTaxAmount, String TotalServiceTaxAmount,
-                            Float TotalsubTaxPercent,  ArrayList<BillTaxItem> otherCharges, String BillingModeName,float fdiscount, float fdiscountPercentage) {
+    public PrintKotBillItem(String billNo, String tableNo, String waiterName, int waiterNo,
+                            int boldHeader, int ownerDetail, int printService, String orderBy,
+                            String customerName, String date, String time, double subTotal,
+                            double netTotal, String addressLine1, String addressLine2, String addressLine3,
+                            String headerLine1, String headerLine2, String headerLine3, String headerLine4,
+                            String headerLine5, String footerLine1, String footerLine2, String footerLine3,
+                            String footerLine4, String footerLine5, ArrayList<BillKotItem> billKotItems,
+                            ArrayList<BillTaxItem> billTaxItems, ArrayList<BillServiceTaxItem> billServiceTaxItems,
+                            ArrayList<BillServiceTaxItem> billcessTaxItems, ArrayList<BillSubTaxItem> billSubTaxItems,
+                            ArrayList<BillTaxSlab> billTaxSlabs, ArrayList<BillTaxItem> billOtherChargesItems,
+                            String strBillingModeName, String strBillingMode, String strPaymentStatus, String strTotalSalesTaxAmount,
+                            String strTotalServiceTaxAmount, float fTotalsubTaxPercent, float fdiscount,
+                            float fdiscountPercentage, String isInterState, String isDuplicate, int UTGSTEnabled,
+                            int HSNPrintEnabled_out, float roundOff) {
         this.billNo = billNo;
         this.tableNo = tableNo;
+        this.waiterName = waiterName;
         this.waiterNo = waiterNo;
+        this.boldHeader = boldHeader;
+        this.ownerDetail = ownerDetail;
+        this.printService = printService;
         this.orderBy = orderBy;
         this.customerName = customerName;
         this.date = date;
@@ -67,21 +92,148 @@ public class PrintKotBillItem implements Serializable {
         this.addressLine1 = addressLine1;
         this.addressLine2 = addressLine2;
         this.addressLine3 = addressLine3;
-        this.footerLine = footerLine;
-        this.HeaderLine = HeaderLine;
+        HeaderLine1 = headerLine1;
+        HeaderLine2 = headerLine2;
+        HeaderLine3 = headerLine3;
+        HeaderLine4 = headerLine4;
+        HeaderLine5 = headerLine5;
+        this.footerLine1 = footerLine1;
+        this.footerLine2 = footerLine2;
+        this.footerLine3 = footerLine3;
+        this.footerLine4 = footerLine4;
+        this.footerLine5 = footerLine5;
         this.billKotItems = billKotItems;
         this.billTaxItems = billTaxItems;
-
-        this.strBillingMode = BillingMode;
-        this.strPaymentStatus = PaymentStatus;
-
-        this.strTotalSalesTaxAmount = TotalSalesTaxAmount;
-        this.strTotalServiceTaxAmount = TotalServiceTaxAmount;
-        this.fTotalsubTaxPercent = TotalsubTaxPercent;
+        this.billServiceTaxItems = billServiceTaxItems;
+        this.billcessTaxItems = billcessTaxItems;
+        this.billSubTaxItems = billSubTaxItems;
+        this.billTaxSlabs = billTaxSlabs;
+        this.billOtherChargesItems = billOtherChargesItems;
+        this.strBillingModeName = strBillingModeName;
+        this.strBillingMode = strBillingMode;
+        this.strPaymentStatus = strPaymentStatus;
+        this.strTotalSalesTaxAmount = strTotalSalesTaxAmount;
+        this.strTotalServiceTaxAmount = strTotalServiceTaxAmount;
+        this.fTotalsubTaxPercent = fTotalsubTaxPercent;
         this.fdiscount = fdiscount;
         this.fdiscountPercentage = fdiscountPercentage;
-        this.billOtherChargesItems = otherCharges;
-        this.strBillingModeName = BillingModeName;
+        this.isInterState = isInterState;
+        this.isDuplicate = isDuplicate;
+        this.UTGSTEnabled = UTGSTEnabled;
+        this.HSNPrintEnabled_out = HSNPrintEnabled_out;
+        this.roundOff = roundOff;
+    }
+
+    public String getWaiterName() {
+        return waiterName;
+    }
+
+    public void setWaiterName(String waiterName) {
+        this.waiterName = waiterName;
+    }
+
+    public String getHeaderLine1() {
+        return HeaderLine1;
+    }
+
+    public void setHeaderLine1(String headerLine1) {
+        HeaderLine1 = headerLine1;
+    }
+
+    public String getHeaderLine2() {
+        return HeaderLine2;
+    }
+
+    public void setHeaderLine2(String headerLine2) {
+        HeaderLine2 = headerLine2;
+    }
+
+    public String getHeaderLine3() {
+        return HeaderLine3;
+    }
+
+    public void setHeaderLine3(String headerLine3) {
+        HeaderLine3 = headerLine3;
+    }
+
+    public String getHeaderLine4() {
+        return HeaderLine4;
+    }
+
+    public void setHeaderLine4(String headerLine4) {
+        HeaderLine4 = headerLine4;
+    }
+
+    public String getHeaderLine5() {
+        return HeaderLine5;
+    }
+
+    public void setHeaderLine5(String headerLine5) {
+        HeaderLine5 = headerLine5;
+    }
+
+    public String getFooterLine1() {
+        return footerLine1;
+    }
+
+    public void setFooterLine1(String footerLine1) {
+        this.footerLine1 = footerLine1;
+    }
+
+    public String getFooterLine2() {
+        return footerLine2;
+    }
+
+    public void setFooterLine2(String footerLine2) {
+        this.footerLine2 = footerLine2;
+    }
+
+    public String getFooterLine3() {
+        return footerLine3;
+    }
+
+    public void setFooterLine3(String footerLine3) {
+        this.footerLine3 = footerLine3;
+    }
+
+    public String getFooterLine4() {
+        return footerLine4;
+    }
+
+    public void setFooterLine4(String footerLine4) {
+        this.footerLine4 = footerLine4;
+    }
+
+    public String getFooterLine5() {
+        return footerLine5;
+    }
+
+    public void setFooterLine5(String footerLine5) {
+        this.footerLine5 = footerLine5;
+    }
+
+    public int getBoldHeader() {
+        return boldHeader;
+    }
+
+    public void setBoldHeader(int boldHeader) {
+        this.boldHeader = boldHeader;
+    }
+
+    public int getOwnerDetail() {
+        return ownerDetail;
+    }
+
+    public void setOwnerDetail(int ownerDetail) {
+        this.ownerDetail = ownerDetail;
+    }
+
+    public int getPrintService() {
+        return printService;
+    }
+
+    public void setPrintService(int printService) {
+        this.printService = printService;
     }
 
     public ArrayList<BillTaxSlab> getBillTaxSlabs() {
@@ -292,19 +444,7 @@ public class PrintKotBillItem implements Serializable {
         this.addressLine3 = addressLine3;
     }
 
-    public String getFooterLine() {
-        return footerLine;
-    }
 
-    public void setFooterLine(String footerLine) {
-        this.footerLine = footerLine;
-    }
-
-    public String getHeaderLine() { return HeaderLine; }
-
-    public void setHeaderLine(String HeaderLine) {
-        this.HeaderLine = HeaderLine;
-    }
 
     public ArrayList<BillKotItem> getBillKotItems() {
         return billKotItems;

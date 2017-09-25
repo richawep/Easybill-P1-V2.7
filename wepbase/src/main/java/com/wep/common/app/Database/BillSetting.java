@@ -23,6 +23,7 @@ public class BillSetting {
 			strDineIn3Caption;
 	int iDineIn1From, iDineIn1To, iDineIn2From, iDineIn2To, iDineIn3From, iDineIn3To;
 	int iKOTType, iPrintKOT, iMaxTables, iMaxWaiter, iPOSNumber, iServiceTaxType, iWeighScale;
+	int billAmountRounfOff;
 	float fServiceTaxpercent;
 
 	String DineInCaption, CounterSalesCaption, TakeAwayCaption, HomeDeliveryCaption;
@@ -34,6 +35,7 @@ public class BillSetting {
 	int fastBillingMode, iItemNoReset, iPrintPreview;
 	int CummulativeHeadingEnable ; // richa_2012
 	int iTableSpliting;
+	int PrintOwnerDetail, BoldHeader, PrintService;
 	int GSTIN, GSTIN_out, POS, POS_out, HSNCode, HSNCode_out, ReverseCharge, ReverseCharge_out;
     int UTGSTEnabled_out , Environment, HSNPrintenabled_out;
 	// Default constructor
@@ -106,79 +108,126 @@ public class BillSetting {
 		this.iItemNoReset = 0;
 		this.iPrintPreview = 0;
 		this.iTableSpliting = 0;
+
+		this.billAmountRounfOff = 0;
 	}
 
 	// Parameterized constructor
-	public BillSetting(String BusinessDate, String HeaderText, String FooterText, String SubUdfText, String TIN,
-			int DineIn1From, int DineIn1To, int DineIn2From, int DineIn2To, int DineIn3From, int DineIn3To,
-			int WeighScale, int KOTType, int PrintKOT, int MaxTable, int MaxWaiter, int POSNumber, int ServiceTaxType,
-			float ServiceTaxPercent, String DineIn1Caption, String DineIn2Caption, String DineIn3Caption,
-			int LoginWith, int DateAndtime, int PriceChange, int BillwithStock, int BillwithoutStock, int Tax,
-			int TaxType, int KOT, int Token, int Kitchen, int OtherChargesItemwise, int OtherChargesBillwise,
-			int Peripherals, int RestoreDefault, int DineIn, int CounterSales, int PickUp, int HomeDelivery, int GSTIN, int POS,
-			int HSNCode, int ReverseCharge , int GSTIN_out, int POS_out, int HSNCode_out, int ReverseCharge_out, int GSTEnable,
-			int fastBillingMode, int ItemoNoReset, int PrintPreview, int TableSpliting) {
 
-		this.strBusinessDate = BusinessDate;
-		this.strHeaderText = HeaderText;
-		this.strFooterText = FooterText;
-		this.strSubUdfText = SubUdfText;
-		this.strTIN = TIN;
-		this.iDineIn1From = DineIn1From;
-		this.iDineIn1To = DineIn1To;
-		this.iDineIn2From = DineIn2From;
-		this.iDineIn2To = DineIn2To;
-		this.iDineIn3From = DineIn3From;
-		this.iDineIn3To = DineIn3To;
-		this.iKOTType = KOTType;
-		this.iPrintKOT = PrintKOT;
-		this.iMaxTables = MaxTable;
-		this.iMaxWaiter = MaxWaiter;
-		this.iPOSNumber = POSNumber;
-		this.iServiceTaxType = ServiceTaxType;
-		this.fServiceTaxpercent = ServiceTaxPercent;
-		this.iWeighScale = WeighScale;
-		this.strDineIn1Caption = DineIn1Caption;
-		this.strDineIn2Caption = DineIn2Caption;
-		this.strDineIn3Caption = DineIn3Caption;
 
-		this.iLoginWith = LoginWith;
-		this.iDateAndTime = DateAndtime;
-		this.iPriceChange = PriceChange;
-		this.iBillwithStock = BillwithStock;
-		this.iBillwithoutStock = BillwithoutStock;
-		this.iTax = Tax;
-		this.iTaxType = TaxType;
-		this.fastBillingMode = fastBillingMode;
-		this.iKOT = KOT;
-		this.iToken = Token;
-		this.iKitchen = Kitchen;
-		this.iOtherChargesItemwise = OtherChargesItemwise;
-		this.iOtherChargesBillwise = OtherChargesBillwise;
-		this.iPeripherals = Peripherals;
-		this.iRestoreDefault = RestoreDefault;
-
-		this.idinein = DineIn;
-		this.icountersales = CounterSales;
-		this.ipickup = PickUp;
-		this.ihomedelivery = HomeDelivery;
-
-        this.iItemNoReset = ItemoNoReset;
-        this.iPrintPreview = PrintPreview;
-		this.iTableSpliting = TableSpliting;
-
-		// GST
-
-		this.GSTIN = GSTIN;
-		this.POS  = POS;
-		this.HSNCode = HSNCode;
-		this.ReverseCharge = ReverseCharge;
-
-		this.GSTIN_out = GSTIN_out;
-		this.POS_out = POS_out;
-		this.HSNCode_out = HSNCode_out;
-		this.ReverseCharge_out = ReverseCharge_out;
+	public BillSetting(String strBusinessDate, String strHeaderText, String strFooterText,
+					   String strSubUdfText, String strTIN, String strDineIn1Caption,
+					   String strDineIn2Caption, String strDineIn3Caption, int iDineIn1From,
+					   int iDineIn1To, int iDineIn2From, int iDineIn2To, int iDineIn3From,
+					   int iDineIn3To, int iKOTType, int iPrintKOT, int iMaxTables, int iMaxWaiter,
+					   int iPOSNumber, int iServiceTaxType, int iWeighScale, int billAmountRounfOff,
+					   float fServiceTaxpercent, String dineInCaption, String counterSalesCaption,
+					   String takeAwayCaption, String homeDeliveryCaption, int iLoginWith, int iPeripherals,
+					   int iDateAndTime, int iPriceChange, int iBillwithStock, int iBillwithoutStock, int iTax,
+					   int iTaxType, int iKOT, int iToken, int iKitchen, int iDiscountType, int iOtherChargesItemwise,
+					   int iOtherChargesBillwise, int iRestoreDefault, int idinein, int icountersales, int ipickup,
+					   int ihomedelivery, int GSTEnable, int fastBillingMode, int iItemNoReset, int iPrintPreview,
+					   int cummulativeHeadingEnable, int iTableSpliting, int printOwnerDetail, int boldHeader,
+					   int printService, int GSTIN, int GSTIN_out, int POS, int POS_out, int HSNCode, int HSNCode_out,
+					   int reverseCharge, int reverseCharge_out, int UTGSTEnabled_out, int environment, int HSNPrintenabled_out) {
+		this.strBusinessDate = strBusinessDate;
+		this.strHeaderText = strHeaderText;
+		this.strFooterText = strFooterText;
+		this.strSubUdfText = strSubUdfText;
+		this.strTIN = strTIN;
+		this.strDineIn1Caption = strDineIn1Caption;
+		this.strDineIn2Caption = strDineIn2Caption;
+		this.strDineIn3Caption = strDineIn3Caption;
+		this.iDineIn1From = iDineIn1From;
+		this.iDineIn1To = iDineIn1To;
+		this.iDineIn2From = iDineIn2From;
+		this.iDineIn2To = iDineIn2To;
+		this.iDineIn3From = iDineIn3From;
+		this.iDineIn3To = iDineIn3To;
+		this.iKOTType = iKOTType;
+		this.iPrintKOT = iPrintKOT;
+		this.iMaxTables = iMaxTables;
+		this.iMaxWaiter = iMaxWaiter;
+		this.iPOSNumber = iPOSNumber;
+		this.iServiceTaxType = iServiceTaxType;
+		this.iWeighScale = iWeighScale;
+		this.billAmountRounfOff = billAmountRounfOff;
+		this.fServiceTaxpercent = fServiceTaxpercent;
+		DineInCaption = dineInCaption;
+		CounterSalesCaption = counterSalesCaption;
+		TakeAwayCaption = takeAwayCaption;
+		HomeDeliveryCaption = homeDeliveryCaption;
+		this.iLoginWith = iLoginWith;
+		this.iPeripherals = iPeripherals;
+		this.iDateAndTime = iDateAndTime;
+		this.iPriceChange = iPriceChange;
+		this.iBillwithStock = iBillwithStock;
+		this.iBillwithoutStock = iBillwithoutStock;
+		this.iTax = iTax;
+		this.iTaxType = iTaxType;
+		this.iKOT = iKOT;
+		this.iToken = iToken;
+		this.iKitchen = iKitchen;
+		this.iDiscountType = iDiscountType;
+		this.iOtherChargesItemwise = iOtherChargesItemwise;
+		this.iOtherChargesBillwise = iOtherChargesBillwise;
+		this.iRestoreDefault = iRestoreDefault;
+		this.idinein = idinein;
+		this.icountersales = icountersales;
+		this.ipickup = ipickup;
+		this.ihomedelivery = ihomedelivery;
 		this.GSTEnable = GSTEnable;
+		this.fastBillingMode = fastBillingMode;
+		this.iItemNoReset = iItemNoReset;
+		this.iPrintPreview = iPrintPreview;
+		CummulativeHeadingEnable = cummulativeHeadingEnable;
+		this.iTableSpliting = iTableSpliting;
+		PrintOwnerDetail = printOwnerDetail;
+		BoldHeader = boldHeader;
+		PrintService = printService;
+		this.GSTIN = GSTIN;
+		this.GSTIN_out = GSTIN_out;
+		this.POS = POS;
+		this.POS_out = POS_out;
+		this.HSNCode = HSNCode;
+		this.HSNCode_out = HSNCode_out;
+		ReverseCharge = reverseCharge;
+		ReverseCharge_out = reverseCharge_out;
+		this.UTGSTEnabled_out = UTGSTEnabled_out;
+		Environment = environment;
+		this.HSNPrintenabled_out = HSNPrintenabled_out;
+	}
+
+	public int getBillAmountRounfOff() {
+		return billAmountRounfOff;
+	}
+
+	public void setBillAmountRounfOff(int billAmountRounfOff) {
+		this.billAmountRounfOff = billAmountRounfOff;
+	}
+
+	public int getPrintOwnerDetail() {
+		return PrintOwnerDetail;
+	}
+
+	public void setPrintOwnerDetail(int printOwnerDetail) {
+		PrintOwnerDetail = printOwnerDetail;
+	}
+
+	public int getBoldHeader() {
+		return BoldHeader;
+	}
+
+	public void setBoldHeader(int boldHeader) {
+		BoldHeader = boldHeader;
+	}
+
+	public int getPrintService() {
+		return PrintService;
+	}
+
+	public void setPrintService(int printService) {
+		PrintService = printService;
 	}
 
 	public int getTableSpliting() {

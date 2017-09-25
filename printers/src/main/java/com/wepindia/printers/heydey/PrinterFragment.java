@@ -676,7 +676,16 @@ public class PrinterFragment extends Activity implements View.OnClickListener {
         esc.addText("======================================"+"\n");
         esc.addSelectJustification(EscCommand.JUSTIFICATION.CENTER);
         esc.addText(getSpaceFormat("Net Total",String.valueOf(item.getNetTotal()),36)+"\n");
-        esc.addText(item.getFooterLine()+"\n");
+        if (!item.getFooterLine1().equals(""))
+            esc.addText(item.getFooterLine1()+"\n");
+        if (!item.getFooterLine2().equals(""))
+            esc.addText(item.getFooterLine2()+"\n");
+        if (!item.getFooterLine3().equals(""))
+            esc.addText(item.getFooterLine3()+"\n");
+        if (!item.getFooterLine4().equals(""))
+            esc.addText(item.getFooterLine4()+"\n");
+        if (!item.getFooterLine5().equals(""))
+            esc.addText(item.getFooterLine5()+"\n");
         esc.addText("=============================================\n");
         esc.addPrintAndFeedLines((byte)3);
 

@@ -102,6 +102,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
     int CUSTOMER_FOUND =0;
     DecimalFormat df_2, df_3;
     Pattern p = Pattern.compile("^(-?[0-9]+[\\.\\,][0-9]{1,2})?[0-9]*$");
+    int PRINTOWNERDETAIL = 0, BOLDHEADER = 0, PRINTSERVICE = 0, BILLAMOUNTROUNDOFF = 0;
 
     private static final String TAG = BillingDineInActivity.class.getSimpleName();
     private DatabaseHandler db;
@@ -117,7 +118,9 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
     TableLayout tblOrderItems;
     TextView tvSalesTax, tvServiceTax;
-    WepButton  btnShiftTable, btnMergeTable, btn_ReprintKOT,btnModifier, btnSaveKOT, btnPayBill, btnLoadKOT, btnDeleteKOT,btnDeleteBill, btnKOTStatus, btnPrintKOT, btnPrintBill, btnClear, btnReprint;
+    WepButton  btnShiftTable, btnMergeTable, btn_ReprintKOT,btnModifier,
+            btnSaveKOT, btnPayBill, btnLoadKOT, btnDeleteKOT,btnDeleteBill,
+            btnKOTStatus, btnPrintKOT, btnPrintBill, btnClear, btnReprint, btnPreviewBill;
     TextView tvDate, tvSubTotal,  tvIGSTValue, tvTaxTotal, tvServiceTaxTotal, tvBillAmount, tvSubUdfValue, txtOthercharges,  tvDiscountAmount , tvDiscountPercentage;
     TextView tvWaiterName, tVLabelTableNo, tVLabelWaiterNo, tVLabelOrderNo, etCustGSTIN;
     EditText edtCustId, edtCustName, edtCustPhoneNo, edtCustAddress, edtCustDineInPhoneNo;
@@ -299,6 +302,34 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     relative_Interstate.setVisibility(View.VISIBLE);
                 }
                 GSTEnable = "1";
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintOwnerDetail")) == 1)) { // print owner detail
+                    PRINTOWNERDETAIL = 1;
+                }else
+                {
+                    PRINTOWNERDETAIL = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BoldHeader")) == 1)) { // bold header
+                    BOLDHEADER = 1;
+                }else
+                {
+                    BOLDHEADER = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintService")) == 1)) { // bold header
+                    PRINTSERVICE = 1;
+                }else
+                {
+                    PRINTSERVICE = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BillAmountRoundOff")) == 1)) { // Bill Amount Round Off
+                    BILLAMOUNTROUNDOFF = 1;
+                }else
+                {
+                    BILLAMOUNTROUNDOFF = 0;
+                }
 
             }
 
@@ -881,6 +912,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
         btnPayBill = (WepButton) findViewById(R.id.btn_PayBill);
         btnShiftTable = (WepButton) findViewById(R.id.btn_ShiftTable);
         btnMergeTable = (WepButton) findViewById(R.id.btn_MergeTable);
+        btnPreviewBill = (WepButton) findViewById(R.id.btn_PreviewBill);
         btnModifier = (WepButton) findViewById(R.id.btn_Modifier);
         btn_ReprintKOT = (WepButton) findViewById(R.id.btn_ReprintKOT);
         btnSaveKOT = (WepButton) findViewById(R.id.btn_SaveKOT);
@@ -929,6 +961,12 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             @Override
             public void onClick(View v) {
                 MergeTable(v);
+            }
+        });
+        btnPreviewBill.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                previewBill(v);
             }
         });
         btnSaveKOT.setOnClickListener(new View.OnClickListener() {
@@ -2901,6 +2939,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 //        Log.d("Richa_clear :- ", String.valueOf(dbBillScreen.getNewBillNumber()));
 //        Log.d("Richa_clear :- ", tvBillNumber.getText().toString());
         btnPrintBill.setEnabled(false);
+        btnPreviewBill.setEnabled(false);
         btnPrintKOT.setEnabled(false);
         // By default load 1st department items to grid
         //GetItemDetails(1);
@@ -3570,6 +3609,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                 REPRINT_KOT =0;
 
                 CalculateTotalAmount();
+                btnPreviewBill.setEnabled(true);
                 Log.d("LoadKOTItems", "Items loaded successfully");
             } else {
                 Log.d("LoadKOTItems", "No rows in cursor");
@@ -4906,6 +4946,390 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
     }
 
     /*************************************************************************************************************************************
+     * Insert each bill item to preview bill items database table
+     *************************************************************************************************************************************/
+    private void InsertPreviewBillItems() {
+
+        // Inserted Row Id in database table
+        long lResult = 0;
+
+        // Bill item object
+        BillItem objBillItem;
+
+        // Reset TotalItems count
+        iTotalItems = 0;
+
+        Cursor crsrUpdateItemStock = null;
+
+        for (int iRow = 0; iRow < tblOrderItems.getChildCount(); iRow++) {
+            objBillItem = new BillItem();
+
+            TableRow RowBillItem = (TableRow) tblOrderItems.getChildAt(iRow);
+
+            // Increment Total item count if row is not empty
+            if (RowBillItem.getChildCount() > 0) {
+                iTotalItems++;
+            }
+
+            // Bill Number
+            objBillItem.setBillNumber(tvBillNumber.getText().toString());
+            Log.d("InsertBillItems_Preview", "InvoiceNo:" + tvBillNumber.getText().toString());
+
+            objBillItem.setBillStatus(1);
+            Log.d("InsertBillItems_Preview", "Bill Status:1");
+
+            // richa_2012
+            //BillingMode
+            objBillItem.setBillingMode(String.valueOf(jBillingMode));
+            Log.d("InsertBillItems_Preview", "Billing Mode :" + String.valueOf(jBillingMode));
+
+            // Item Number
+            if (RowBillItem.getChildAt(0) != null) {
+                CheckBox ItemNumber = (CheckBox) RowBillItem.getChildAt(0);
+                objBillItem.setItemNumber(Integer.parseInt(ItemNumber.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Item Number:" + ItemNumber.getText().toString());
+
+                crsrUpdateItemStock = dbBillScreen.getItem(Integer.parseInt(ItemNumber.getText().toString()));
+            }
+
+            // Item Name
+            if (RowBillItem.getChildAt(1) != null) {
+                TextView ItemName = (TextView) RowBillItem.getChildAt(1);
+                objBillItem.setItemName(ItemName.getText().toString());
+                Log.d("InsertBillItems_Preview", "Item Name:" + ItemName.getText().toString());
+            }
+
+            if (RowBillItem.getChildAt(2) != null) {
+                TextView HSN = (TextView) RowBillItem.getChildAt(2);
+                objBillItem.setHSNCode(HSN.getText().toString());
+                Log.d("InsertBillItems_Preview", "Item HSN:" + HSN.getText().toString());
+            }
+
+            // Quantity
+            double qty_d = 0.00;
+            if (RowBillItem.getChildAt(3) != null) {
+                EditText Quantity = (EditText) RowBillItem.getChildAt(3);
+                String qty_str = Quantity.getText().toString();
+                if(qty_str==null || qty_str.equals(""))
+                {
+                    Quantity.setText("0.00");
+                }else
+                {
+                    qty_d = Double.parseDouble(qty_str);
+                }
+
+                objBillItem.setQuantity(Float.parseFloat(String.format("%.2f",qty_d)));
+                Log.d("InsertBillItems_Preview", "Quantity:" + Quantity.getText().toString());
+
+                if (crsrUpdateItemStock!=null && crsrUpdateItemStock.moveToFirst()) {
+                    // Check if item's bill with stock enabled update the stock
+                    // quantity
+                    Cursor billsettingCursor = dbBillScreen.getBillSetting();
+                    if(billsettingCursor!= null && billsettingCursor.moveToFirst())
+                    {
+                        //String i = billsettingCursor.getString(billsettingCursor.getColumnIndex("BillwithStock"));
+                        if (billsettingCursor.getInt(billsettingCursor.getColumnIndex("BillwithStock")) == 1) {
+                            UpdateItemStock(crsrUpdateItemStock, Float.parseFloat(Quantity.getText().toString()));
+                        }
+                    }
+
+                }
+            }
+
+
+            // Rate
+            double rate_d = 0.00;
+            if (RowBillItem.getChildAt(4) != null) {
+                EditText Rate = (EditText) RowBillItem.getChildAt(4);
+                String rate_str = Rate.getText().toString();
+                if((rate_str==null || rate_str.equals("")))
+                {
+                    Rate.setText("0.00");
+                }else
+                {
+                    rate_d = Double.parseDouble(rate_str);
+                }
+
+                objBillItem.setValue(Float.parseFloat(String.format("%.2f",rate_d)));
+                Log.d("InsertBillItems_Preview", "Rate:" + Rate.getText().toString());
+            }
+            // oRIGINAL rate in case of reverse tax
+            if (RowBillItem.getChildAt(27) != null) {
+                TextView originalRate = (TextView) RowBillItem.getChildAt(27);
+                objBillItem.setOriginalRate(Double.parseDouble(originalRate.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Original Rate  :" + objBillItem.getOriginalRate());
+            }
+            if (RowBillItem.getChildAt(28) != null) {
+                TextView TaxableValue = (TextView) RowBillItem.getChildAt(28);
+                objBillItem.setTaxableValue(Double.parseDouble(TaxableValue.getText().toString()));
+                Log.d("InsertBillItems_Preview", "TaxableValue  :" + objBillItem.getTaxableValue());
+            }
+
+            // Amount
+            if (RowBillItem.getChildAt(5) != null) {
+                TextView Amount = (TextView) RowBillItem.getChildAt(5);
+                objBillItem.setAmount(Double.parseDouble(Amount.getText().toString()));
+                String reverseTax = "";
+                if (!(crsrSettings.getInt(crsrSettings.getColumnIndex("Tax")) == 1)) { // forward tax
+                    reverseTax = " (Reverse Tax)";
+                    objBillItem.setIsReverTaxEnabled("YES");
+                }else
+                {
+                    objBillItem.setIsReverTaxEnabled("NO");
+                }
+                Log.d("InsertBillItems_Preview", "Amount :" + objBillItem.getAmount()+reverseTax);
+            }
+
+
+
+
+            // Service Tax Percent
+            float sgatTax = 0;
+            if (RowBillItem.getChildAt(15) != null) {
+                TextView ServiceTaxPercent = (TextView) RowBillItem.getChildAt(15);
+                sgatTax = Float.parseFloat(ServiceTaxPercent.getText().toString());
+                if (chk_interstate.isChecked()) {
+                    objBillItem.setSGSTRate(0.00f);
+                    Log.d("InsertBillItems_Preview", "SGST Tax %: 0");
+
+                } else {
+                    objBillItem.setSGSTRate(Float.parseFloat(ServiceTaxPercent.getText().toString()));
+                    Log.d("InsertBillItems_Preview", "SGST Tax %: " + objBillItem.getSGSTRate());
+                }
+            }
+
+            // Service Tax Amount
+            float sgstAmt = 0;
+            if (RowBillItem.getChildAt(16) != null) {
+                TextView ServiceTaxAmount = (TextView) RowBillItem.getChildAt(16);
+                sgstAmt = Float.parseFloat(ServiceTaxAmount.getText().toString());
+                if (chk_interstate.isChecked()) {
+                    objBillItem.setSGSTAmount(0.00f);
+                    Log.d("InsertBillItems_Preview", "SGST Amount : 0" );
+
+                } else {
+                    objBillItem.setSGSTAmount(Float.parseFloat(String.format("%.2f",
+                            Float.parseFloat(ServiceTaxAmount.getText().toString()))));
+                    Log.d("InsertBillItems_Preview", "SGST Amount : " + objBillItem.getSGSTAmount());
+                }
+            }
+
+            // Sales Tax %
+            if (RowBillItem.getChildAt(6) != null) {
+                TextView SalesTaxPercent = (TextView) RowBillItem.getChildAt(6);
+                float cgsttax = (Float.parseFloat(SalesTaxPercent.getText().toString()));
+                if (chk_interstate.isChecked()) {
+                    //objBillItem.setIGSTRate(Float.parseFloat(String.format("%.2f", cgsttax + sgatTax)));
+                    //Log.d("InsertBillItems", " IGST Tax %: " + objBillItem.getIGSTRate());
+                    objBillItem.setCGSTRate(0.00f);
+                    Log.d("InsertBillItems_Preview", " CGST Tax %: 0.00");
+                }else{
+                    // objBillItem.setIGSTRate(0.00f);
+                    // Log.d("InsertBillItems_Preview", " IGST Tax %: 0.00");
+                    objBillItem.setCGSTRate(Float.parseFloat(String.format("%.2f",Float.parseFloat(SalesTaxPercent.getText().toString()))));
+                    Log.d("InsertBillItems_Preview", " CGST Tax %: " + SalesTaxPercent.getText().toString());
+                }
+            }
+            // Sales Tax Amount
+            if (RowBillItem.getChildAt(7) != null) {
+                TextView SalesTaxAmount = (TextView) RowBillItem.getChildAt(7);
+                float cgstAmt = (Float.parseFloat(SalesTaxAmount.getText().toString()));
+                if (chk_interstate.isChecked()) {
+                    //objBillItem.setIGSTAmount(Float.parseFloat(String.format("%.2f",cgstAmt+sgstAmt)));
+                    //Log.d("InsertBillItems_Preview", "IGST Amt: " + objBillItem.getIGSTAmount());
+                    objBillItem.setCGSTAmount(0.00f);
+                    Log.d("InsertBillItems_Preview", "CGST Amt: 0");
+                } else {
+                    // objBillItem.setIGSTAmount(0.00f);
+                    //Log.d("InsertBillItems_Preview", "IGST Amt: 0");
+                    objBillItem.setCGSTAmount(Float.parseFloat(String.format("%.2f",
+                            Float.parseFloat(SalesTaxAmount.getText().toString()))));
+                    Log.d("InsertBillItems_Preview", "CGST Amt: " + SalesTaxAmount.getText().toString());
+                }
+            }
+
+            // IGST Tax %
+            if (RowBillItem.getChildAt(23) != null) {
+                TextView IGSTTaxPercent = (TextView) RowBillItem.getChildAt(23);
+                float igsttax = (Float.parseFloat(IGSTTaxPercent.getText().toString()));
+                if (chk_interstate.isChecked()) {
+                    objBillItem.setIGSTRate(Float.parseFloat(String.format("%.2f", igsttax)));
+                    Log.d("InsertBillItems_Preview", " IGST Tax %: " + objBillItem.getIGSTRate());
+                }else{
+                    objBillItem.setIGSTRate(0.00f);
+                    Log.d("InsertBillItems_Preview", " IGST Tax %: 0.00");
+                }
+            }
+            // IGST Tax Amount
+            if (RowBillItem.getChildAt(24) != null) {
+                TextView IGSTTaxAmount = (TextView) RowBillItem.getChildAt(24);
+                float igstAmt = (Float.parseFloat(IGSTTaxAmount.getText().toString()));
+                if (chk_interstate.isChecked()) {
+                    objBillItem.setIGSTAmount(Float.parseFloat(String.format("%.2f",igstAmt)));
+                    Log.d("InsertBillItems_Preview", "IGST Amt: " + objBillItem.getIGSTAmount());
+                } else {
+                    objBillItem.setIGSTAmount(0.00f);
+                    Log.d("InsertBillItems_Preview", "IGST Amt: 0");
+                }
+            }
+
+            // cess Tax %
+            if (RowBillItem.getChildAt(25) != null) {
+                TextView cessTaxPercent = (TextView) RowBillItem.getChildAt(25);
+                float cesstax = (Float.parseFloat(cessTaxPercent.getText().toString()));
+                objBillItem.setCessRate(Float.parseFloat(String.format("%.2f", cesstax)));
+                Log.d("InsertBillItems_Preview", " cess Tax %: " + objBillItem.getCessRate());
+            }
+            // cessTax Amount
+            if (RowBillItem.getChildAt(26) != null) {
+                TextView cessTaxAmount = (TextView) RowBillItem.getChildAt(26);
+                float cessAmt = (Float.parseFloat(cessTaxAmount.getText().toString()));
+                objBillItem.setCessAmount(Float.parseFloat(String.format("%.2f",cessAmt)));
+                Log.d("InsertBillItems_Preview", "cess Amt: " + objBillItem.getCessAmount());
+            }
+            // Discount %
+            if (RowBillItem.getChildAt(8) != null) {
+                TextView DiscountPercent = (TextView) RowBillItem.getChildAt(8);
+                objBillItem.setDiscountPercent(Float.parseFloat(DiscountPercent.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Disc %:" + DiscountPercent.getText().toString());
+            }
+
+            // Discount Amount
+            if (RowBillItem.getChildAt(9) != null) {
+                TextView DiscountAmount = (TextView) RowBillItem.getChildAt(9);
+                objBillItem.setDiscountAmount(Float.parseFloat(DiscountAmount.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Disc Amt:" + DiscountAmount.getText().toString());
+
+                // fTotalDiscount += Float.parseFloat(DiscountAmount.getText().toString());
+            }
+
+            // Department Code
+            if (RowBillItem.getChildAt(10) != null) {
+                TextView DeptCode = (TextView) RowBillItem.getChildAt(10);
+                objBillItem.setDeptCode(Integer.parseInt(DeptCode.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Dept Code:" + DeptCode.getText().toString());
+            }
+
+            // Category Code
+            if (RowBillItem.getChildAt(11) != null) {
+                TextView CategCode = (TextView) RowBillItem.getChildAt(11);
+                objBillItem.setCategCode(Integer.parseInt(CategCode.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Categ Code:" + CategCode.getText().toString());
+            }
+
+            // Kitchen Code
+            if (RowBillItem.getChildAt(12) != null) {
+                TextView KitchenCode = (TextView) RowBillItem.getChildAt(12);
+                objBillItem.setKitchenCode(Integer.parseInt(KitchenCode.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Kitchen Code:" + KitchenCode.getText().toString());
+            }
+
+            // Tax Type
+            if (RowBillItem.getChildAt(13) != null) {
+                TextView TaxType = (TextView) RowBillItem.getChildAt(13);
+                objBillItem.setTaxType(Integer.parseInt(TaxType.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Tax Type:" + TaxType.getText().toString());
+            }
+
+            // Modifier Amount
+            if (RowBillItem.getChildAt(14) != null) {
+                TextView ModifierAmount = (TextView) RowBillItem.getChildAt(14);
+                objBillItem.setModifierAmount(Float.parseFloat(ModifierAmount.getText().toString()));
+                Log.d("InsertBillItems_Preview", "Modifier Amt:" + ModifierAmount.getText().toString());
+            }
+
+            if (RowBillItem.getChildAt(17) != null) {
+                TextView SupplyType = (TextView) RowBillItem.getChildAt(17);
+                objBillItem.setSupplyType(SupplyType.getText().toString());
+                Log.d("InsertBillItems_Preview", "SupplyType:" + SupplyType.getText().toString());
+                /*if (GSTEnable.equals("1")) {
+                    objBillItem.setSupplyType(SupplyType.getText().toString());
+                    Log.d("InsertBillItems_Preview", "SupplyType:" + SupplyType.getText().toString());
+                } else {
+                    objBillItem.setSupplyType("");
+                }*/
+            }
+            if (RowBillItem.getChildAt(22) != null) {
+                TextView UOM = (TextView) RowBillItem.getChildAt(22);
+                objBillItem.setUom(UOM.getText().toString());
+                Log.d("InsertBillItems_Preview", "UOM:" + UOM.getText().toString());
+
+            }
+
+            // subtotal
+            double subtotal = objBillItem.getAmount() + objBillItem.getIGSTAmount() + objBillItem.getCGSTAmount() + objBillItem.getSGSTAmount();
+//            double roundOffFinalAmount = 0;
+//            if (BILLAMOUNTROUNDOFF == 1) {
+//                String temp = tvBillAmount.getText().toString().trim();
+//                double finalAmount = Double.parseDouble(tvBillAmount.getText().toString().trim());
+//
+//                if (!temp.contains(".00")){
+//                    roundOffFinalAmount = Math.round(finalAmount);
+//                    fRoundOfValue = Float.parseFloat("0" + temp.substring(temp.indexOf(".")));
+//                } else {
+//                    roundOffFinalAmount = subtotal;
+//                }
+//            } else {
+//                roundOffFinalAmount = subtotal;
+//            }
+
+            objBillItem.setSubTotal(subtotal);
+            Log.d("InsertBillItems_Preview", "Sub Total :" + subtotal);
+
+            // Date
+            String date_today = tvDate.getText().toString();
+            //Log.d("Date ", date_today);
+            try {
+                Date date1 = new SimpleDateFormat("dd-MM-yyyy").parse(date_today);
+                objBillItem.setInvoiceDate(String.valueOf(date1.getTime()));
+            }catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+
+            // cust name
+            String custname = edtCustName.getText().toString();
+            objBillItem.setCustName(custname);
+            Log.d("InsertBillItems_Preview", "CustName :" + custname);
+
+            String custgstin = etCustGSTIN.getText().toString().trim().toUpperCase();
+            objBillItem.setGSTIN(custgstin);
+            Log.d("InsertBillItems_Preview", "custgstin :" + custgstin);
+
+            // cust StateCode
+            //String custStateCode =spnr_pos.getSelectedItem().toString();
+            if (chk_interstate.isChecked()) {
+                String str = spnr_pos.getSelectedItem().toString();
+                int length = str.length();
+                String sub = "";
+                if (length > 0) {
+                    sub = str.substring(length - 2, length);
+                }
+                objBillItem.setCustStateCode(sub);
+                Log.d("InsertBillItems_Preview", "CustStateCode :" + sub+" - "+str);
+            } else {
+                objBillItem.setCustStateCode(dbBillScreen.getOwnerPOS());// to be retrieved from database later -- richa to do
+                Log.d("InsertBillItems_Preview", "CustStateCode :"+objBillItem.getCustStateCode());
+            }
+
+            // BusinessType
+            if (etCustGSTIN.getText().toString().equals("")) {
+                objBillItem.setBusinessType("B2C");
+            } else // gstin present means b2b bussiness
+            {
+                objBillItem.setBusinessType("B2B");
+            }
+
+            Log.d("InsertBillItems_Preview", "BusinessType : " + objBillItem.getBusinessType());
+
+            // richa to do - hardcoded b2b bussinies type
+            //objBillItem.setBusinessType("B2B");
+            lResult = dbBillScreen.addPreviewBillItem(objBillItem);
+            Log.d("InsertBillItem", "Bill item inserted at position:" + lResult);
+        }
+    }
+
+    /*************************************************************************************************************************************
      * Inserts bill details to bill detail database table
      *
      * @param TenderType : Type of tender, 1 - Pay cash, 2 - Tender Screen payment
@@ -5006,9 +5430,6 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
         objBillDetail.setAmount(String.valueOf(taxval_f));
         Log.d("InsertBillDetail", "Taxable Value:" + taxval_f);
 
-
-
-
         double subtot_f = taxval_f + objBillDetail.getIGSTAmount() + objBillDetail.getCGSTAmount()+ objBillDetail.getSGSTAmount();
         objBillDetail.setSubTotal(subtot_f);
         Log.d("InsertBillDetail", "Sub Total :" + subtot_f);
@@ -5037,9 +5458,6 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             objBillDetail.setCustStateCode(userPOS);
             Log.d("InsertBillDetail", "CustStateCode : "+objBillDetail.getCustStateCode());
         }
-
-
-
 
         // BusinessType
         if (etCustGSTIN.getText().toString().equals("")) {
@@ -5232,6 +5650,28 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
     }
 
     /*************************************************************************************************************************************
+     * Invokes InsertBillItems() and InsertBillDetail() functions
+     *
+     * @param TenderType  : Type of tender, 1 - Pay cash, 2 - Tender Screen payment
+     * @param isPrintBill : True if bill needs to be printed else False
+     *************************************************************************************************************************************/
+    private void lPreviewBill(int TenderType, boolean isPrintBill) { // TenderType:
+        // 1=PayCash
+        // 2=Tender
+
+        // Insert all bill items to database
+        InsertPreviewBillItems();
+
+        // Insert bill details to database
+        //InsertBillDetail(TenderType);
+
+        /*if (isPrintBill) {
+            // Print bill
+            PrintBill();
+        }*/
+    }
+
+    /*************************************************************************************************************************************
      * Updates complimentary bill details in database
      *
      * @param BillNumber          : Complimentary bill number
@@ -5399,6 +5839,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
         }*/
         btnPayBill.setEnabled(false);
         btnPrintBill.setEnabled(false);
+        btnPreviewBill.setEnabled(false);
 
         if (crsrSettings.getString(crsrSettings.getColumnIndex("FastBillingMode")).equalsIgnoreCase("1")) {
             //    grdItems.setNumColumns(6);
@@ -5482,6 +5923,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             LoadModifyKOTItems(LoadModifyKOT);
             btnPrintBill.setEnabled(false);
             btnPayBill.setEnabled(false);
+            btnPreviewBill.setEnabled(false);
 
             // btnDeleteKOT.setEnabled(true);
         } else {
@@ -5778,6 +6220,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             intentTender.putExtra("TaxType", taxType);// forward/reverse
             intentTender.putParcelableArrayListExtra("OrderList", orderItemList);
             intentTender.putExtra("USER_NAME", strUserName);
+            intentTender.putExtra("BillAmountRoundOff", BILLAMOUNTROUNDOFF);
             startActivityForResult(intentTender, 1);
         }
     }
@@ -6172,11 +6615,13 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
         {
             btnPayBill.setEnabled(true);
             btnPrintBill.setEnabled(true);
+            btnPreviewBill.setEnabled(true);
         }
         else
         {
             btnPayBill.setEnabled(false);
             btnPrintBill.setEnabled(false);
+            btnPreviewBill.setEnabled(true);
         }
         //PrintKOT();
     }
@@ -6214,6 +6659,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
 
                         btnPrintKOT.setEnabled(true);
                         btnPrintBill.setEnabled(true);
+                        btnPreviewBill.setEnabled(true);
                         // Delete Table Booking
                         int Result = dbBillScreen.DeleteTableBooking(tvTableNumber.getText().toString());
                         //ClearAll();
@@ -6718,6 +7164,112 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
 
     }
 
+    public ArrayList<BillTaxSlab> TaxSlabPreviewPrint_InterState() {
+        ArrayList<BillTaxSlab> billTaxSlabs = new ArrayList<BillTaxSlab>();
+
+        try {
+            Date date = new SimpleDateFormat("dd-MM-yyyy").parse(tvDate.getText().toString());
+            Cursor crsrTax = db.getItemsForTaxSlabPreviewPrints(Integer.valueOf(tvBillNumber.getText().toString()), String.valueOf(date.getTime()));
+            int count = 0;
+            //System.out.println(crsrTax.getCount());
+            if (crsrTax.moveToFirst()) {
+                do {
+                    Double taxpercent = Double.parseDouble(String.format("%.2f",crsrTax.getDouble(crsrTax.getColumnIndex("IGSTRate"))));
+                    Double igstamt  = Double.parseDouble(String.format("%.2f",crsrTax.getDouble(crsrTax.getColumnIndex("IGSTAmount"))));
+                    Double taxableValue  = Double.parseDouble(String.format("%.2f",crsrTax.getDouble(crsrTax.getColumnIndex("TaxableValue"))));
+
+                    if (taxpercent == 0)
+                        continue;
+                    BillTaxSlab taxItem = new BillTaxSlab("",taxpercent, igstamt,0.00,0.00, taxableValue,igstamt);
+                    int found =0;
+                    for (BillTaxSlab taxSlabItem : billTaxSlabs )
+                    {
+                        if (taxSlabItem.getTaxRate() == taxpercent)
+                        {
+                            taxSlabItem.setIGSTAmount(taxSlabItem.getIGSTAmount()+igstamt);
+                            taxSlabItem.setTaxableValue(taxSlabItem.getTaxableValue()+taxableValue);
+                            taxSlabItem.setTotalTaxAmount(taxSlabItem.getTotalTaxAmount()+igstamt);
+                            found =1;
+                            break;
+                        }
+                    }
+                    if(found == 0){
+                        taxItem.setTaxIndex(Character.toString((char)('A'+count)));
+                        count++;
+                        billTaxSlabs.add(taxItem);
+                    }
+
+                } while (crsrTax.moveToNext());
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            billTaxSlabs = new ArrayList<BillTaxSlab>();
+        }
+        finally
+        {
+            return billTaxSlabs;
+        }
+
+    }
+
+    public ArrayList<BillTaxSlab> TaxSlabPreviewPrint_IntraState() {
+        ArrayList<BillTaxSlab> billTaxSlabs = new ArrayList<BillTaxSlab>();
+
+        try {
+            Date date = new SimpleDateFormat("dd-MM-yyyy").parse(tvDate.getText().toString());
+            Cursor crsrTax = db.getItemsForTaxSlabPreviewPrints(Integer.valueOf(tvBillNumber.getText().toString()), String.valueOf(date.getTime()));
+            int count = 0;
+            //System.out.println(crsrTax.getCount());
+            if (crsrTax.moveToFirst()) {
+                do {
+                    Double taxpercent = Double.parseDouble(String.format("%.2f",(crsrTax.getDouble(crsrTax.getColumnIndex("CGSTRate")) +
+                            crsrTax.getDouble(crsrTax.getColumnIndex("SGSTRate")))));
+
+                    Double cgstamt  = Double.parseDouble(String.format("%.2f",
+                            crsrTax.getDouble(crsrTax.getColumnIndex("CGSTAmount"))));
+                    Double sgstamt  = Double.parseDouble(String.format("%.2f",
+                            crsrTax.getDouble(crsrTax.getColumnIndex("SGSTAmount"))));
+                    Double taxableValue  = Double.parseDouble(String.format("%.2f",
+                            crsrTax.getDouble(crsrTax.getColumnIndex("TaxableValue"))));
+                    double cc = crsrTax.getDouble(crsrTax.getColumnIndex("TaxableValue"));
+
+                    if (taxpercent == 0)
+                        continue;
+                    BillTaxSlab taxItem = new BillTaxSlab("",taxpercent, 0.00,cgstamt,sgstamt, taxableValue,cgstamt+sgstamt);
+                    int found =0;
+                    for (BillTaxSlab taxSlabItem : billTaxSlabs )
+                    {
+                        if (taxSlabItem.getTaxRate() == taxpercent)
+                        {
+                            taxSlabItem.setCGSTAmount(taxSlabItem.getCGSTAmount()+cgstamt);
+                            taxSlabItem.setSGSTAmount(taxSlabItem.getSGSTAmount()+sgstamt);
+                            taxSlabItem.setTaxableValue(taxSlabItem.getTaxableValue()+taxableValue);
+                            taxSlabItem.setTotalTaxAmount(taxSlabItem.getTotalTaxAmount()+cgstamt+sgstamt);
+                            found =1;
+                            break;
+                        }
+                    }
+                    if(found == 0){
+                        taxItem.setTaxIndex(Character.toString((char)('A'+count)));
+                        count++;
+                        billTaxSlabs.add(taxItem);
+                    }
+
+                } while (crsrTax.moveToNext());
+            }
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+            billTaxSlabs = new ArrayList<BillTaxSlab>();
+        }
+        finally
+        {
+            return billTaxSlabs;
+        }
+
+    }
+
     public ArrayList<BillServiceTaxItem> cessTaxPrint() {
         ArrayList<BillServiceTaxItem> billcessTaxItems = new ArrayList<BillServiceTaxItem>();
         try {
@@ -6931,9 +7483,15 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 return;
             } else {
                 int tableId = 0, waiterId = 0, orderId = 0;
-                if ((!tvTableNumber.getText().toString().trim().equalsIgnoreCase("")) && (!tvWaiterNumber.getText().toString().trim().equalsIgnoreCase("")) && (!tvBillNumber.getText().toString().trim().equalsIgnoreCase(""))) {
+                String waiterName;
+                if ((!tvTableNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvWaiterNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvBillNumber.getText().toString().trim().equalsIgnoreCase("")
+                        && (!tvWaiterName.getText().toString().trim().equalsIgnoreCase("")))
+                        ) {
                     tableId = Integer.parseInt(tvTableNumber.getText().toString().trim());
                     waiterId = Integer.parseInt(tvWaiterNumber.getText().toString().trim());
+                    waiterName = tvWaiterName.getText().toString().trim();
                     orderId = Integer.parseInt(tvBillNumber.getText().toString().trim());
                     ArrayList<BillKotItem> billKotItems = kotPrint();
                     if(billKotItems.size()<1)
@@ -6945,6 +7503,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                     item.setBillKotItems(billKotItems);
                     item.setTableNo(String.valueOf(tableId));
                     item.setWaiterNo(waiterId);
+                    item.setWaiterName(waiterName);
                     item.setBillNo(String.valueOf(iKOTNo));
                     item.setOrderBy(strUserName);
                     item.setBillingMode(String.valueOf(jBillingMode));
@@ -6990,6 +7549,44 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
         }
     }
 
+    public void previewBill(View view){
+        int proceed =1;
+        if (tblOrderItems.getChildCount() < 1){
+            MsgBox.Show("Warning", "Add Item before Printing Bill");
+            proceed =0;
+        } else if (tvBillAmount.getText().toString().equals("") ) {
+            MsgBox.Show("Warning", "Please add item to make bill");
+            proceed =0;
+        } else if ( tvBillAmount.getText().toString().equals("0.00")) {
+            MsgBox.Show("Warning", "Please make bill of amount greater than 0.00");
+            proceed =0;
+        }else if (chk_interstate.isChecked() && spnr_pos.getSelectedItem().equals("")) {
+            MsgBox.Show("Warning", "Please Select Code for Intersate Supply");
+            proceed =0;
+        }
+
+        if(proceed == 0)
+            return;
+        if (isPrinterAvailable) {
+            strPaymentStatus = "Paid";
+            PrintBillPayment = 1;
+
+            // Print Bill with Save Bill
+            if (tblOrderItems.getChildCount() < 1) {
+                MsgBox.Show("Warning", "Insert item before Print Bill");
+                return;
+            } else {
+
+                lPreviewBill(2, true);
+                PrintPreviewBill();
+//                Toast.makeText(myContext, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(myContext, "Printer is not ready", Toast.LENGTH_SHORT).show();
+            askForConfig();
+        }
+    }
+
     public void printBILL(View view) {
         int proceed =1;
         if (tblOrderItems.getChildCount() < 1){
@@ -7024,6 +7621,20 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 MsgBox.Show("Warning", "Insert item before Print Bill");
                 return;
             } else {
+
+
+                if (BILLAMOUNTROUNDOFF == 1) {
+                    String temp = tvBillAmount.getText().toString().trim();
+                    double finalAmount = Double.parseDouble(tvBillAmount.getText().toString().trim());
+                    double roundOffFinalAmount = 0;
+
+                    if (!temp.contains(".00")){
+                        roundOffFinalAmount = Math.round(finalAmount);
+                        tvBillAmount.setText(String.valueOf(roundOffFinalAmount));
+                        fRoundOfValue = Float.parseFloat("0" + temp.substring(temp.indexOf(".")));
+                    }
+                }
+
                 l(2, true);
                 PrintNewBill();
                 Toast.makeText(myContext, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
@@ -7061,9 +7672,14 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 return;
             } else {
                 int tableId = 0, waiterId = 0, orderId = 0;
-                if ((!tvTableNumber.getText().toString().trim().equalsIgnoreCase("")) && (!tvWaiterNumber.getText().toString().trim().equalsIgnoreCase("")) && (!tvBillNumber.getText().toString().trim().equalsIgnoreCase(""))) {
+                String waiterName;
+                if ((!tvTableNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvWaiterNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvBillNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvWaiterName.getText().toString().trim().equalsIgnoreCase(""))) {
                     tableId = Integer.parseInt(tvTableNumber.getText().toString().trim());
                     waiterId = Integer.parseInt(tvWaiterNumber.getText().toString().trim());
+                    waiterName = tvWaiterName.getText().toString().trim();
                     orderId = Integer.parseInt(tvBillNumber.getText().toString().trim());
                     ArrayList<BillTaxItem> billOtherChargesItems = otherChargesPrint();
                     ArrayList<BillServiceTaxItem> billcessTaxItems = new ArrayList<BillServiceTaxItem>();
@@ -7073,6 +7689,9 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                     billcessTaxItems = cessTaxPrint();
                     PrintKotBillItem item = new PrintKotBillItem();
 
+                    item.setPrintService(PRINTSERVICE);
+                    item.setBoldHeader(BOLDHEADER);
+                    item.setOwnerDetail(PRINTOWNERDETAIL);
 
                     Cursor crsrCustomer = dbBillScreen.getCustomer(Integer.valueOf(edtCustId.getText().toString()));
                     if (crsrCustomer.moveToFirst()) {
@@ -7102,7 +7721,9 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                     item.setBillTaxSlabs(billTaxSlabs);
                     item.setBillcessTaxItems(billcessTaxItems);
                     item.setSubTotal(Double.parseDouble(tvSubTotal.getText().toString().trim()));
+
                     item.setNetTotal(Double.parseDouble(tvBillAmount.getText().toString().trim()));
+
                     String tablemsg = String.valueOf(tableId);
                     if (tableSplit ==1)
                     {
@@ -7110,6 +7731,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                     }
                     item.setTableNo(tablemsg);
                     item.setWaiterNo(waiterId);
+                    item.setWaiterName(waiterName);
                     item.setUTGSTEnabled(UTGSTENABLED);
                     item.setHSNPrintEnabled_out(HSNPRINTENABLED);
                     String billNoPrefix  = db.getBillNoPrefix();
@@ -7226,7 +7848,11 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                             }else{
                                 item.setAddressLine3(tokens[2]);}
                             }
-                            item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+                            item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                            item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                            item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                            item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                            item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
                         } else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
                         }
@@ -7262,8 +7888,16 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                             item.setAddressLine3(tokens[2]);
                             crsrHeaderFooterSetting = db.getBillSettings();
                             if(crsrHeaderFooterSetting.moveToNext()) {
-                                item.setHeaderLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText")));
-                                item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+                                item.setHeaderLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText1")));
+                                item.setHeaderLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText2")));
+                                item.setHeaderLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText3")));
+                                item.setHeaderLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText4")));
+                                item.setHeaderLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText5")));
+                                item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                                item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                                item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                                item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                                item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
                             }
                         }  else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
@@ -7271,6 +7905,277 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                         //startActivity(intent);
                         if (isPrinterAvailable) {
                             printHeydeyBILL(item, "BILL");
+                        } else {
+                            askForConfig();
+                        }
+                    } else {
+                        Toast.makeText(myContext, "Printer not configured. Kindly goto settings and configure printer", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(BillingDineInActivity.this, "Please Enter Bill, Waiter, Table Number", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            Toast.makeText(myContext, "Printer is not ready", Toast.LENGTH_SHORT).show();
+            askForConfig();
+        }
+    }
+
+    protected void PrintPreviewBill() {
+        if (isPrinterAvailable) {
+            if (tblOrderItems.getChildCount() < 1) {
+                MsgBox.Show("Warning", "Insert item before Print Bill");
+                return;
+            } else {
+                int tableId = 0, waiterId = 0, orderId = 0;
+                String waiterName;
+                if ((!tvTableNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvWaiterNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvBillNumber.getText().toString().trim().equalsIgnoreCase(""))
+                        && (!tvWaiterName.getText().toString().trim().equalsIgnoreCase(""))) {
+                    tableId = Integer.parseInt(tvTableNumber.getText().toString().trim());
+                    waiterId = Integer.parseInt(tvWaiterNumber.getText().toString().trim());
+                    waiterName = tvWaiterName.getText().toString().trim();
+                    orderId = Integer.parseInt(tvBillNumber.getText().toString().trim());
+                    ArrayList<BillTaxItem> billOtherChargesItems = otherChargesPrint();
+                    ArrayList<BillServiceTaxItem> billcessTaxItems = new ArrayList<BillServiceTaxItem>();
+                    ArrayList<BillTaxSlab> billTaxSlabs = new ArrayList<BillTaxSlab>();
+
+
+                    billcessTaxItems = cessTaxPrint();
+                    PrintKotBillItem item = new PrintKotBillItem();
+
+                    item.setPrintService(PRINTSERVICE);
+                    item.setBoldHeader(BOLDHEADER);
+                    item.setOwnerDetail(PRINTOWNERDETAIL);
+
+                    Cursor crsrCustomer = dbBillScreen.getCustomer(Integer.valueOf(edtCustId.getText().toString()));
+                    if (crsrCustomer.moveToFirst()) {
+                        item.setCustomerName(crsrCustomer.getString(crsrCustomer.getColumnIndex("CustName")));
+                    } else {
+                        item.setCustomerName(" - - - ");
+                    }
+                    if(reprintBillingMode>0) {
+                        item.setIsDuplicate("\n(Duplicate Bill)");
+                    }else{
+                        item.setIsDuplicate("");
+                    }
+                    if(chk_interstate.isChecked())
+                    {
+                        item.setIsInterState("y");
+                        billTaxSlabs = TaxSlabPreviewPrint_InterState();
+                    }
+                    else
+                    {
+                        item.setIsInterState("n");
+                        billTaxSlabs = TaxSlabPreviewPrint_IntraState();
+                    }
+                    ArrayList<BillKotItem> billKotItems = billPrint(billTaxSlabs);
+
+                    item.setBillKotItems(billKotItems);
+                    item.setBillOtherChargesItems(billOtherChargesItems);
+                    item.setBillTaxSlabs(billTaxSlabs);
+                    item.setBillcessTaxItems(billcessTaxItems);
+                    item.setSubTotal(Double.parseDouble(tvSubTotal.getText().toString().trim()));
+
+                    double roundOffFinalAmount = 0;
+                    double finalAmount = Double.parseDouble(tvBillAmount.getText().toString().trim());
+                    if (BILLAMOUNTROUNDOFF == 1) {
+                        String temp = tvBillAmount.getText().toString().trim();
+                        if (!temp.contains(".00")){
+                            roundOffFinalAmount = Math.round(finalAmount);
+                            fRoundOfValue = Float.parseFloat("0" + temp.substring(temp.indexOf(".")));
+                        } else {
+                            roundOffFinalAmount = finalAmount;
+                        }
+                    } else {
+                        roundOffFinalAmount = finalAmount;
+                    }
+
+                    item.setNetTotal(roundOffFinalAmount);
+
+                    String tablemsg = String.valueOf(tableId);
+                    if (tableSplit ==1)
+                    {
+                        tablemsg  =  String.valueOf(tableId) +" - "+ tvTableSplitNo.getText().toString();
+                    }
+                    item.setTableNo(tablemsg);
+                    item.setWaiterNo(waiterId);
+                    item.setWaiterName(waiterName);
+                    item.setUTGSTEnabled(UTGSTENABLED);
+                    item.setHSNPrintEnabled_out(HSNPRINTENABLED);
+                    String billNoPrefix  = db.getBillNoPrefix();
+                    item.setBillNo(billNoPrefix+String.valueOf(orderId));
+                    item.setOrderBy(strUserName);
+                    item.setBillingMode(String.valueOf(jBillingMode));
+                    if (strPaymentStatus.equalsIgnoreCase("")) {
+                        item.setPaymentStatus("");
+                    } else {
+                        item.setPaymentStatus(strPaymentStatus);
+                    }
+
+
+                    item.setdiscountPercentage(Float.parseFloat(tvDiscountPercentage.getText().toString()));
+                    //if(ItemwiseDiscountEnabled ==1)
+                    calculateDiscountAmount();
+                    item.setFdiscount(fTotalDiscount);
+
+                    item.setTotalsubTaxPercent(fTotalsubTaxPercent);
+                    item.setTotalSalesTaxAmount(tvTaxTotal.getText().toString());
+                    item.setTotalServiceTaxAmount(tvServiceTaxTotal.getText().toString());
+                    item.setRoundOff(fRoundOfValue);
+
+                    if(reprintBillingMode == 0) {
+                        item.setStrBillingModeName(DineInCaption);
+                        item.setDate(tvDate.getText().toString());
+                        //item.setTime(String.format("%tR", Time));
+                        String strTime = new SimpleDateFormat("kk:mm:ss").format(Time.getTime());
+                        item.setTime(strTime);
+                    }else
+                    {
+                        switch (reprintBillingMode)
+                        {
+                            case 1 : item.setStrBillingModeName(DineInCaption);
+                                item.setBillingMode("1");
+                                //item.setPaymentStatus(""); // payment status not required for dinein Mode
+                                break;
+                            case 2 : item.setStrBillingModeName(CounterSalesCaption);
+                                item.setBillingMode("2");
+                                //item.setPaymentStatus(""); // payment status not required for CounterSales Mode
+                                break;
+                            case 3 : item.setStrBillingModeName(TakeAwayCaption);
+                                item.setBillingMode("3");
+                                break;
+                            case 4 : item.setStrBillingModeName(HomeDeliveryCaption);
+                                item.setBillingMode("4");
+                                if(crsrCustomer!=null){
+                                    String CustDetail = crsrCustomer.getString(crsrCustomer.getColumnIndex("CustName"));
+                                    CustDetail = CustDetail +"\n"+crsrCustomer.getString(crsrCustomer.getColumnIndex("CustAddress"));
+                                    item.setCustomerName(CustDetail);
+                                }
+                                break;
+                        }
+                        try{
+                            Date date = new SimpleDateFormat("dd-MM-yyyy").parse(tvDate.getText().toString());
+                            Cursor c  = db.getBillDetail_counter(orderId,String.valueOf(date.getTime()));
+                            if(c!=null && c.moveToNext()){
+
+                                String time = c.getString(c.getColumnIndex("Time"));
+                                item.setTime(time);
+                                item.setDate(tvDate.getText().toString());
+                                float round = c.getString(c.getColumnIndex("RoundOff")) == (null)?0:c.getFloat(c.getColumnIndex("RoundOff"));
+                                item.setRoundOff(Float.parseFloat(String.format("%.2f",round)));
+
+                                if(reprintBillingMode==1)
+                                {
+                                    String tableNo = c.getString(c.getColumnIndex("TableNo"));
+                                    String splitno = c.getString(c.getColumnIndex("TableSplitNo"));
+                                    if(splitno!=null && !splitno.equals(""))
+                                        item.setTableNo(tableNo+" - "+splitno);
+                                    else
+                                        item.setTableNo(tableNo);
+                                }
+                                String userId = c.getString(c.getColumnIndex("UserId"));
+                                if(reprintBillingMode != 0 && userId!=null)
+                                {
+                                    Cursor user_cursor = db.getUsers_counter(userId);
+                                    if(user_cursor!=null && user_cursor.moveToFirst())
+                                    {
+                                        item.setOrderBy(user_cursor.getString(user_cursor.getColumnIndex("Name")));
+                                    }
+                                }
+
+                            }}catch(Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                    String prf = Preferences.getSharedPreferencesForPrint(BillingDineInActivity.this).getString("bill", "--Select--");
+                /*Intent intent = new Intent(getApplicationContext(), PrinterSohamsaActivity.class);*/
+                    Intent intent = null;
+                    if (prf.equalsIgnoreCase("Sohamsa")) {
+                        String[] tokens = new String[3];
+                        tokens[0] = "";
+                        tokens[1] = "";
+                        tokens[2] = "";
+                        Cursor crsrHeaderFooterSetting = null;
+                        crsrHeaderFooterSetting = dbBillScreen.getBillSetting();
+                        if (crsrHeaderFooterSetting.moveToFirst()) {
+                            try {
+                                tokens = crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText")).split(Pattern.quote("|"));
+                            } catch (Exception e) {
+                                tokens[0] = "";
+                                tokens[1] = "";
+                                tokens[2] = "";
+                            }
+                            if (!tokens[0].equalsIgnoreCase(""))
+                                item.setAddressLine1(tokens[0]);
+                            if (!tokens[1].equalsIgnoreCase(""))
+                                item.setAddressLine2(tokens[1]);
+                            if (!tokens[2].equalsIgnoreCase(""))
+                            {  if(reprintBillingMode>0) {
+                                item.setAddressLine3(tokens[2]+"\n(Duplicate Bill)");
+                            }else{
+                                item.setAddressLine3(tokens[2]);}
+                            }
+                            item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                            item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                            item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                            item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                            item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
+                        } else {
+                            Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
+                        }
+
+                        //printSohamsaBILL(item, "BILL");
+                    } else if (prf.equalsIgnoreCase("Heyday")) {
+                        String[] tokens = new String[3];
+                        tokens[0] = "";
+                        tokens[1] = "";
+                        tokens[2] = "";
+                        Cursor crsrHeaderFooterSetting = null;
+                        crsrHeaderFooterSetting = db.getOwnerDetail_counter();
+                        if (crsrHeaderFooterSetting.moveToFirst()) {
+                            try {
+                                tokens[0] = crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("GSTIN"));
+                                tokens[1] = crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FirmName"));
+                                tokens[2] = crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("Address"));
+                            } catch (Exception e) {
+                                tokens[0] = "";
+                                tokens[1] = "";
+                                tokens[2] = "";
+                            }
+                            if (!tokens[0].equalsIgnoreCase(""))
+                                item.setAddressLine1(tokens[0]);
+                            if (!tokens[1].equalsIgnoreCase(""))
+                                item.setAddressLine2(tokens[1]);
+
+                            if(chk_interstate.isChecked())
+                            {
+                                item.setCustomerName(item.getCustomerName()+ "  ("+(spnr_pos.getSelectedItem().toString())+") ");
+                                tokens[2] =  tokens[2] + "\n ("+getState_pos(db.getOwnerPOS_counter())+") ";
+                            }
+                            item.setAddressLine3(tokens[2]);
+                            crsrHeaderFooterSetting = db.getBillSettings();
+                            if(crsrHeaderFooterSetting.moveToNext()) {
+                                item.setHeaderLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText1")));
+                                item.setHeaderLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText2")));
+                                item.setHeaderLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText3")));
+                                item.setHeaderLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText4")));
+                                item.setHeaderLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText5")));
+                                item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                                item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                                item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                                item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                                item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
+                            }
+                        }  else {
+                            Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
+                        }
+                        //startActivity(intent);
+                        if (isPrinterAvailable) {
+                            printHeydeyBILL(item, "BILL");
+                            int iResult = db.deletePreviewBillTable(orderId, item.getDate());
                         } else {
                             askForConfig();
                         }
@@ -7362,6 +8267,27 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             }else
             {
                 REVERSETAX = false;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintOwnerDetail")) == 1)) { // print owner detail
+                PRINTOWNERDETAIL = 1;
+            }else
+            {
+                PRINTOWNERDETAIL = 0;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BoldHeader")) == 1)) { // bold header
+                BOLDHEADER = 1;
+            }else
+            {
+                BOLDHEADER = 0;
+            }
+
+            if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintService")) == 1)) { // bold header
+                PRINTSERVICE = 1;
+            }else
+            {
+                PRINTSERVICE = 0;
             }
 
             // Display items in table

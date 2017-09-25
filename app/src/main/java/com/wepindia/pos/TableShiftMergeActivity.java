@@ -681,27 +681,13 @@ public class TableShiftMergeActivity extends WepBaseActivity {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 
 			AlertDialog.Builder AuthorizationDialog = new AlertDialog.Builder(myContext);
-			LayoutInflater UserAuthorization = (LayoutInflater) myContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View vwAuthorization = UserAuthorization.inflate(R.layout.user_authorization, null);
-			final EditText txtUserId = (EditText) vwAuthorization.findViewById(R.id.etAuthorizationUserId);
-			final EditText txtPassword = (EditText) vwAuthorization.findViewById(R.id.etAuthorizationUserPassword);
-			final TextView tvAuthorizationUserId = (TextView) vwAuthorization.findViewById(R.id.tvAuthorizationUserId);
-			final TextView tvAuthorizationUserPassword = (TextView) vwAuthorization.findViewById(R.id.tvAuthorizationUserPassword);
-			tvAuthorizationUserId.setVisibility(View.GONE);
-			tvAuthorizationUserPassword.setVisibility(View.GONE);
-			txtUserId.setVisibility(View.GONE);
-			txtPassword.setVisibility(View.GONE);
+
 			AuthorizationDialog
 					.setTitle("Are you sure you want to exit ?")
-					.setView(vwAuthorization)
+					.setIcon(R.drawable.ic_launcher)
 					.setNegativeButton("No", null)
 					.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
-							/*Intent returnIntent =new Intent();
-                            returnIntent.putExtra("TABLE_NUMBER", "0");
-                            returnIntent.putExtra("TABLE_SPLIT_NO", "1");
-                            returnIntent.putExtra("SUB_UDF_NUMBER", "0");
-							setResult(Activity.RESULT_OK,returnIntent);*/
 							finish();
 						}
 					})

@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -89,7 +90,9 @@ import java.util.regex.Pattern;
 public class BillingCounterSalesActivity extends WepPrinterBaseActivity implements View.OnClickListener ,TextWatcher {
     String tx ="";
     int CUSTOMER_FOUND =0;
+    int PRINTOWNERDETAIL = 0, BOLDHEADER = 0, PRINTSERVICE = 0, BILLAMOUNTROUNDOFF = 0;
     boolean REVERSETAX = false;
+    boolean ROUNDOFFAMOUNT = false;
     DecimalFormat df_2, df_3;
     Pattern p = Pattern.compile("^(-?[0-9]+[\\.\\,][0-9]{1,2})?[0-9]*$");
 
@@ -735,7 +738,13 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
 
     private void onClickEvents() {
         try{
-
+            /*autoCompleteTextViewSearchItemBarcode.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    autoCompleteTextViewSearchItemBarcode.showDropDown();
+                    return false;
+                }
+            });*/
             autoCompleteTextViewSearchItemBarcode.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -1004,6 +1013,34 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                 }else
                 {
                     REVERSETAX = false;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintOwnerDetail")) == 1)) { // print owner detail
+                    PRINTOWNERDETAIL = 1;
+                }else
+                {
+                    PRINTOWNERDETAIL = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BoldHeader")) == 1)) { // bold header
+                    BOLDHEADER = 1;
+                }else
+                {
+                    BOLDHEADER = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("PrintService")) == 1)) { // Print Service
+                    PRINTSERVICE = 1;
+                }else
+                {
+                    PRINTSERVICE = 0;
+                }
+
+                if ((crsrSettings.getInt(crsrSettings.getColumnIndex("BillAmountRoundOff")) == 1)) { // Bill Amount Round Off
+                    BILLAMOUNTROUNDOFF = 1;
+                }else
+                {
+                    BILLAMOUNTROUNDOFF = 0;
                 }
 
                 // Handling Null pointer Exception
@@ -2650,6 +2687,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
             intentTender.putExtra("TaxType", taxType);// forward/reverse
             intentTender.putParcelableArrayListExtra("OrderList", orderItemList);
             intentTender.putExtra("USER_NAME", userName);
+            intentTender.putExtra("BillAmountRoundOff", BILLAMOUNTROUNDOFF);
             startActivityForResult(intentTender, 1);
         }
     }
@@ -2906,6 +2944,19 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
             }
             else
             {
+
+                if (BILLAMOUNTROUNDOFF == 1) {
+                    String temp = tvBillAmount.getText().toString().trim();
+                    double finalAmount = Double.parseDouble(tvBillAmount.getText().toString().trim());
+                    double roundOffFinalAmount = 0;
+
+                    if (!temp.contains(".00")){
+                        roundOffFinalAmount = Math.round(finalAmount);
+                        tvBillAmount.setText(String.valueOf(roundOffFinalAmount));
+                        fRoundOfValue = Float.parseFloat("0" + temp.substring(temp.indexOf(".")));
+                    }
+                }
+
                 l(2, true);
                 PrintNewBill();
                 Toast.makeText(BillingCounterSalesActivity.this, "Bill Saved Successfully", Toast.LENGTH_SHORT).show();
@@ -3216,8 +3267,6 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                 Log.d("InsertBillItems", "Modifier Amt:" + ModifierAmount.getText().toString());
             }
 
-
-
             if (RowBillItem.getChildAt(17) != null) {
                 TextView SupplyType = (TextView) RowBillItem.getChildAt(17);
                 objBillItem.setSupplyType(SupplyType.getText().toString());
@@ -3233,6 +3282,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
 
             // subtotal
             double subtotal = objBillItem.getAmount() + objBillItem.getIGSTAmount() + objBillItem.getCGSTAmount() + objBillItem.getSGSTAmount();
+
             objBillItem.setSubTotal(subtotal);
             Log.d("InsertBillItems", "Sub Total :" + subtotal);
 
@@ -3352,9 +3402,6 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
         objBillDetail.setPOS(db.getOwnerPOS_counter());// to be retrieved from database later -- richa to do
         Log.d("InsertBillDetail", "POS : "+objBillDetail.getPOS());
 
-
-
-
         // Total Items
         objBillDetail.setTotalItems(iTotalItems);
         Log.d("InsertBillDetail", "Total Items:" + iTotalItems);
@@ -3410,8 +3457,12 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
 
 
         float subtot_f = taxval_f + objBillDetail.getIGSTAmount() + objBillDetail.getCGSTAmount()+ objBillDetail.getSGSTAmount();
+
         objBillDetail.setSubTotal(subtot_f);
-        Log.d("InsertBillDetail", "Sub Total :" + subtot_f);
+        Log.d("InsertBillItems", "Sub Total :" + subtot_f);
+
+//        objBillDetail.setSubTotal(subtot_f);
+//        Log.d("InsertBillDetail", "Sub Total :" + subtot_f);
 
         // cust name
         String custname = editTextName.getText().toString();
@@ -3651,6 +3702,10 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                         billTaxSlabs = TaxSlabPrint_IntraState();
                     }
 
+                    item.setPrintService(PRINTSERVICE);
+                    item.setBoldHeader(BOLDHEADER);
+                    item.setOwnerDetail(PRINTOWNERDETAIL);
+
                     billcessTaxItems = cessTaxPrint();
                     billKotItems = billPrint(billTaxSlabs);
                     item.setBillKotItems(billKotItems);
@@ -3810,8 +3865,16 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                             item.setAddressLine3(tokens[2]);
                             crsrHeaderFooterSetting = db.getBillSettings();
                             if(crsrHeaderFooterSetting.moveToNext()) {
-                                item.setHeaderLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText")));
-                                item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+                                item.setHeaderLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText1")));
+                                item.setHeaderLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText2")));
+                                item.setHeaderLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText3")));
+                                item.setHeaderLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText4")));
+                                item.setHeaderLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("HeaderText5")));
+                                item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                                item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                                item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                                item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                                item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
                             }
                         } else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
@@ -5226,7 +5289,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
         {
             View v = getCurrentFocus();
             System.out.println(v);
-            EditText etbar = (EditText)findViewById(R.id.etItemBarcode);
+            EditText etbar = (EditText)findViewById(R.id.AutoCompleteItemBarcode);
             //EditText ed = (WepEditText)findViewById(v.getId());
             if (v.getId()!= R.id.aCTVSearchItemBarcode)
             {

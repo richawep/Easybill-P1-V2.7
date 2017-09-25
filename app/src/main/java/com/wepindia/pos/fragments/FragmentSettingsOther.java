@@ -30,7 +30,11 @@ public class FragmentSettingsOther extends Fragment {
     RadioButton rbEnvironment_Production, rbEnvironment_Demo, rbEnvironment_Testing;
     RadioButton rbBillNoResetEnable, rbBillNoResetDisable;
     RadioButton rbItemNoResetAuto, rbItemNoResetManual;
+    RadioButton rbPrintOwnerDetailEnable, rbPrintOwnerDetailDisable;
     RadioButton rbPrintPreviewEnable, rbPrintPreviewDisable;
+    RadioButton rbHeaderBoldEnable, rbHeaderBoldDisable;
+    RadioButton rbPrintServiceEnable, rbPrintServiceDisable;
+    RadioButton rbBillAmountRoundOffEnable, rbBillAmountRoundOffDisable;
     Button btnApply, btnClose;
     RadioButton rbCummulativeHeadingEnable, rbCummulativeHeadingDisable; // richa_2012
     RadioButton rbTableSplitingEnable, rbTableSplitingDisable;
@@ -125,6 +129,18 @@ public class FragmentSettingsOther extends Fragment {
 
         rbTableSplitingEnable = (RadioButton) view.findViewById(R.id.rbTableSplitingEnable);
         rbTableSplitingDisable = (RadioButton) view.findViewById(R.id.rbTableSplitingDisable);
+
+        rbPrintOwnerDetailEnable = (RadioButton) view.findViewById(R.id.rbPrintOwnerDetailEnable);
+        rbPrintOwnerDetailDisable = (RadioButton) view.findViewById(R.id.rbPrintOwnerDetailDisable);
+
+        rbHeaderBoldEnable = (RadioButton) view.findViewById(R.id.rbHeaderBoldEnable);
+        rbHeaderBoldDisable = (RadioButton) view.findViewById(R.id.rbHeaderBoldDisable);
+
+        rbPrintServiceEnable = (RadioButton) view.findViewById(R.id.rbPrintServiceEnable);
+        rbPrintServiceDisable = (RadioButton) view.findViewById(R.id.rbPrintServiceDisable);
+
+        rbBillAmountRoundOffEnable = (RadioButton) view.findViewById(R.id.rbBillAmountRoundOffEnable);
+        rbBillAmountRoundOffDisable = (RadioButton) view.findViewById(R.id.rbBillAmountRoundOffDisable);
 
         //richa_2012
         rbCummulativeHeadingEnable = (RadioButton) view.findViewById(R.id.rbCummulativeHeadingEnable);
@@ -250,6 +266,34 @@ public class FragmentSettingsOther extends Fragment {
                 rbEnvironment_Testing.setChecked(true);
             }
 
+            // Print Owner Detail
+            if (crsrBillSetting.getInt(crsrBillSetting.getColumnIndex("PrintOwnerDetail")) == 1) {
+                rbPrintOwnerDetailEnable.setChecked(true);
+            } else {
+                rbPrintOwnerDetailDisable.setChecked(true);
+            }
+
+            // Bold Header
+            if (crsrBillSetting.getInt(crsrBillSetting.getColumnIndex("BoldHeader")) == 1) {
+                rbHeaderBoldEnable.setChecked(true);
+            } else {
+                rbHeaderBoldDisable.setChecked(true);
+            }
+
+            // Print Service
+            if (crsrBillSetting.getInt(crsrBillSetting.getColumnIndex("PrintService")) == 1) {
+                rbPrintServiceEnable.setChecked(true);
+            } else {
+                rbPrintServiceDisable.setChecked(true);
+            }
+
+            // Bill Amount Round Off
+            if (crsrBillSetting.getInt(crsrBillSetting.getColumnIndex("BillAmountRoundOff")) == 1) {
+                rbBillAmountRoundOffEnable.setChecked(true);
+            } else {
+                rbBillAmountRoundOffDisable.setChecked(true);
+            }
+
 
 
         } else {
@@ -267,6 +311,7 @@ public class FragmentSettingsOther extends Fragment {
         int fastBillingMode = 0, iItemNoReset = 0, iPrintPreview = 0, iTableSpliting = 0;
         int CummulativeHeadingEnable = 0; //richa_2012
         int environment =1;
+        int printOwnerDetail = 0, boldHeader = 0, printService = 0, billAmountRounfOff = 0;
 
         // Date And Time
         if (rbDateTimeAuto.isChecked() == true) {
@@ -357,6 +402,34 @@ public class FragmentSettingsOther extends Fragment {
             environment = 3; // TEST
         }
 
+        // Print Owner Detail
+        if (rbPrintOwnerDetailEnable.isChecked() == true) {
+            printOwnerDetail = 1;
+        } else {
+            printOwnerDetail = 0;
+        }
+
+        // Bold Header
+        if (rbHeaderBoldEnable.isChecked() == true) {
+            boldHeader = 1;
+        } else {
+            boldHeader = 0;
+        }
+
+        // Print Service
+        if (rbPrintServiceEnable.isChecked() == true) {
+            printService = 1;
+        } else {
+            printService = 0;
+        }
+
+        // Print Service
+        if (rbBillAmountRoundOffEnable.isChecked() == true) {
+            billAmountRounfOff = 1;
+        } else {
+            billAmountRounfOff = 0;
+        }
+
         // Initialize all the settings variable
         objBillSettings.setLoginWith(0);
         objBillSettings.setDateAndTime(iDateAndTime);
@@ -379,6 +452,11 @@ public class FragmentSettingsOther extends Fragment {
         objBillSettings.setTableSpliting(iTableSpliting);
         objBillSettings.setCummulativeHeadingEnable(CummulativeHeadingEnable); // richa_2012
         objBillSettings.setEnvironment(environment);
+
+        objBillSettings.setPrintOwnerDetail(printOwnerDetail);
+        objBillSettings.setBoldHeader(boldHeader);
+        objBillSettings.setPrintService(printService);
+        objBillSettings.setBillAmountRounfOff(billAmountRounfOff);
     }
 
     private void SaveOtherSettings() {

@@ -223,6 +223,13 @@ public class InwardItemActivity extends WepBaseActivity {
             });
 
             lstInwardItem.setOnItemClickListener(ListViewClickEvent);
+            autocomplete_inw_ItemName.setOnTouchListener(new View.OnTouchListener(){
+                //@Override
+                public boolean onTouch(View v, MotionEvent event){
+                    autocomplete_inw_ItemName.showDropDown();
+                    return false;
+                }
+            });
             /*autocomplete_inw_ItemName.setOnTouchListener(new View.OnTouchListener(){
                 //@Override
                 public boolean onTouch(View v, MotionEvent event){
@@ -231,7 +238,7 @@ public class InwardItemActivity extends WepBaseActivity {
                     autocomplete_inw_ItemName.showDropDown();
                     return false;
                 }
-            });*/
+            });
 
             autocomplete_inw_ItemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
@@ -244,7 +251,9 @@ public class InwardItemActivity extends WepBaseActivity {
                     {
                        // FOCUS =0;
                     }
+                    //autocomplete_inw_ItemName.showDropDown();
                 }
+
             });
 
             et_inw_HSNCode.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -254,13 +263,12 @@ public class InwardItemActivity extends WepBaseActivity {
                     {
                         FOCUS =0;
                         autocomplete_inw_ItemName.showDropDown();
-
                        autocomplete_inw_ItemName.requestFocus();
 
                     }
                 }
             });
-
+*/
             et_Inw_SGSTRate.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {

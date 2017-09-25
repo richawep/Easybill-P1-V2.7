@@ -65,7 +65,7 @@ public class UserManagementActivity extends WepBaseActivity implements View.OnCl
         //tvTitleDate.setText("Date : " + s);
 
 
-        com.wep.common.app.ActionBarUtils.setupToolbar(UserManagementActivity.this,toolbar,getSupportActionBar(),"Waiter/Rider",strUserName," Date:"+s.toString());
+        com.wep.common.app.ActionBarUtils.setupToolbar(UserManagementActivity.this,toolbar,getSupportActionBar(),"User Management",strUserName," Date:"+s.toString());
 
         try {
 

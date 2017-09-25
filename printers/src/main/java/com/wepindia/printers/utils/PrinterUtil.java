@@ -207,7 +207,7 @@ public class PrinterUtil {
         tmpList.add(CreateBitmap.AddText(18, "Bold","MONOSPACE", getSpaceFormat("TOTAL  : ","", String.format("%.2f",item.getNetTotal()),34,0), TextAlign.CENTER,context));
         tmpList.add(CreateBitmap.AddBlank(1));
         tmpList.add(CreateBitmap.AddBlank(1));
-        tmpList.add(CreateBitmap.AddText(20, "Bold","MONOSPACE", item.getFooterLine(), TextAlign.CENTER,context));
+        tmpList.add(CreateBitmap.AddText(20, "Bold","MONOSPACE", item.getFooterLine1(), TextAlign.CENTER,context));
         //tmpList.add(CreateBitmap.AddBlank(1));
         //tmpList.add(CreateBitmap.AddText(20, "Bold","MONOSPACE", "Hope you will visit Again,", TextAlign.CENTER,context));
         tmpList.add(CreateBitmap.AddBlank(5));
@@ -399,15 +399,17 @@ public class PrinterUtil {
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
         esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT);
         esc.addText("=============================================\n");
-        esc.addText("Attandant : "+item.getOrderBy()+"\n");
+        esc.addText("Attendant : "+item.getOrderBy()+"\n");
+        if ((item.getWaiterName() != null) && !(item.getWaiterName().equals("")))
+         esc.addText("Waiter : "+item.getWaiterName()+"\n");
         esc.addText("Date : "+item.getDate() +" | "+"Time : "+item.getTime()+"\n");
         esc.addText("=============================================\n");
-        esc.addSelectJustification(EscCommand.JUSTIFICATION.CENTER);
-        esc.addText("Lists\n");
+//        esc.addSelectJustification(EscCommand.JUSTIFICATION.CENTER);
+//        esc.addText("Lists\n");
+//        esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT);
+//        esc.addText("=============================================\n");
         esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT);
-        esc.addText("=============================================\n");
-        esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT);
-        esc.addText("SNo              NAME               QTY"+"\n");
+        esc.addText("SNo        NAME                    QTY"+"\n");
         esc.addText("=============================================\n");
         ArrayList<BillKotItem> billKotItems = item.getBillKotItems();
         Iterator it = billKotItems.iterator();
@@ -415,9 +417,9 @@ public class PrinterUtil {
         {
             BillKotItem billKotItem = (BillKotItem) it.next();
             int id = billKotItem.getItemId();
-            String name = getFormatedCharacterForPrint(billKotItem.getItemName(),10,1);
+            String name = getFormatedCharacterForPrint(billKotItem.getItemName(),16,1);
             String qty = billKotItem.getQty()+"";
-            String pre = getPostAddedSpaceFormat("",String.valueOf(id),15,1)+name;
+            String pre = getPostAddedSpaceFormat("",String.valueOf(id),10,1)+name;
             esc.addText(getPreAddedSpaceFormat(pre,qty,38,1)+"\n");
         }
         esc.addText("=============================================\n");
@@ -436,16 +438,36 @@ public class PrinterUtil {
         esc.addSelectJustification(EscCommand.JUSTIFICATION.CENTER);
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
         esc.addText("OUTWARDS INVOICE"+item.getIsDuplicate()+"\n");
-        if(item.getHeaderLine()!=null && !item.getHeaderLine().equals("") )
-            esc.addText(item.getHeaderLine()+"\n");
-        esc.addPrintAndLineFeed();
 
+        if (item.getBoldHeader() == 1)
+            esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.ON, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF);
+
+        if(item.getHeaderLine1()!=null && !item.getHeaderLine1().equals("")) {
+            esc.addText(item.getHeaderLine1()+"\n");
+        }
+        if(item.getHeaderLine2()!=null && !item.getHeaderLine2().equals("")) {
+            esc.addText(item.getHeaderLine2()+"\n");
+        }
+        if(item.getHeaderLine3()!=null && !item.getHeaderLine3().equals("")) {
+            esc.addText(item.getHeaderLine3()+"\n");
+        }
+        if(item.getHeaderLine4()!=null && !item.getHeaderLine4().equals("")) {
+            esc.addText(item.getHeaderLine4()+"\n");
+        }
+        if(item.getHeaderLine5()!=null && !item.getHeaderLine5().equals("")) {
+            esc.addText(item.getHeaderLine5()+"\n");
+        }
+
+        esc.addPrintAndLineFeed();
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
         esc.addSelectJustification(EscCommand.JUSTIFICATION.LEFT);
-        esc.addText("GSTIN     : "+item.getAddressLine1()+"\n");
-        esc.addText("Name      : "+item.getAddressLine2()+"\n");
-        esc.addText("Address   : "+item.getAddressLine3()+"\n");
-        esc.addPrintAndLineFeed();
+
+        if (item.getOwnerDetail() == 1) {
+            esc.addText("GSTIN     : "+item.getAddressLine1()+"\n");
+            esc.addText("Name      : "+item.getAddressLine2()+"\n");
+            esc.addText("Address   : "+item.getAddressLine3()+"\n");
+            esc.addPrintAndLineFeed();
+        }
 
         esc.addText("Bill no         : "+item.getBillNo()+"\n");
         if(item.getBillingMode().equals("1"))
@@ -454,22 +476,27 @@ public class PrinterUtil {
        /* esc.addText("Date            : "+item.getDate() +"\n");
         esc.addText("Time            : "+item.getTime() +"\n");*/
         esc.addText("Cashier         : "+item.getOrderBy()+"\n");
-        esc.addText("Customer Name   : "+item.getCustomerName()+"\n");
+
+        if (!item.getCustomerName().equals("") && !item.getCustomerName().contains("-")) {
+            esc.addText("Customer Name   : "+item.getCustomerName()+"\n");
+        }
+
         if(item.getBillingMode().equalsIgnoreCase("4") || item.getBillingMode().equalsIgnoreCase("3")) {
             esc.addText("Payment Status  : " + item.getPaymentStatus()+"\n");
         }
 
-
-        if(item.getBillingMode().equalsIgnoreCase("1") || item.getBillingMode().equalsIgnoreCase("2") ||
-                item.getBillingMode().equalsIgnoreCase("3") || item.getBillingMode().equalsIgnoreCase("4")){
-            esc.addText("Service         : "+ item.getStrBillingModeName() + "\n");
-        } else {
-            esc.addText("-----------" + "\n");
+        if (item.getPrintService() == 1) {
+            if(item.getBillingMode().equalsIgnoreCase("1") || item.getBillingMode().equalsIgnoreCase("2") ||
+                    item.getBillingMode().equalsIgnoreCase("3") || item.getBillingMode().equalsIgnoreCase("4")){
+                esc.addText("Service         : "+ item.getStrBillingModeName() + "\n");
+            } else {
+                esc.addText("-----------" + "\n");
+            }
         }
 
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
         esc.addText("================================================"+"\n");
-        esc.addText("SI  ITEM NAME       QTY     RATE       AMOUNT "+"\n");
+        esc.addText("SI  ITEM NAME            QTY     RATE    AMOUNT "+"\n");
         if(item.getHSNPrintEnabled_out()== 1)
         {
             esc.addText("HSN"+"\n");
@@ -486,14 +513,27 @@ public class PrinterUtil {
             BillKotItem billKotItem = (BillKotItem) it.next();
 
             String preId = getPostAddedSpaceFormat("",String.valueOf(billKotItem.getItemId()),3,1);
-            String preName = getPostAddedSpaceFormat("",getFormatedCharacterForPrint(String.valueOf(billKotItem.getItemName()),10,1),11,1);
-            String HSN = getPostAddedSpaceFormat("",getFormatedCharacterForPrint(String.valueOf(billKotItem.getHSNCode()),7,1),7,1);
+            String preName = getPostAddedSpaceFormat("",getFormatedCharacterForPrint(String.valueOf(billKotItem.getItemName()),16,1),17,1);
+            String HSN = getPostAddedSpaceFormat("",getFormatedCharacterForPrint(String.valueOf(billKotItem.getHSNCode()),8,1),8,1);
 
-            String preQty = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.valueOf(billKotItem.getQty())+billKotItem.getUOM(),8,1),9,1);
-            String preRate = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getRate()),9,1),10,1);
-            String preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
-                                                                                                +billKotItem.getTaxIndex(),14,1),14,1);
-            String pre = preId+preName+/*HSN+*/preQty+preRate+preAmount;
+            String preQty = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.valueOf(billKotItem.getQty())+billKotItem.getUOM(),9,1),10,1);
+            String preRate = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getRate()),7,1),8,1);
+            String preAmount = "0";
+            String pre = "";
+            if(String.format("%.2f",billKotItem.getAmount()).length()>8)
+            {
+                preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
+                        +billKotItem.getTaxIndex(),(String.format("%.2f",billKotItem.getAmount()) +billKotItem.getTaxIndex() ).length(),1),10,1);
+                pre = preId+preName+/*HSN+*/preQty+preRate+"\n"+preAmount;
+
+            }else
+            {
+                preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
+                        +billKotItem.getTaxIndex(),9,1),10,1);
+                pre = preId+preName+/*HSN+*/preQty+preRate+preAmount;
+            }
+
+
             esc.addText(pre+"\n");
             if(item.getHSNPrintEnabled_out() == 1) {
                 esc.addText(HSN+"\n");
@@ -625,8 +665,16 @@ public class PrinterUtil {
             esc.addText(getSpaceFormater("Total Roundoff to 1.00 ","",48,1)+"\n");
         }
         esc.addText("================================================"+"\n");
-        if(!item.getFooterLine().equals(""))
-            esc.addText(item.getFooterLine()+"\n");
+        if(!item.getFooterLine1().equals(""))
+            esc.addText(item.getFooterLine1()+"\n");
+        if(!item.getFooterLine2().equals(""))
+            esc.addText(item.getFooterLine2()+"\n");
+        if(!item.getFooterLine3().equals(""))
+            esc.addText(item.getFooterLine3()+"\n");
+        if(!item.getFooterLine4().equals(""))
+            esc.addText(item.getFooterLine4()+"\n");
+        if(!item.getFooterLine5().equals(""))
+            esc.addText(item.getFooterLine5()+"\n");
         esc.addPrintAndFeedLines((byte)3);
 
         Vector<Byte> datas = esc.getCommand();

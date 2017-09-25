@@ -5336,7 +5336,12 @@ public class BillingScreenActivity_Unused extends WepPrinterBaseActivity {
                                 item.setAddressLine2(tokens[1]);
                             if (!tokens[2].equalsIgnoreCase(""))
                                 item.setAddressLine3(tokens[2]);
-                            item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+
+                            item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                            item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                            item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                            item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                            item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
                         } else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
                         }
@@ -5363,7 +5368,13 @@ public class BillingScreenActivity_Unused extends WepPrinterBaseActivity {
                                 item.setAddressLine2(tokens[1]);
                             if (!tokens[2].equalsIgnoreCase(""))
                                 item.setAddressLine3(tokens[2]);
-                            item.setFooterLine(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText")));
+
+                            item.setFooterLine1(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText1")));
+                            item.setFooterLine2(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText2")));
+                            item.setFooterLine3(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText3")));
+                            item.setFooterLine4(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText4")));
+                            item.setFooterLine5(crsrHeaderFooterSetting.getString(crsrHeaderFooterSetting.getColumnIndex("FooterText5")));
+
                         } else {
                             Log.d(TAG, "DisplayHeaderFooterSettings No data in BillSettings table");
                         }

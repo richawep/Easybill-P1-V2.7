@@ -180,8 +180,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_DineIn2To = "DineIn2To";
     private static final String KEY_DineIn3From = "DineIn3From";
     private static final String KEY_DineIn3To = "DineIn3To";
-    private static final String KEY_FooterText = "FooterText";
-    private static final String KEY_HeaderText = "HeaderText";
+    private static final String KEY_FooterText1 = "FooterText1";
+    private static final String KEY_FooterText2 = "FooterText2";
+    private static final String KEY_FooterText3 = "FooterText3";
+    private static final String KEY_FooterText4 = "FooterText4";
+    private static final String KEY_FooterText5 = "FooterText5";
+    private static final String KEY_HeaderText1 = "HeaderText1";
+    private static final String KEY_HeaderText2 = "HeaderText2";
+    private static final String KEY_HeaderText3 = "HeaderText3";
+    private static final String KEY_HeaderText4 = "HeaderText4";
+    private static final String KEY_HeaderText5 = "HeaderText5";
     private static final String KEY_KOTType = "KOTType";
     private static final String KEY_MaximumTables = "MaximumTables";
     private static final String KEY_MaximumWaiters = "MaximumWaiters";
@@ -571,6 +579,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     static final String TBL_GSTR2_AMEND = "InwardSupplyLedgerAmend";
     static final String TBL_Supplier = "SupplierDetails";
     static final String TBL_OUTWARD_SUPPLY_LEDGER = "OutwardSupplyLedger";
+    static final String TBL_PREVIEW_OUTWARD_SUPPLY_LEDGER = "PreviewOutwardSupplyLedger";
     static final String TBL_GSTR1_AMEND = "OutwardSupplyLedgerAmend";
     static final String TBL_OUTWARD_SUPPLY_ITEMS_DETAILS = "OutwardSuppyItemsDetails";
     static final String TBL_CreditDebit_Outward = "CreditDebitOutward";
@@ -587,6 +596,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     private static final String TBL_BILLDETAIL = "OutwardSuppyItemsDetails";
     private static final String TBL_BILLITEM = "OutwardSupplyLedger";
+    private static final String TBL_PREVIEWBILLITEM = "PreviewOutwardSupplyLedger";
     private static final String TBL_StockOutward = "StockOutward";
     private static final String TBL_StockInward = "StockInward";
     public static final String KEY_OpeningStock = "OpeningStock";
@@ -661,6 +671,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public static final String KEY_Environment = "Environment";
     public static final String KEY_UTGSTEnabled = "UTGSTEnabled";
     public static final String KEY_HSNPrintEnabled_out = "HSNPrintEnabled_out";
+    public static final String KEY_PrintOwnerDetail = "PrintOwnerDetail";
+    public static final String KEY_HeaderBold = "BoldHeader";
+    public static final String KEY_PrintService = "PrintService";
+    public static final String KEY_BillAmountRoundOff = "BillAmountRoundOff";
 
     public static final String KEY_ProvisionalAssess = "ProvisionalAssess";
     public static final String KEY_LineNumber = "LineNumber";
@@ -857,6 +871,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             KEY_DiscountPercent + " REAL, " + KEY_DiscountAmount + " REAL, " + KEY_TaxAmount + " REAL, " + KEY_BillStatus+" INTEGER, "+
             KEY_TaxPercent + " REAL)";
 
+    String QUERY_CREATE_TABLE_Preview_Outward_Supply_Ledger = "CREATE TABLE " + TBL_PREVIEW_OUTWARD_SUPPLY_LEDGER +
+            "( " + KEY_GSTIN + " TEXT, " + KEY_CustName + " TEXT, " + KEY_CustStateCode + " TEXT, " + KEY_InvoiceNo + " TEXT, " +
+            KEY_InvoiceDate + " TEXT, " + KEY_SupplyType + " TEXT, " +
+            KEY_BusinessType + " TEXT, " + KEY_TaxationType + " TEXT, " + KEY_HSNCode + " TEXT, "
+            + KEY_ItemNumber + " NUMERIC, " + KEY_ItemName + " TEXT, " + KEY_Quantity + " REAL, " + KEY_UOM + " TEXT, "
+            +KEY_OriginalRate+" REAL, "+
+            KEY_Value + " REAL, " + KEY_TaxableValue + " REAL, " + KEY_Amount + " REAL, " +KEY_IsReverseTaxEnabled + " TEXT, " + KEY_IGSTRate + " REAL," +
+            KEY_IGSTAmount + " REAL," + KEY_CGSTRate + " REAL," + KEY_CGSTAmount + " REAL, " + KEY_SGSTRate + " REAL," +
+            KEY_SGSTAmount + " REAL," + KEY_cessRate + " REAL," + KEY_cessAmount + " REAL," +
+            KEY_SubTotal + " REAl, " + KEY_BillingMode + " TEXT, " + KEY_ServiceTaxAmount + " REAL, " +
+            KEY_ServiceTaxPercent + " REAL," + KEY_ModifierAmount + " REAL, " + KEY_TaxType + " NUMERIC, " +
+            KEY_KitchenCode + " NUMERIC, " + KEY_CategCode + " NUMERIC, " + KEY_DeptCode + " NUMERIC, " +
+            KEY_DiscountPercent + " REAL, " + KEY_DiscountAmount + " REAL, " + KEY_TaxAmount + " REAL, " + KEY_BillStatus+" INTEGER, "+
+            KEY_TaxPercent + " REAL)";
+
     String QUERY_CREATE_TABLE_Outward_Supply_Items_Details = " CREATE TABLE " + TBL_OUTWARD_SUPPLY_ITEMS_DETAILS + "( "
             + KEY_GSTIN + " TEXT, "
             + KEY_CustName + " TEXT, "
@@ -1033,8 +1062,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + KEY_DineIn2To + " NUMERIC, "
             + KEY_DineIn3From + " NUMERIC, "
             + KEY_DineIn3To + " NUMERIC, "
-            + KEY_FooterText + " TEXT, "
-            + KEY_HeaderText + " TEXT, "
+            + KEY_FooterText1 + " TEXT, "
+            + KEY_FooterText2 + " TEXT, "
+            + KEY_FooterText3 + " TEXT, "
+            + KEY_FooterText4 + " TEXT, "
+            + KEY_FooterText5 + " TEXT, "
+            + KEY_HeaderText1 + " TEXT, "
+            + KEY_HeaderText2 + " TEXT, "
+            + KEY_HeaderText3 + " TEXT, "
+            + KEY_HeaderText4 + " TEXT, "
+            + KEY_HeaderText5 + " TEXT, "
             + KEY_KOTType + " NUMERIC, "
             + KEY_MaximumTables + " NUMERIC, "
             + KEY_MaximumWaiters + " NUMERIC, "
@@ -1076,7 +1113,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             +KEY_Environment +" NUMERIC, "
             +KEY_UTGSTEnabled +" NUMERIC, "
             + KEY_HSNPrintEnabled_out +" NUMERIC, "
-            +KEY_TableSpliting + " NUMERIC )";
+            + KEY_PrintOwnerDetail +" NUMERIC, "
+            + KEY_HeaderBold +" NUMERIC, "
+            + KEY_PrintService +" NUMERIC, "
+            + KEY_BillAmountRoundOff +" NUMERIC, "
+            + KEY_TableSpliting + " NUMERIC )";
 
     String QUERY_CREATE_TABLE_BILLNO_RESET = "CREATE TABLE " + TBL_BILLNORESETCONFIG + "( " + KEY_BillNoReset_InvoiceNo +
             " NUMERIC, " + KEY_BillNoReset_Period + " TEXT," + KEY_BillNoReset_PeriodDate + " TEXT, KOTNo NUMERIC)";
@@ -1252,6 +1293,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.execSQL(QUERY_CREATE_TABLE_INWARD_SUPPLY_ITEM_DETAILS);
             db.execSQL(QUERY_CREATE_TABLE_GSTR2_AMMEND);
             db.execSQL(QUERY_CREATE_TABLE_Outward_Supply_Ledger);
+            db.execSQL(QUERY_CREATE_TABLE_Preview_Outward_Supply_Ledger);
             db.execSQL(QUERY_CREATE_TABLE_Outward_Supply_Items_Details);
             db.execSQL(QUERY_CREATE_TABLE_OUTWARD_SUPPLY_AMMEND);
             db.execSQL(QUERY_CREATE_TABLE_Supplier);
@@ -1313,6 +1355,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TBL_INWARD_SUPPLY_LEDGER);
         db.execSQL("DROP TABLE IF EXISTS " + TBL_GSTR2_AMEND);
         db.execSQL("DROP TABLE IF EXISTS " + TBL_OUTWARD_SUPPLY_LEDGER);
+        db.execSQL("DROP TABLE IF EXISTS " + TBL_PREVIEW_OUTWARD_SUPPLY_LEDGER);
         db.execSQL("DROP TABLE IF EXISTS " + TBL_OUTWARD_SUPPLY_ITEMS_DETAILS);
         db.execSQL("DROP TABLE IF EXISTS " + TBL_GSTR1_AMEND);
         db.execSQL("DROP TABLE IF EXISTS " + TBL_READ_FROM_2A);
@@ -1481,8 +1524,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("DineIn2To", 20);
         cvDbValues.put("DineIn3From", 3);
         cvDbValues.put("DineIn3To", 30);
-        cvDbValues.put("FooterText", " Thankyou ");
-        cvDbValues.put("HeaderText", "Restaurant");
+        cvDbValues.put("FooterText1", "Thank You");
+        cvDbValues.put("FooterText2", "");
+        cvDbValues.put("FooterText3", "");
+        cvDbValues.put("FooterText4", "");
+        cvDbValues.put("FooterText5", "");
+        cvDbValues.put("HeaderText1", "Restaurant");
+        cvDbValues.put("HeaderText2", "Bangalore");
+        cvDbValues.put("HeaderText3", "");
+        cvDbValues.put("HeaderText4", "");
+        cvDbValues.put("HeaderText5", "");
         //cvDbValues.put("HeaderText", "Restaurant|St Marks Road|Bangalore|");
         cvDbValues.put("KOTType", 1);
         cvDbValues.put("MaximumTables", 12);
@@ -1532,6 +1583,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put(KEY_UTGSTEnabled, 0); // disabling
         cvDbValues.put(KEY_Environment, 1); // Production
         cvDbValues.put(KEY_HSNPrintEnabled_out, 0); // Disabled
+
+        cvDbValues.put(KEY_PrintOwnerDetail, 0); // Disabled
+        cvDbValues.put(KEY_HeaderBold, 0); // Disabled
+        cvDbValues.put(KEY_PrintService, 0); // Disabled
+        cvDbValues.put(KEY_BillAmountRoundOff, 0); // Disabled
 
         status = 0;
         try {
@@ -2866,10 +2922,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return dbFNB.update(TBL_BILLSETTING, cvDbValues, null, null);
     }*/
     // Temp functions - Header-Footer Text update
-    public int updateHeaderFooterText(String str1, String str2) {
+    public int updateHeaderFooterText(String strHeader1, String strHeader2, String strHeader3, String strHeader4, String strHeader5,
+                                      String strFooter1, String strFooter2, String strFooter3, String strFooter4, String strFooter5) {
         ContentValues contentValues = new ContentValues();
-        contentValues.put("FooterText", str2);
-        contentValues.put("HeaderText", str1);
+        contentValues.put("FooterText1", strFooter1);
+        contentValues.put("FooterText2", strFooter2);
+        contentValues.put("FooterText3", strFooter3);
+        contentValues.put("FooterText4", strFooter4);
+        contentValues.put("FooterText5", strFooter5);
+        contentValues.put("HeaderText1", strHeader1);
+        contentValues.put("HeaderText2", strHeader2);
+        contentValues.put("HeaderText3", strHeader3);
+        contentValues.put("HeaderText4", strHeader4);
+        contentValues.put("HeaderText5", strHeader5);
         return dbFNB.update(TBL_BILLSETTING, contentValues, null, null);
     }
 
@@ -2953,6 +3018,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("TableSpliting", objBillSetting.getTableSpliting());
         cvDbValues.put(KEY_Environment, objBillSetting.getEnvironment());
         cvDbValues.put(KEY_CummulativeHeadingEnable, objBillSetting.getCummulativeHeadingEnable()); // richa_2012
+
+        cvDbValues.put(KEY_PrintOwnerDetail, objBillSetting.getPrintOwnerDetail());
+        cvDbValues.put(KEY_HeaderBold, objBillSetting.getBoldHeader());
+        cvDbValues.put(KEY_PrintService, objBillSetting.getPrintService());
+        cvDbValues.put(KEY_BillAmountRoundOff, objBillSetting.getBillAmountRounfOff());
 
         return dbFNB.update(TBL_BILLSETTING, cvDbValues, null, null);
     }
@@ -5612,6 +5682,60 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return dbFNB.insert(TBL_BILLITEM, null, cvDbValues);
     }
 
+    /************************************************************************************************************************************/
+    /*******************************************************
+     * Table - PreviewBillItem
+     ***********************************************************/
+    /************************************************************************************************************************************/
+    // -----Insert Preview Bill Items-----
+    public long addPreviewBillItem(BillItem objBillItem) {
+        cvDbValues = new ContentValues();
+
+        cvDbValues.put(KEY_InvoiceNo, objBillItem.getBillNumber());
+        cvDbValues.put(KEY_BillingMode, objBillItem.getBillingMode()); // richa_2012
+        cvDbValues.put("ItemNumber", objBillItem.getItemNumber());
+        cvDbValues.put("ItemName", objBillItem.getItemName());
+        cvDbValues.put("Quantity", objBillItem.getQuantity());
+        cvDbValues.put("Value", objBillItem.getValue());
+        cvDbValues.put("ModifierAmount", objBillItem.getModifierAmount());
+        cvDbValues.put(KEY_TaxableValue, objBillItem.getTaxableValue());
+        cvDbValues.put(KEY_TaxableValue, objBillItem.getTaxableValue());
+        cvDbValues.put(KEY_Amount, objBillItem.getAmount());
+        cvDbValues.put(KEY_OriginalRate, objBillItem.getOriginalRate());
+        cvDbValues.put(KEY_IsReverseTaxEnabled, objBillItem.getIsReverTaxEnabled());
+        cvDbValues.put("DiscountAmount", objBillItem.getDiscountAmount());
+        cvDbValues.put("DiscountPercent", objBillItem.getDiscountPercent());
+        cvDbValues.put("ServiceTaxAmount", objBillItem.getServiceTaxAmount());
+        cvDbValues.put("ServiceTaxPercent", objBillItem.getServiceTaxPercent());
+        cvDbValues.put("TaxAmount", objBillItem.getTaxAmount());
+        cvDbValues.put("TaxPercent", objBillItem.getTaxPercent());
+        cvDbValues.put("DeptCode", objBillItem.getDeptCode());
+        cvDbValues.put("CategCode", objBillItem.getCategCode());
+        cvDbValues.put("KitchenCode", objBillItem.getKitchenCode());
+        cvDbValues.put("TaxType", objBillItem.getTaxType());
+        //cvDbValues.put("CustId", objBillItem.getCustId());
+        //cvDbValues.put(KEY_BusinessType, objBillItem.getBusinessType());
+        cvDbValues.put(KEY_InvoiceDate, objBillItem.getInvoiceDate());
+        cvDbValues.put(KEY_HSNCode, objBillItem.getHSNCode());
+        cvDbValues.put(KEY_IGSTRate, objBillItem.getIGSTRate());
+        cvDbValues.put(KEY_IGSTAmount, objBillItem.getIGSTAmount());
+        cvDbValues.put(KEY_CGSTRate, objBillItem.getCGSTRate());
+        cvDbValues.put(KEY_CGSTAmount, objBillItem.getCGSTAmount());
+        cvDbValues.put(KEY_SGSTRate, objBillItem.getSGSTRate());
+        cvDbValues.put(KEY_SGSTAmount, objBillItem.getSGSTAmount());
+        cvDbValues.put(KEY_cessRate, objBillItem.getCessRate());
+        cvDbValues.put(KEY_cessAmount, objBillItem.getCessAmount());
+        cvDbValues.put(KEY_SupplyType, objBillItem.getSupplyType());
+        cvDbValues.put(KEY_SubTotal, objBillItem.getSubTotal());
+        cvDbValues.put(KEY_CustName, objBillItem.getCustName());
+        cvDbValues.put(KEY_CustStateCode, objBillItem.getCustStateCode());
+        cvDbValues.put(KEY_UOM, objBillItem.getUom());
+        cvDbValues.put(KEY_BusinessType, objBillItem.getBusinessType());
+        cvDbValues.put(KEY_BillStatus, objBillItem.getBillStatus());
+
+        return dbFNB.insert(TBL_PREVIEWBILLITEM, null, cvDbValues);
+    }
+
 
     // -----Insert Bill Items-----
     public long addBillItem_inward(BillItem objBillItem) {
@@ -5894,6 +6018,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         Cursor cursor = dbFNB.rawQuery(selectQuery, null);
         return cursor;
     }
+    public Cursor getTaxDetailforPreviewBill(String Invoiceno, String Invoicedate, String taxPercentName, String taxAmountName)
+    {
+        String selectQuery = "Select "+taxPercentName+" , "+taxAmountName+" ,"+KEY_TaxableValue+","+KEY_DiscountAmount+" FROM "+TBL_PREVIEW_OUTWARD_SUPPLY_LEDGER+
+                " WHERE "+KEY_InvoiceNo+" LIKE '"+Invoiceno+"' AND "+KEY_InvoiceDate+" LIKE '"+Invoicedate+"'";
+        Cursor cursor = dbFNB.rawQuery(selectQuery, null);
+        return cursor;
+    }
     public Cursor getTaxReport(String StartDate, String EndDate) {
         /*return dbFNB.rawQuery("SELECT * FROM BillDetail, BillItem, TaxConfig WHERE BillDetail.BillStatus=1 AND "
                 + "BillItem.BillNumber=BillDetail.BillNumber AND BillItem.TaxPercent=TaxConfig.TaxPercentage AND "
@@ -6171,6 +6302,34 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // returning lables
         return list;
     }
+    public List<String> getAllItemsBarCode() {
+        List<String> list = new ArrayList<String>();
+        String selectQuery = "SELECT  * FROM " + TBL_ITEM_Outward;
+        Cursor cursor = dbFNB.rawQuery(selectQuery, null);
+        if (cursor !=null && cursor.moveToNext()) {
+            do {
+                String barcode = cursor.getString(cursor.getColumnIndex("ItemBarcode"));
+                if(barcode!=null && !barcode.equals(""))
+                    list.add(barcode);// adding
+            } while (cursor.moveToNext());
+        }
+        return list;
+    }
+
+    public Cursor getItemDetail_ByBarCode(String BarCode) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = null;
+        try{
+            cursor = db.rawQuery("SELECT * FROM " + TBL_ITEM_Outward + "  WHERE "+KEY_ItemBarcode+" LIKE '" + BarCode + "'", null);
+        }catch (Exception e){
+            e.printStackTrace();
+            cursor = null;
+        }finally {
+            //db.close();
+        }
+        return cursor;
+    }
+
 
     public long saveSupplierDetails(String supplierType_str, String suppliergstin_str, String suppliername_str,
                                     String supplierphn_str, String supplieraddress_str) {
@@ -7533,8 +7692,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("DineIn2To", 20);
         cvDbValues.put("DineIn3From", 3);
         cvDbValues.put("DineIn3To", 30);
-        cvDbValues.put("FooterText", " Thankyou ");
-        cvDbValues.put("HeaderText", "Restaurant");
+        cvDbValues.put("FooterText1", "Thank You");
+        cvDbValues.put("FooterText2", "");
+        cvDbValues.put("FooterText3", "");
+        cvDbValues.put("FooterText4", "");
+        cvDbValues.put("FooterText5", "");
+        cvDbValues.put("HeaderText1", "Restaurant");
+        cvDbValues.put("HeaderText2", "Bangalore");
+        cvDbValues.put("HeaderText3", "");
+        cvDbValues.put("HeaderText4", "");
+        cvDbValues.put("HeaderText5", "");
         cvDbValues.put("KOTType", 1);
         cvDbValues.put("MaximumTables", 12);
         cvDbValues.put("MaximumWaiters", 4);
@@ -7584,6 +7751,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put(KEY_UTGSTEnabled, 0); // disabling
         cvDbValues.put(KEY_Environment, 1); // Production
         cvDbValues.put(KEY_HSNPrintEnabled_out, 0); // disabled
+
+        cvDbValues.put(KEY_PrintOwnerDetail, 0); // Disabled
+        cvDbValues.put(KEY_HeaderBold, 0); // Disabled
+        cvDbValues.put(KEY_PrintService, 0); // Disabled
+        cvDbValues.put(KEY_BillAmountRoundOff, 0); // Disabled
 
         long result1 = dbFNB.insert(TBL_BILLSETTING, null, cvDbValues);
 
@@ -8790,6 +8962,23 @@ public Cursor getGSTR1B2CL_invoices_ammend(String InvoiceNo, String InvoiceDate,
 
 
     }
+    public Cursor getItemsForTaxSlabPreviewPrints(int InvoiceNo, String InvoiceDate) {
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor cursor = null;
+        try{
+            cursor = db.rawQuery("Select IGSTRate, CGSTRate, SGSTRate, IGSTAmount, CGSTAmount, SGSTAmount, TaxableValue from " + TBL_PREVIEWBILLITEM +
+                    " where InvoiceNo = '" + InvoiceNo + "' AND "+KEY_InvoiceDate+" LIKE '"+InvoiceDate+"'", null);
+        }catch (Exception e){
+            e.printStackTrace();
+            cursor = null;
+            db.close();
+        }finally {
+            return cursor;
+
+        }
+
+
+    }
 
     /*public Cursor getItemsForSGSTTaxPrint(int InvoiceNo) {
 
@@ -8950,6 +9139,20 @@ public Cursor getGSTR1B2CL_invoices_ammend(String InvoiceNo, String InvoiceDate,
         SQLiteDatabase db = getWritableDatabase();
         try{
             int result = db.delete(TBL_PENDINGKOT, "CustId=" + CustId + " AND OrderMode=" + OrderMode, null);
+            return result;
+        }catch (Exception e){
+            e.printStackTrace();
+            return 1;
+        }finally {
+            //db.close();
+        }
+    }
+
+    // -----Delete Preview Bill table-----
+    public int deletePreviewBillTable(int invoiceNo, String strDate) {
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            int result = db.delete(TBL_PREVIEWBILLITEM, null, null);
             return result;
         }catch (Exception e){
             e.printStackTrace();

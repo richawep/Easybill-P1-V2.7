@@ -1243,7 +1243,7 @@ public class PrinterSohamsaActivity extends Activity {
         tmpList.add(CreateBitmap.AddText(18, "Bold","MONOSPACE", getSpaceFormat("TOTAL  : ","", String.valueOf(item.getNetTotal()),34), TextAlign.CENTER,getApplicationContext()));
         tmpList.add(CreateBitmap.AddBlank(1));
         tmpList.add(CreateBitmap.AddBlank(1));
-        tmpList.add(CreateBitmap.AddText(20, "Bold","MONOSPACE", item.getFooterLine(), TextAlign.CENTER,getApplicationContext()));
+        tmpList.add(CreateBitmap.AddText(20, "Bold","MONOSPACE", item.getFooterLine1(), TextAlign.CENTER,getApplicationContext()));
         //tmpList.add(CreateBitmap.AddBlank(1));
         //tmpList.add(CreateBitmap.AddText(20, "Bold","MONOSPACE", "Hope you will visit Again,", TextAlign.CENTER,getApplicationContext()));
         tmpList.add(CreateBitmap.AddBlank(5));
