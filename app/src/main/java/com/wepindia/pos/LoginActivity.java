@@ -11,13 +11,17 @@ package com.wepindia.pos;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,14 +29,25 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.mswipetech.wisepad.sdktest.view.ApplicationData;
+import com.shehabic.droppy.DroppyClickCallbackInterface;
+import com.shehabic.droppy.DroppyMenuItem;
+import com.shehabic.droppy.DroppyMenuPopup;
 import com.wep.common.app.Database.BillSetting;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.WepBaseActivity;
 import com.wep.common.app.utils.Preferences;
 import com.wepindia.pos.GenericClasses.MessageDialog;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -47,6 +62,7 @@ public class LoginActivity extends WepBaseActivity {
     // View handling variables
     EditText txtUserId, txtPassword;
     Button btnDateDisplay, btnMonthDisplay, btnYearDisplay, btnLogin, btnClose;
+    ImageButton btnHelp;
 
     // Class Variables
     private static final int HOME_RESULT = 1;
@@ -65,6 +81,7 @@ public class LoginActivity extends WepBaseActivity {
         try {
             MsgBox = new MessageDialog(this);
             calDate = Calendar.getInstance();
+            btnHelp = (ImageButton) findViewById(R.id.btnHelp);
             txtUserId = (EditText) findViewById(R.id.txtUserId);
             txtPassword = (EditText) findViewById(R.id.txtPassword);
             btnDateDisplay = (Button) findViewById(R.id.btnDateDisplay);
@@ -88,6 +105,13 @@ public class LoginActivity extends WepBaseActivity {
             btnDateDisplay.setText(String.valueOf(calDate.get(Calendar.DAY_OF_MONTH)));
             btnMonthDisplay.setText(calDate.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US));
             btnYearDisplay.setText(String.valueOf(calDate.get(Calendar.YEAR)));
+
+            btnHelp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showOptions(view);
+                }
+            });
 
             dbLogin.CreateDatabase();
             dbLogin.OpenDatabase();
@@ -148,6 +172,120 @@ public class LoginActivity extends WepBaseActivity {
                 .setMessage(strAboutMsg)
                 .setNeutralButton("OK", null)
                 .show();
+    }
+
+    // Download documents
+
+    String FILENAME = "";
+
+    void showOptions(View v) {
+        DroppyMenuPopup.Builder droppyBuilder = new DroppyMenuPopup.Builder(this, btnHelp);
+        droppyBuilder.addMenuItem(new DroppyMenuItem("Download Quick Start Guide"))
+                .addMenuItem(new DroppyMenuItem("Download User Manual"))
+                .addSeparator();
+        droppyBuilder.setOnClick(new DroppyClickCallbackInterface() {
+            @Override
+            public void call(View v, int id) {
+                switch (id) {
+                    case 0:
+                        FILENAME = "Quick_Start_Guide";
+                        new GenerateDocuments().execute();
+                        break;
+                    case 1:
+                        FILENAME = "User_Manual";
+                        new GenerateDocuments().execute();
+                        break;
+                }
+            }
+        });
+        droppyBuilder.build().show();
+    }
+
+    private String DOCUMENT_GENERATE_PATH = Environment.getExternalStorageDirectory().getPath() + "/EasyBill_Documents/";
+
+    class GenerateDocuments extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog pd = new ProgressDialog(LoginActivity.this);
+        int progress = 0;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progress = 0;
+            pd.setMessage("Copying document...");
+            pd.setCancelable(false);
+            pd.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            progress = 1;
+
+            try {
+                File directory = new File(DOCUMENT_GENERATE_PATH);
+                if (!directory.exists())
+                    directory.mkdirs();
+
+                InputStream isAssetDbFile = getApplicationContext().getAssets().open( FILENAME + ".pdf");
+                OutputStream osNewDbFile = new FileOutputStream(DOCUMENT_GENERATE_PATH + FILENAME + ".pdf");
+                byte[] bFileBuffer = new byte[1024];
+                int iBytesRead = 0;
+
+                while ((iBytesRead = isAssetDbFile.read(bFileBuffer)) > 0) {
+                    osNewDbFile.write(bFileBuffer, 0, iBytesRead);
+                }
+
+                osNewDbFile.flush();
+                osNewDbFile.close();
+                isAssetDbFile.close();
+                pd.dismiss();
+                publishProgress();
+
+            } catch (FileNotFoundException e) {
+                pd.dismiss();
+                progress = 3;
+                publishProgress();
+                e.printStackTrace();
+            } catch (IOException e) {
+                pd.dismiss();
+                progress = 4;
+                publishProgress();
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if (progress == 1) {
+                Toast.makeText(LoginActivity.this, "Document generated successfully! Path:" + DOCUMENT_GENERATE_PATH + FILENAME, Toast.LENGTH_LONG).show();
+            } else if (progress == 3 || progress == 4){
+                Toast.makeText(LoginActivity.this, "Error occurred!", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(1 == progress )
+            {
+                File file = new File(Environment.getExternalStorageDirectory().getPath() + "/EasyBill_Documents/" + FILENAME + ".pdf");
+                Intent target = new Intent(Intent.ACTION_VIEW);
+                target.setDataAndType(Uri.fromFile(file),"application/pdf");
+                target.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                Intent intent = Intent.createChooser(target, "Open File");
+                try {
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // Instruct the user to install a PDF reader here, or something
+                    Toast.makeText(LoginActivity.this, "Please install a PDF reader to open the document.", Toast.LENGTH_LONG).show();
+                }
+            }
+            progress = 2;
+            pd.dismiss();
+
+        }
     }
 
     // Login button event
