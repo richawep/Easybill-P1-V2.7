@@ -230,45 +230,7 @@ public class InwardItemActivity extends WepBaseActivity {
                     return false;
                 }
             });
-            /*autocomplete_inw_ItemName.setOnTouchListener(new View.OnTouchListener(){
-                //@Override
-                public boolean onTouch(View v, MotionEvent event){
-                    //FOCUS =1;
-                   // et_inw_HSNCode.requestFocus();
-                    autocomplete_inw_ItemName.showDropDown();
-                    return false;
-                }
-            });
 
-            autocomplete_inw_ItemName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if(FOCUS ==0)
-                    {
-                        FOCUS=1;
-                        et_inw_HSNCode.requestFocus();
-                    }else
-                    {
-                       // FOCUS =0;
-                    }
-                    //autocomplete_inw_ItemName.showDropDown();
-                }
-
-            });
-
-            et_inw_HSNCode.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    if (FOCUS ==1)
-                    {
-                        FOCUS =0;
-                        autocomplete_inw_ItemName.showDropDown();
-                       autocomplete_inw_ItemName.requestFocus();
-
-                    }
-                }
-            });
-*/
             et_Inw_SGSTRate.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -331,22 +293,7 @@ public class InwardItemActivity extends WepBaseActivity {
                 }
             });
 
-            autocomplete_inw_ItemName.setOnDismissListener(new AutoCompleteTextView.OnDismissListener() {
-                @Override
-                public void onDismiss() {
-                    hideKeyboard();
-                }
-            });
-            autocomplete_inw_ItemName.setOnKeyListener(new View.OnKeyListener() {
-                @Override
-                public boolean onKey(View v, int keyCode, KeyEvent event) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK)
-                    {
-                        hideKeyboard();
-                    }
-                    return false;
-                }
-            });
+
             autocomplete_inw_ItemName.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     String itemname = autocomplete_inw_ItemName.getText().toString();
