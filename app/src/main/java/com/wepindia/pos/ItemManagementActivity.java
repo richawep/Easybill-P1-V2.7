@@ -1199,7 +1199,7 @@ public void onFocusChange(View v, boolean hasFocus) {
         mUserCSVInvalidValue = "";
         String checkUOMTypye = "Pk Lt Ml Gm Kg Bg Bx No Mt Dz Sa St Bt Pl Pc";
         String[] checkSupplyType = {"G", "S"};
-        String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT,DEPARTMENT CODE,CATEGORY CODE";
+        String csvHeading = "MENU CODE,ITEM NAME,SUPPLY TYPE,RATE 1,RATE 2,RATE 3,QUANTITY,UOM,CGST RATE,SGST RATE,IGST RATE,cess RATE,DISCOUNT PERCENT,DEPARTMENT CODE,CATEGORY CODE,HSN,BAR CODE";
         boolean flag;
         boolean   mCSVHashCheckflag = false;
         try {
@@ -1222,13 +1222,15 @@ public void onFocusChange(View v, boolean hasFocus) {
             //dataList.clear();
             mHashMapItemCode.clear();
 
-            while ((line = buffer.readLine()) != null)
-            {
-                final String[] colums = line.split("\\r\\n\\r\\n", 15);
-                if(colums.length ==0)
+            while ((line = buffer.readLine()) != null) {
+                if (line.length() == 16)
                     continue;
-                else if (colums.length !=15)
-                {
+
+                final String[] colums = line.split(",", -1);
+                // final String[] colums = line.split("\\r\\n\\r\\n", 15);
+                if (colums.length == 0)
+                    continue;
+                else if (colums.length != 17) {
                     mFlag = true;
                     mUserCSVInvalidValue = getResources().getString(R.string.insufficient_information);
                     break;
@@ -1592,6 +1594,17 @@ public void onFocusChange(View v, boolean hasFocus) {
                 } else {
                     mCategCode = 0;
                 }
+
+                mHSN = "";
+                if (colums[15] != null && colums[15].trim().length() > 0) {
+                    mHSN = colums[15];
+                }
+
+                mbarCode = "";
+                if (colums[16] != null && colums[16].trim().length() > 0) {
+                    mbarCode = colums[16];
+                }
+
 
                 ItemOutward item_add = new ItemOutward(mMenuCode, mItemName, mRate1, mRate2, mRate3, mQuantity,
                         mDeptCode, mCategCode, mKitchenCode, mbarCode, mImageUri, mMenuCode,

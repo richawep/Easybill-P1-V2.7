@@ -134,6 +134,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_Rate = "Rate";
     private static final String KEY_Time = "Time";
     private static final String KEY_TokenNumber = "TokenNumber";
+    private static final String KEY_TokenNumber_SubNo = "TokenNumber_SubNo";
     private static final String KEY_Table_Split_No = "TableSplitNo";
     private static final String KEY_DeliveryCharge = "DeliveryCharge";
     private static final String KEY_BillAmount = "BillAmount";
@@ -1201,6 +1202,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             + KEY_TaxPercent + " REAL, "
             + KEY_Time + " TEXT, "
             + KEY_TokenNumber + " NUMERIC, "
+            + KEY_TokenNumber_SubNo + " NUMERIC, "
             + KEY_Table_Split_No + " NUMERIC, "
             + KEY_SupplyType + " TEXT, "
             + KEY_POS + " TEXT, "
