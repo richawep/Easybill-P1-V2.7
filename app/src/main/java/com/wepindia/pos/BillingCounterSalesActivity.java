@@ -1546,7 +1546,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                     etQty.setTextSize(11);
                     etQty.setWidth(mQuantityWidth); // 57px ~= 85dp
                     etQty.setTextSize(mDataMiniDeviceTextsize);
-                    //etQty.setSelectAllOnFocus(true);
+                    etQty.setSelectAllOnFocus(true);
                     etQty.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     // Read quantity from weighing scale if read from weigh
                     // scale is set in settings
@@ -1559,7 +1559,8 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                     etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     etInputValidate.ValidateDecimalInput(etQty);
                     etQty.setEnabled(true);
-                    etQty.setOnClickListener(Qty_Rate_Click);
+
+                    //etQty.setOnClickListener(Qty_Rate_Click);
                     etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                     etQty.addTextChangedListener(new TextWatcher() {
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -2211,7 +2212,8 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
     {
         public void onClick(View v)
         {
-            ((EditText) v).setSelection(((EditText) v).getText().length());
+            //((EditText) v).setSelection(((EditText) v).getText().length());
+            //((EditText) v).getText().clear();
         }
 
     };
@@ -2225,11 +2227,26 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
 
             if (v.getTag().toString().equalsIgnoreCase("QTY_RATE"))
             {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                if(event.getAction() == KeyEvent.ACTION_DOWN)
+                    return false;
+                if ( event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
                 {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(((EditText) v).getWindowToken(), 0);
                     Qty_Rate_Edit();
+                }else if ((event.getKeyCode() >= KeyEvent.KEYCODE_0 &&event.getKeyCode()  <= KeyEvent.KEYCODE_9  ) )
+                {
+                    int startSelection=((EditText)v).getSelectionStart();
+                    int endSelection=((EditText)v).getSelectionEnd();
+                    System.out.println("StartSelection "+startSelection);
+                    System.out.println("EndSelection "+endSelection);
+                    if(startSelection == 0 && endSelection == 0) {
+                        ((EditText) v).setText(String.valueOf(event.getNumber()));
+                        ((EditText) v).setSelection(((EditText) v).getText().length());
+                    }else
+                    {
+
+                    }
                 }
             }
             return false;
@@ -4966,7 +4983,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                 etQty.setTextSize(mDataMiniDeviceTextsize);
 
                 etQty.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("Quantity"))));
-                etQty.setOnClickListener(Qty_Rate_Click);
+                //etQty.setOnClickListener(Qty_Rate_Click);
                 etInputValidate.ValidateDecimalInput(etQty);
 
                 // Rate
@@ -5246,16 +5263,6 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
         if (keyCode == KeyEvent.KEYCODE_BACK) {
 
             AlertDialog.Builder AuthorizationDialog = new AlertDialog.Builder(BillingCounterSalesActivity.this);
-            LayoutInflater UserAuthorization = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View vwAuthorization = UserAuthorization.inflate(R.layout.user_authorization, null);
-            final EditText txtUserId = (EditText) vwAuthorization.findViewById(R.id.etAuthorizationUserId);
-            final EditText txtPassword = (EditText) vwAuthorization.findViewById(R.id.etAuthorizationUserPassword);
-            final TextView tvAuthorizationUserId= (TextView) vwAuthorization.findViewById(R.id.tvAuthorizationUserId);
-            final TextView tvAuthorizationUserPassword= (TextView) vwAuthorization.findViewById(R.id.tvAuthorizationUserPassword);
-            tvAuthorizationUserId.setVisibility(View.GONE);
-            tvAuthorizationUserPassword.setVisibility(View.GONE);
-            txtUserId.setVisibility(View.GONE);
-            txtPassword.setVisibility(View.GONE);
             AuthorizationDialog
                     .setIcon((R.drawable.ic_launcher))
                     .setTitle("Are you sure you want to exit ?")
@@ -5273,18 +5280,8 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
     }
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-                /*char pressedKey = (char) event.getUnicodeChar();
-        String Barcode = "" + pressedKey;
-        Toast.makeText(getApplicationContext(), "barcode--->>>" + Barcode, Toast.LENGTH_SHORT).show();
 
-        Toast.makeText(myContext, "keyUp:"+keyCode+" : "+event.toString(), Toast.LENGTH_SHORT).show();*/
         long dd = event.getEventTime()-event.getDownTime();
-                /*long time1= System.currentTimeMillis();
-        long time= SystemClock.uptimeMillis();*/
-        //long dd = time - event.getEventTime();
-                                /*Log.d("TAG",String.valueOf(dd));
-        Log.d("TAG1",String.valueOf(event.getEventTime()-event.getDownTime()));
-        Log.d("TAG",String.valueOf(event));*/
         if (dd<15 && dd >0 && CUSTOMER_FOUND==0)
         {
             View v = getCurrentFocus();

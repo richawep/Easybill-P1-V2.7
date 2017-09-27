@@ -1357,7 +1357,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
         public void onClick(View v) {
             // TODO Auto-generated method stub
-            ((EditText) v).setSelection(((EditText) v).getText().length());
+            //((EditText) v).setSelection(((EditText) v).getText().length());
         }
 
     };
@@ -1368,23 +1368,34 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
     View.OnKeyListener Qty_Rate_KeyPressEvent = new View.OnKeyListener() {
 
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            // TODO Auto-generated method stub
 
-            if (v.getTag().toString().equalsIgnoreCase("QTY_RATE")) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-
+            if (v.getTag().toString().equalsIgnoreCase("QTY_RATE"))
+            {
+                if(event.getAction() == KeyEvent.ACTION_DOWN)
+                    return false;
+                if ( event.getKeyCode() == KeyEvent.KEYCODE_ENTER)
+                {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(((EditText) v).getWindowToken(), 0);
-
                     Qty_Rate_Edit();
-                    // return true;
+                }else if ((event.getKeyCode() >= KeyEvent.KEYCODE_0 &&event.getKeyCode()  <= KeyEvent.KEYCODE_9  ) )
+                {
+                    int startSelection=((EditText)v).getSelectionStart();
+                    int endSelection=((EditText)v).getSelectionEnd();
+                    System.out.println("StartSelection "+startSelection);
+                    System.out.println("EndSelection "+endSelection);
+                    if(startSelection == 0 && endSelection == 0) {
+                        ((EditText) v).setText(String.valueOf(event.getNumber()));
+                        ((EditText) v).setSelection(((EditText) v).getText().length());
+                    }else
+                    {
+
+                    }
                 }
-                // else { return false; }
             }
             return false;
         }
     };
-
 
 
     /*************************************************************************************************************************************
@@ -1900,7 +1911,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     etQty.setWidth(mQuantityWidth); // 57px ~= 85dp
                     etQty.setTextSize(mDataMiniDeviceTextsize);
 
-                    //etQty.setSelectAllOnFocus(true);
+                    etQty.setSelectAllOnFocus(true);
                     etQty.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                     // Read quantity from weighing scale if read from weigh
                     // scale is set in settings
@@ -1913,7 +1924,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     etInputValidate.ValidateDecimalInput(etQty);
                     etQty.setEnabled(true);
-                    etQty.setOnClickListener(Qty_Rate_Click);
+                   // etQty.setOnClickListener(Qty_Rate_Click);
                     etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                     etQty.addTextChangedListener(new TextWatcher() {
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1945,7 +1956,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 //                    etRate.setTextSize(11);
                     etRate.setWidth(mRateWidth); // 74px ~= 110dp
                     etRate.setTextSize(mDataMiniDeviceTextsize);
-                    //etRate.setSelectAllOnFocus(true);
+                    etRate.setSelectAllOnFocus(true);
                     etRate.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     etRate.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
@@ -1971,7 +1982,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                 Qty_Rate_Edit();
                             }
                         });
-                        etRate.setOnClickListener(Qty_Rate_Click);
+                        //etRate.setOnClickListener(Qty_Rate_Click);
                         etRate.setOnKeyListener(Qty_Rate_KeyPressEvent);
                         etInputValidate.ValidateDecimalInput(etRate);
                     }
@@ -2472,7 +2483,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                         etQty.setText(String.format("%.2f", getQuantityFromWeighScale()));
                     }
                     etQty.setTag("QTY_RATE");
-                    etQty.setOnClickListener(Qty_Rate_Click);
+                    //etQty.setOnClickListener(Qty_Rate_Click);
                     etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                     etInputValidate.ValidateDecimalInput(etQty);
@@ -2515,7 +2526,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     if (crsrSettings.getInt(crsrSettings.getColumnIndex("PriceChange")) == 0) {
                         etRate.setEnabled(false);
                     } else {
-                        etRate.setOnClickListener(Qty_Rate_Click);
+                       // etRate.setOnClickListener(Qty_Rate_Click);
                         etRate.setOnKeyListener(Qty_Rate_KeyPressEvent);
                         etInputValidate.ValidateDecimalInput(etRate);
                         etRate.addTextChangedListener(new TextWatcher() {
@@ -3602,12 +3613,12 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                         etQty.setEnabled(false);
                     }
                     etQty.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("Quantity"))));
-                    //etQty.setSelectAllOnFocus(true);
+                    etQty.setSelectAllOnFocus(true);
                     etQty.setTag("QTY_RATE");
                     etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
-                    if(jBillingMode ==2 || jBillingMode ==3 || jBillingMode ==4)
+                    if( jBillingMode ==3 || jBillingMode ==4)
                     {
-                        etQty.setOnClickListener(Qty_Rate_Click);
+                        //etQty.setOnClickListener(Qty_Rate_Click);
                         etQty.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                         etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                         etInputValidate.ValidateDecimalInput(etQty);
@@ -3879,12 +3890,12 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                         etQty.setTextColor(getResources().getColor(R.color.black));
                     }
                     etQty.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("Quantity"))));
-                    //etQty.setSelectAllOnFocus(true);
+                    etQty.setSelectAllOnFocus(true);
                     etQty.setTag("QTY_RATE");
                     etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     if( jBillingMode ==3 || jBillingMode ==4)
                     {
-                        etQty.setOnClickListener(Qty_Rate_Click);
+                        //etQty.setOnClickListener(Qty_Rate_Click);
                         etQty.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                         etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                         etInputValidate.ValidateDecimalInput(etQty);
@@ -4147,7 +4158,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 etQty.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("Quantity"))));
                 //etQty.setSelectAllOnFocus(true);
                 etQty.setTag("QTY_RATE");
-                etQty.setOnClickListener(Qty_Rate_Click);
+                //etQty.setOnClickListener(Qty_Rate_Click);
                 etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                 etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                 etInputValidate.ValidateDecimalInput(etQty);
@@ -7825,7 +7836,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 etQty.setWidth(55);
                 etQty.setTextSize(11);
                 etQty.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("Quantity"))));
-                etQty.setOnClickListener(Qty_Rate_Click);
+                //etQty.setOnClickListener(Qty_Rate_Click);
                 etInputValidate.ValidateDecimalInput(etQty);
 
                 // Rate
