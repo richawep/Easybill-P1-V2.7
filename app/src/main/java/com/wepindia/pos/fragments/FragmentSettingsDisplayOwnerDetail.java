@@ -26,6 +26,11 @@ public class FragmentSettingsDisplayOwnerDetail extends Fragment {
     Context myContext;
     Button btnClose, btnApply;
 
+    private final int CHECK_INTEGER_VALUE = 0;
+    private final int CHECK_DOUBLE_VALUE = 1;
+    private final int CHECK_STRING_VALUE = 2;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,11 +136,72 @@ public class FragmentSettingsDisplayOwnerDetail extends Fragment {
     {
         String billPrefix = BillNoPrefix.getText().toString().trim();
         String gstin = Gstin.getText().toString().trim().toUpperCase();
+        if (!Gstin.getText().toString().trim().toUpperCase().equals("") && Gstin.getText().toString().trim().toUpperCase().length()!=15)
+        {
+            Toast.makeText(myContext, "GSTIN can either be empty or of 15 characters", Toast.LENGTH_SHORT);
+            return;
+        }if(!checkGSTINValidation(gstin))
+        {
+            Toast.makeText(myContext, "Invalid GSTIN", Toast.LENGTH_SHORT);
+            return;
+        }
         String referenceNo = RefernceNo.getText().toString().trim();
         dbHelper.CreateDatabase();
         dbHelper.OpenDatabase();
         int ll = dbHelper.updateOwnerDetails(billPrefix,gstin,referenceNo);
         if(ll>0)
             Toast.makeText(myContext, "Details updated successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean checkGSTINValidation(String str )
+    {
+        boolean mFlag = false;
+        try {
+            if(str.trim().length() == 0)
+            {mFlag = true;}
+            else if (str.trim().length() > 0 && str.length() == 15) {
+                String[] part = str.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)");
+                if (CHECK_INTEGER_VALUE == checkDataypeValue(part[0], "Int")
+                        && CHECK_STRING_VALUE == checkDataypeValue(part[1],"String")
+                        && CHECK_INTEGER_VALUE == checkDataypeValue(part[2],"Int")
+                        && CHECK_STRING_VALUE == checkDataypeValue(part[3],"String")
+                        && CHECK_INTEGER_VALUE == checkDataypeValue(part[4],"Int")
+                        && CHECK_STRING_VALUE == checkDataypeValue(part[5],"String")
+                        && (CHECK_INTEGER_VALUE == checkDataypeValue(str.substring(14),"Int") ||
+                        CHECK_STRING_VALUE == checkDataypeValue(str.substring(14),"String"))) {
+
+                    mFlag = true;
+                } else {
+                    mFlag = false;
+                }
+            } else {
+                mFlag = false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            mFlag = false;
+        }
+
+        return mFlag;
+    }
+
+    public static int checkDataypeValue(String value, String type) {
+        int flag =0;
+        try {
+            switch(type) {
+                case "Int":
+                    Integer.parseInt(value);
+                    flag = 0;
+                    break;
+                case "Double" : Double.parseDouble(value);
+                    flag = 1;
+                    break;
+                default : flag =2;
+            }
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+            flag = -1;
+        }
+        return flag;
     }
 }
