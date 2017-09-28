@@ -379,7 +379,7 @@
                                 android:layout_below="@+id/imageViewPayment"
                                 android:layout_centerHorizontal="true"
                                 android:gravity="center"
-                                android:text="MSwipe Card Payment"
+                                android:text="MSwipe Payment"
                                 android:textColor="@color/black"
                                 android:textSize="@dimen/textSizePayment"
                                 android:textStyle="bold" />

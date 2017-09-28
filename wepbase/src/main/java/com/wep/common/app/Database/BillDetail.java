@@ -17,25 +17,25 @@
 package com.wep.common.app.Database;
 
 public class BillDetail {
-	
+
 	// Private variables
 	String Custname, CustStateCode, POS,strDate, strTime, strUserId,BusinessType, Amount, GSTIN;
 	int iBillNumber, iBillStatus, iCustId, iEmployeeId, iReprintCount, iTotalItems, iUserId;
 	String BillingMode, TableNo, TableSplitNo; // richa_2012
 	float fBillAmount, fCardPayment, fCashPayment, fCouponPayment, fPettyCashPayment, fPaidTotalPayment, fChangePayment, fWalletAmount,
-	fDeliveryCharge, fTotalDiscountPercentage,fTotalDiscountAmount, fTotalTaxAmount, fTotalServiceTaxAmount, IGSTAmount, CGSTAmount, SGSTAmount,
-		 cessAmount;
+			fDeliveryCharge, fTotalDiscountPercentage,fTotalDiscountAmount,IGSTAmount;
+	double dBillAmount, CGSTAmount, SGSTAmount, cessAmount,  fTotalTaxAmount, fTotalServiceTaxAmount;
 	float fRoundOff;
-
+	double dPettyCashPayment;
 	double SubTotal;
 
 	// Default Constructor
 	public BillDetail(){
 		this.GSTIN="";
 		this.Custname="";
-        this.BillingMode  = ""; // richa_2012
-        this.TableNo  = ""; // richa_2012
-        this.TableSplitNo  = ""; // richa_2012
+		this.BillingMode  = ""; // richa_2012
+		this.TableNo  = ""; // richa_2012
+		this.TableSplitNo  = ""; // richa_2012
 		this.CustStateCode="";
 		this.POS = "";
 		this.Amount="";
@@ -55,6 +55,7 @@ public class BillDetail {
 		this.strUserId = "";
 		this.iUserId = 0;
 		this.fBillAmount = 0;
+		this.dBillAmount = 0;
 		this.fCardPayment = 0;
 		this.fRoundOff = 0;
 		this.fCashPayment = 0;
@@ -67,48 +68,79 @@ public class BillDetail {
 		this.fWalletAmount = 0;
 
 		this.fPettyCashPayment = 0;
+		this.dPettyCashPayment = 0;
 		this.fPaidTotalPayment = 0;
 		this.fChangePayment = 0;
-        this.cessAmount =0;
+		this.cessAmount =0;
 
-		
+
 	}
 
 
 
 	// Parameterized Constructor
-	public BillDetail(String Date,String Time,int BillNumber,int BillStatus,int CustId,int EmployeeId,int ReprintCount,int TotalItems,String UserId,
-			float BillAmount,float CardPayment,float CashPayment,float CouponPayment,float DeliveryCharge,
-			float TotalDiscountAmount,float TotalTaxAmount,float TotalServiceTaxAmount, float PettyCashPayment, float PaidTotalPayment,
-                      float ChangePayment,String BusinessType,String Amount,float walletAmount, String tableNo, String TableSplitNo, float cessAmount){
-		this.Amount = Amount;
-		this.strDate = Date;
-		this.strTime = Time;
-		this.BusinessType=BusinessType;
-		this.iBillNumber = BillNumber;
-		this.iBillStatus = BillStatus;
-		this.iCustId = CustId;
-		this.iEmployeeId = EmployeeId;
-		this.iReprintCount = ReprintCount;
-		this.iTotalItems = TotalItems;
-		this.strUserId = UserId;
-		//this.iUserId = UserId;
-		this.fBillAmount = BillAmount;
-		this.fCardPayment = CardPayment;
-		this.fCashPayment = CashPayment;
-		this.fCouponPayment = CouponPayment;
-		this.fDeliveryCharge = DeliveryCharge;
-		this.fTotalDiscountAmount = TotalDiscountAmount;
-		this.fTotalTaxAmount = TotalTaxAmount;
-		this.fTotalServiceTaxAmount = TotalServiceTaxAmount;
 
-        this.fPettyCashPayment = PettyCashPayment;
-        this.fPaidTotalPayment = PaidTotalPayment;
-        this.fChangePayment = ChangePayment;
-		this.fWalletAmount = walletAmount;
-		this.TableNo = tableNo;
-		this.TableSplitNo= TableSplitNo;
-        this.cessAmount = cessAmount;
+
+	public BillDetail(String custname, String custStateCode, String POS,
+					  String strDate, String strTime, String strUserId,
+					  String businessType, String amount, String GSTIN,
+					  int iBillNumber, int iBillStatus, int iCustId, int iEmployeeId,
+					  int iReprintCount, int iTotalItems, int iUserId, String billingMode,
+					  String tableNo, String tableSplitNo, float fBillAmount, float fCardPayment,
+					  float fCashPayment, float fCouponPayment, float fPettyCashPayment,
+					  float fPaidTotalPayment, float fChangePayment, float fWalletAmount,
+					  float fDeliveryCharge, float fTotalDiscountPercentage, float fTotalDiscountAmount,
+					  float fTotalTaxAmount, float fTotalServiceTaxAmount, float IGSTAmount,
+					  double CGSTAmount, double SGSTAmount, double cessAmount, double dBillAmount,
+					  float fRoundOff, double dPettyCashPayment, double subTotal) {
+		Custname = custname;
+		CustStateCode = custStateCode;
+		this.POS = POS;
+		this.strDate = strDate;
+		this.strTime = strTime;
+		this.strUserId = strUserId;
+		BusinessType = businessType;
+		Amount = amount;
+		this.GSTIN = GSTIN;
+		this.iBillNumber = iBillNumber;
+		this.iBillStatus = iBillStatus;
+		this.iCustId = iCustId;
+		this.iEmployeeId = iEmployeeId;
+		this.iReprintCount = iReprintCount;
+		this.iTotalItems = iTotalItems;
+		this.iUserId = iUserId;
+		BillingMode = billingMode;
+		TableNo = tableNo;
+		TableSplitNo = tableSplitNo;
+		this.fBillAmount = fBillAmount;
+		this.fCardPayment = fCardPayment;
+		this.fCashPayment = fCashPayment;
+		this.fCouponPayment = fCouponPayment;
+		this.fPettyCashPayment = fPettyCashPayment;
+		this.fPaidTotalPayment = fPaidTotalPayment;
+		this.fChangePayment = fChangePayment;
+		this.fWalletAmount = fWalletAmount;
+		this.fDeliveryCharge = fDeliveryCharge;
+		this.fTotalDiscountPercentage = fTotalDiscountPercentage;
+		this.fTotalDiscountAmount = fTotalDiscountAmount;
+		this.fTotalTaxAmount = fTotalTaxAmount;
+		this.fTotalServiceTaxAmount = fTotalServiceTaxAmount;
+		this.IGSTAmount = IGSTAmount;
+		this.CGSTAmount = CGSTAmount;
+		this.SGSTAmount = SGSTAmount;
+		this.cessAmount = cessAmount;
+		this.dBillAmount = dBillAmount;
+		this.fRoundOff = fRoundOff;
+		this.dPettyCashPayment = dPettyCashPayment;
+		SubTotal = subTotal;
+	}
+
+	public double getdBillAmount() {
+		return dBillAmount;
+	}
+
+	public void setdBillAmount(double dBillAmount) {
+		this.dBillAmount = dBillAmount;
 	}
 
 	public float getfRoundOff() {
@@ -119,15 +151,15 @@ public class BillDetail {
 		this.fRoundOff = fRoundOff;
 	}
 
-	public float getCessAmount() {
-        return cessAmount;
-    }
+	public double getCessAmount() {
+		return cessAmount;
+	}
 
-    public void setCessAmount(float cessAmount) {
-        this.cessAmount = cessAmount;
-    }
+	public void setCessAmount(double cessAmount) {
+		this.cessAmount = cessAmount;
+	}
 
-    public String getGSTIN() {
+	public String getGSTIN() {
 		return GSTIN;
 	}
 
@@ -169,16 +201,16 @@ public class BillDetail {
 
 	// richa_2012 starts
 
-    public String getBillingMode() {
-        return BillingMode;
-    }
+	public String getBillingMode() {
+		return BillingMode;
+	}
 
-    public void setBillingMode(String billingMode) {
-        BillingMode = billingMode;
-    }
+	public void setBillingMode(String billingMode) {
+		BillingMode = billingMode;
+	}
 
 
-    // richa_2012 ends
+	// richa_2012 ends
 
 	public String getCustname() {
 		return Custname;
@@ -212,19 +244,19 @@ public class BillDetail {
 		this.IGSTAmount = IGSTAmount;
 	}
 
-	public float getCGSTAmount() {
+	public double getCGSTAmount() {
 		return CGSTAmount;
 	}
 
-	public void setCGSTAmount(float CGSTAmount) {
+	public void setCGSTAmount(double CGSTAmount) {
 		this.CGSTAmount = CGSTAmount;
 	}
 
-	public float getSGSTAmount() {
+	public double getSGSTAmount() {
 		return SGSTAmount;
 	}
 
-	public void setSGSTAmount(float SGSTAmount) {
+	public void setSGSTAmount(double SGSTAmount) {
 		this.SGSTAmount = SGSTAmount;
 	}
 
@@ -256,201 +288,208 @@ public class BillDetail {
 	public String getDate(){
 		return this.strDate;
 	}
-	
+
 	// getting Time
 	public String getTime(){
 		return this.strTime;
 	}
-	
+
 	// getting BillNumber
 	public int getBillNumber(){
 		return this.iBillNumber;
 	}
-	
+
 	// getting BillStatus
 	public int getBillStatus(){
 		return this.iBillStatus;
 	}
-		
+
 	// getting CustId
 	public int getCustId(){
 		return this.iCustId;
 	}
-		
+
 	// getting EmployeeId
 	public int getEmployeeId(){
 		return this.iEmployeeId;
 	}
-		
+
 	// getting ReprintCount
 	public int getReprintCount(){
 		return this.iReprintCount;
 	}
-		
+
 	// getting TotalItems
 	public int getTotalItems(){
 		return this.iTotalItems;
 	}
-		
+
 	// getting UserId
 	public String getUserId(){
 		return this.strUserId;
 	}
-	
+
 	// getting BillAmount
 	public float getBillAmount(){
 		return this.fBillAmount;
 	}
-	
+
 	// getting CardPayment
 	public float getCardPayment(){
 		return this.fCardPayment;
 	}
-		
+
 	// getting CashPayment
 	public float getCashPayment(){
 		return this.fCashPayment;
 	}
-		
+
 	// getting CouponPayment
 	public float getCouponPayment(){
 		return this.fCouponPayment;
 	}
-		
+
 	// getting DeliveryCharge
 	public float getDeliveryCharge(){
 		return this.fDeliveryCharge;
 	}
-		
+
 	// getting TotalDiscountAmount
 	public float getTotalDiscountAmount(){
 		return this.fTotalDiscountAmount;
 	}
-		
+
 	// getting TotalTaxAmount
-	public float getTotalTaxAmount(){
+	public double getTotalTaxAmount(){
 		return this.fTotalTaxAmount;
 	}
-	
+
 	// getting TotalServiceTaxAmount
-	public float getTotalServiceTaxAmount(){
+	public double getTotalServiceTaxAmount(){
 		return this.fTotalServiceTaxAmount;
 	}
 
-    // getting PettyCashPayment
-    public float getPettyCashPayment(){
-        return this.fPettyCashPayment;
-    }
+	// getting PettyCashPayment
+	public float getPettyCashPayment(){
+		return this.fPettyCashPayment;
+	}
 
-    // getting PaidTotalPayment
-    public float getPaidTotalPayment(){
-        return this.fPaidTotalPayment;
-    }
+	// getting PaidTotalPayment
+	public float getPaidTotalPayment(){
+		return this.fPaidTotalPayment;
+	}
 
-    // getting ChangePayment
-    public float getChangePayment(){
-        return this.fChangePayment;
-    }
+	// getting ChangePayment
+	public float getChangePayment(){
+		return this.fChangePayment;
+	}
 
-	
+
 	// setting Date
 	public void setDate(String Date){
 		this.strDate = Date;
 	}
-	
+
 	// setting Time
 	public void setTime(String Time){
 		this.strTime = Time;
 	}
-		
+
 	// setting BillNumber
 	public void setBillNumber(int BillNumber){
 		this.iBillNumber = BillNumber;
 	}
-		
+
 	// setting BillStatus
 	public void setBillStatus(int BillStatus){
 		this.iBillStatus = BillStatus;
 	}
-			
+
 	// setting CustId
 	public void setCustId(int CustId){
 		this.iCustId = CustId;
 	}
-			
+
 	// setting EmployeeId
 	public void setEmployeeId(int EmployeeId){
 		this.iEmployeeId = EmployeeId;
 	}
-			
+
 	// setting ReprintCount
 	public void setReprintCount(int ReprintCount){
 		this.iReprintCount = ReprintCount;
 	}
-			
+
 	// setting TotalItems
 	public void setTotalItems(int TotalItems){
 		this.iTotalItems = TotalItems;
 	}
-			
+
 	// setting UserId
 	public void setUserId(String UserId){
 		this.strUserId = UserId;
 	}
-		
+
 	// setting BillAmount
 	public void setBillAmount(float BillAmount){
 		this.fBillAmount = BillAmount;
 	}
-		
+
 	// setting CardPayment
 	public void setCardPayment(float CardPayment){
 		this.fCardPayment = CardPayment;
 	}
-			
+
 	// setting CashPayment
 	public void setCashPayment(float CashPayment){
 		this.fCashPayment = CashPayment;
 	}
-			
+
 	// setting CouponPayment
 	public void setCouponPayment(float CouponPayment){
 		this.fCouponPayment = CouponPayment;
 	}
-			
+
 	// setting DeliveryCharge
 	public void setDeliveryCharge(float DeliveryCharge){
 		this.fDeliveryCharge = DeliveryCharge;
 	}
-			
+
 	// setting TotalDiscountAmount
 	public void setTotalDiscountAmount(float TotalDiscountAmount){
 		this.fTotalDiscountAmount = TotalDiscountAmount;
 	}
-			
+
 	// setting TotalTaxAmount
-	public void setTotalTaxAmount(float TotalTaxAmount){
+	public void setTotalTaxAmount(double TotalTaxAmount){
 		this.fTotalTaxAmount = TotalTaxAmount;
 	}
-	
+
 	// setting TotalServiceTaxAmount
 	public void setTotalServiceTaxAmount(float TotalServiceTaxAmount){
 		this.fTotalServiceTaxAmount = TotalServiceTaxAmount;
 	}
 
-    // setting PettyCashPayment
-    public void setPettyCashPayment(float PettyCashPayment){
-        this.fPettyCashPayment = PettyCashPayment;
-    }
+	// setting PettyCashPayment
+	public void setPettyCashPayment(float PettyCashPayment){
+		this.fPettyCashPayment = PettyCashPayment;
+	}
 
-    // setting PaidTotalPayment
-    public void setPaidTotalPayment(float PaidTotalPayment){
-        this.fPaidTotalPayment = PaidTotalPayment;
-    }
+	// setting PaidTotalPayment
+	public void setPaidTotalPayment(float PaidTotalPayment){
+		this.fPaidTotalPayment = PaidTotalPayment;
+	}
 
-    // setting ChangePayment
-    public void setChangePayment(float ChangePayment){
-        this.fChangePayment = ChangePayment;
-    }
+	// setting ChangePayment
+	public void setChangePayment(float ChangePayment){
+		this.fChangePayment = ChangePayment;
+	}
 
+	public double getdPettyCashPayment() {
+		return dPettyCashPayment;
+	}
+
+	public void setdPettyCashPayment(double dPettyCashPayment) {
+		this.dPettyCashPayment = dPettyCashPayment;
+	}
 }

@@ -21,7 +21,8 @@ public class Customer {
 	// Private Variable
 	String strCustName, strCustContactNumber, strCustAddress, strCustGSTIN;
 	int iCustId;
-	float fLastTransaction, fTotalTransaction, fCreditAmount;
+	double fLastTransaction, fTotalTransaction;
+	double fCreditAmount;
 
 	// Default constructor
 	public Customer() {
@@ -36,8 +37,8 @@ public class Customer {
 	}
 
 	// Parameterized construcor
-	public Customer(String CustAddress, String CustName, String CustContactNumber, float LastTransaction,
-			float TotalTransaction, float CreaditAmount,String gstin) {
+	public Customer(String CustAddress, String CustName, String CustContactNumber, double LastTransaction,
+					double TotalTransaction, double CreaditAmount,String gstin) {
 		this.strCustAddress = CustAddress;
 		this.strCustName = CustName;
 		this.strCustContactNumber = CustContactNumber;
@@ -76,17 +77,17 @@ public class Customer {
 	}
 
 	// getting LastTransaction
-	public float getLastTransaction() {
+	public double getLastTransaction() {
 		return this.fLastTransaction;
 	}
 
 	// getting TotalTransaction
-	public float getTotalTransaction() {
+	public double getTotalTransaction() {
 		return this.fTotalTransaction;
 	}
 
 	// getting CreditAmount
-	public float getCreditAmount() {
+	public double getCreditAmount() {
 		return this.fCreditAmount;
 	}
 
@@ -111,17 +112,17 @@ public class Customer {
 	}
 
 	// setting LastTransaction
-	public void setLastTransaction(float LastTransaction) {
+	public void setLastTransaction(double LastTransaction) {
 		this.fLastTransaction = LastTransaction;
 	}
 
 	// setting TotalTransaction
-	public void setTotalTransaction(float TotalTransaction) {
+	public void setTotalTransaction(double TotalTransaction) {
 		this.fTotalTransaction = TotalTransaction;
 	}
 
 	// setting CreaditAmount
-	public void setCeraditAmount(float CreaditAmount) {
+	public void setCeraditAmount(double CreaditAmount) {
 		this.fCreditAmount = CreaditAmount;
 	}
 }

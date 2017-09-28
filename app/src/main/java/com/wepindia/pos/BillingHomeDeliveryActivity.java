@@ -146,6 +146,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
     byte jBillingMode = 0, jWeighScale = 0;
     int iTaxType = 0, iTotalItems = 0, iCustId = 0, iTokenNumber = 0;
     float fTotalDiscount = 0, fCashPayment = 0, fCardPayment = 0, fCouponPayment = 0, fPettCashPayment = 0, fPaidTotalPayment = 0;
+    double dPettCashPayment = 0;
     float dDiscPercent = 0;
     float fWalletPayment = 0;
     float fChangePayment = 0, fRoundOfValue =0;
@@ -1924,7 +1925,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     etQty.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     etInputValidate.ValidateDecimalInput(etQty);
                     etQty.setEnabled(true);
-                   // etQty.setOnClickListener(Qty_Rate_Click);
+                    // etQty.setOnClickListener(Qty_Rate_Click);
                     etQty.setOnKeyListener(Qty_Rate_KeyPressEvent);
                     etQty.addTextChangedListener(new TextWatcher() {
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -2526,7 +2527,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     if (crsrSettings.getInt(crsrSettings.getColumnIndex("PriceChange")) == 0) {
                         etRate.setEnabled(false);
                     } else {
-                       // etRate.setOnClickListener(Qty_Rate_Click);
+                        // etRate.setOnClickListener(Qty_Rate_Click);
                         etRate.setOnKeyListener(Qty_Rate_KeyPressEvent);
                         etInputValidate.ValidateDecimalInput(etRate);
                         etRate.addTextChangedListener(new TextWatcher() {
@@ -2970,8 +2971,8 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
      ************************************************************************************************************************************/
     private void CalculateTotalAmount() {
 
-        double dSubTotal = 0, dTaxTotal = 0, dModifierAmt = 0, dServiceTaxAmt = 0, dOtherCharges = 0, dTaxAmt = 0, dSerTaxAmt = 0;
-        float dTaxPercent = 0, dSerTaxPercent = 0, dIGSTAmt=0, dcessAmt=0;
+        double dSubTotal = 0, dTaxTotal = 0, dModifierAmt = 0, dServiceTaxAmt = 0, dOtherCharges = 0, dTaxAmt = 0, dSerTaxAmt = 0, dIGSTAmt=0, dcessAmt=0;
+        float dTaxPercent = 0, dSerTaxPercent = 0;
 
         // Item wise tax calculation ----------------------------
         for (int iRow = 0; iRow < tblOrderItems.getChildCount(); iRow++) {
@@ -3402,7 +3403,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
             // Sales Tax Amount
             if (RowKOTItem.getChildAt(7) != null) {
-                objPendingKOT.setTaxAmount(Float.parseFloat(SalesTaxAmount.getText().toString()));
+                objPendingKOT.setTaxAmount(Double.parseDouble(SalesTaxAmount.getText().toString()));
             }
 
             // Discount %
@@ -3447,7 +3448,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
             // Service Tax Amount
             if (RowKOTItem.getChildAt(16) != null) {
-                objPendingKOT.setServiceTaxAmount(Float.parseFloat(ServiceTaxAmount.getText().toString()));
+                objPendingKOT.setServiceTaxAmount(Double.parseDouble(ServiceTaxAmount.getText().toString()));
             }
 
             // SupplyType - G/S
@@ -3472,7 +3473,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             }
             if(RowKOTItem.getChildAt(26)!=null)
             {
-                objPendingKOT.setCessAmount(Float.parseFloat(cessAmt.getText().toString()));
+                objPendingKOT.setCessAmount(Double.parseDouble(cessAmt.getText().toString()));
             }
             if(RowKOTItem.getChildAt(27)!=null)
             {
@@ -3501,15 +3502,15 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
             Cursor crsrItemsUpdate = db.getItemsForUpdatingKOT_new(tblno, subudfno, tblsplitno, itemno, jBillingMode);
             if (crsrItemsUpdate.moveToFirst()) {
-                float Qty = 0,  TaxAmt = 0, SerTaxAmt = 0;
-                double Amt = 0;
+                float Qty = 0;
+                double Amt = 0, TaxAmt = 0, SerTaxAmt = 0;
                 float qty_temp = Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("Quantity")));
                 Qty = Float.valueOf(Quantity.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("Quantity")));
                 Amt = Double.valueOf(Amount.getText().toString()) + (crsrItemsUpdate.getDouble(crsrItemsUpdate.getColumnIndex("Amount")));
-                TaxAmt = Float.valueOf(SalesTaxAmount.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("TaxAmount")));
-                SerTaxAmt = Float.valueOf(ServiceTaxAmount.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("ServiceTaxAmount")));
+                TaxAmt = Double.valueOf(SalesTaxAmount.getText().toString()) + Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("TaxAmount")));
+                SerTaxAmt = Double.valueOf(ServiceTaxAmount.getText().toString()) + Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("ServiceTaxAmount")));
                 float IAmt = Float.valueOf(IGSTAmt.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("IGSTAmount")));
-                float cessAmount = Float.valueOf(cessAmt.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("cessAmount")));
+                double cessAmount = Double.valueOf(cessAmt.getText().toString()) + Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("cessAmount")));
                 double  taxableValue = Double.valueOf(TaxableValue.getText().toString()) +
                         Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("TaxableValue")));
 
@@ -3946,7 +3947,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
                     // Sales Tax Amount
                     tvTaxAmt = new TextView(myContext);
-                    tvTaxAmt.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("TaxAmount")));
+                    tvTaxAmt.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("TaxAmount"))));
 
                     // Discount %
                     tvDiscPercent = new TextView(myContext);
@@ -3982,7 +3983,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
                     // Service Tax Amount
                     tvServiceTaxAmt = new TextView(myContext);
-                    tvServiceTaxAmt.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("ServiceTaxAmount")));
+                    tvServiceTaxAmt.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("ServiceTaxAmount"))));
 
                     // Service Tax Amount
                     TextView tvSupplyType = new TextView(myContext);
@@ -4018,8 +4019,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     tvcessRate.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("cessRate")));
 
                     TextView tvcessAmt = new TextView(BillingHomeDeliveryActivity.this);
-                    tvcessAmt.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("cessAmount")));
-
+                    tvcessAmt.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("cessAmount"))));
 
                     TextView tvUOM = new TextView(BillingHomeDeliveryActivity.this);
                     tvUOM.setWidth(50);
@@ -4563,17 +4563,16 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             }
 
             // Service Tax Amount
-            float sgstAmt = 0;
+            double sgstAmt = 0;
             if (RowBillItem.getChildAt(16) != null) {
                 TextView ServiceTaxAmount = (TextView) RowBillItem.getChildAt(16);
-                sgstAmt = Float.parseFloat(ServiceTaxAmount.getText().toString());
+                sgstAmt = Double.parseDouble(ServiceTaxAmount.getText().toString());
                 if (chk_interstate.isChecked()) {
-                    objBillItem.setSGSTAmount(0.00f);
+                    objBillItem.setSGSTAmount(0);
                     Log.d("InsertBillItems", "SGST Amount : 0" );
 
                 } else {
-                    objBillItem.setSGSTAmount(Float.parseFloat(String.format("%.2f",
-                            Float.parseFloat(ServiceTaxAmount.getText().toString()))));
+                    objBillItem.setSGSTAmount(Double.parseDouble(String.format("%.2f", sgstAmt)));
                     Log.d("InsertBillItems", "SGST Amount : " + objBillItem.getSGSTAmount());
                 }
             }
@@ -4597,17 +4596,16 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             // Sales Tax Amount
             if (RowBillItem.getChildAt(7) != null) {
                 TextView SalesTaxAmount = (TextView) RowBillItem.getChildAt(7);
-                float cgstAmt = (Float.parseFloat(SalesTaxAmount.getText().toString()));
+                double cgstAmt = (Double.parseDouble(SalesTaxAmount.getText().toString()));
                 if (chk_interstate.isChecked()) {
                     //objBillItem.setIGSTAmount(Float.parseFloat(String.format("%.2f",cgstAmt+sgstAmt)));
                     //Log.d("InsertBillItems", "IGST Amt: " + objBillItem.getIGSTAmount());
-                    objBillItem.setCGSTAmount(0.00f);
+                    objBillItem.setCGSTAmount(0);
                     Log.d("InsertBillItems", "CGST Amt: 0");
                 } else {
                     // objBillItem.setIGSTAmount(0.00f);
                     //Log.d("InsertBillItems", "IGST Amt: 0");
-                    objBillItem.setCGSTAmount(Float.parseFloat(String.format("%.2f",
-                            Float.parseFloat(SalesTaxAmount.getText().toString()))));
+                    objBillItem.setCGSTAmount(Double.parseDouble(String.format("%.2f", cgstAmt)));
                     Log.d("InsertBillItems", "CGST Amt: " + SalesTaxAmount.getText().toString());
                 }
             }
@@ -4646,8 +4644,8 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             // cess Tax Amount
             if (RowBillItem.getChildAt(26) != null) {
                 TextView cessTaxAmount = (TextView) RowBillItem.getChildAt(26);
-                float cessAmt = (Float.parseFloat(cessTaxAmount.getText().toString()));
-                objBillItem.setCessAmount(Float.parseFloat(String.format("%.2f",cessAmt)));
+                double cessAmt = (Double.parseDouble(cessTaxAmount.getText().toString()));
+                objBillItem.setCessAmount(Double.parseDouble(String.format("%.2f",cessAmt)));
                 Log.d("InsertBillItems", "cess Amt: " + objBillItem.getCessAmount());
             }
 
@@ -4856,8 +4854,9 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
         Log.d("InsertBillDetail", "Total Items:" + iTotalItems);
 
         // Bill Amount
-        String billamt_temp = String.format("%.2f",Float.parseFloat(tvBillAmount.getText().toString()));
-        objBillDetail.setBillAmount(Float.parseFloat(billamt_temp));
+        String billamt_temp = String.format("%.2f",Double.parseDouble(tvBillAmount.getText().toString()));
+//        objBillDetail.setBillAmount(Float.parseFloat(billamt_temp));
+        objBillDetail.setdBillAmount(Double.parseDouble(billamt_temp));
         Log.d("InsertBillDetail", "Bill Amount:" + tvBillAmount.getText().toString());
 
         // Discount Percentage
@@ -4879,14 +4878,14 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             objBillDetail.setSGSTAmount(0.00f);
         } else {
             objBillDetail.setIGSTAmount(0.00f);
-            objBillDetail.setCGSTAmount(Float.parseFloat(String.format("%.2f",Float.parseFloat(tvTaxTotal.getText().toString()))));
-            objBillDetail.setSGSTAmount(Float.parseFloat(String.format("%.2f",Float.parseFloat(tvServiceTaxTotal.getText().toString()))));
+            objBillDetail.setCGSTAmount(Double.parseDouble(String.format("%.2f",Double.parseDouble(tvTaxTotal.getText().toString()))));
+            objBillDetail.setSGSTAmount(Double.parseDouble(String.format("%.2f",Double.parseDouble(tvServiceTaxTotal.getText().toString()))));
         }
         Log.d("InsertBillDetail", "IGSTAmount : " + objBillDetail.getIGSTAmount());
         Log.d("InsertBillDetail", "CGSTAmount : " + objBillDetail.getCGSTAmount());
         Log.d("InsertBillDetail", "SGSTAmount : " + objBillDetail.getSGSTAmount());
 
-        objBillDetail.setCessAmount(Float.parseFloat(String.format("%.2f",Float.parseFloat(tvcessValue.getText().toString()))));
+        objBillDetail.setCessAmount(Double.parseDouble(String.format("%.2f",Double.parseDouble(tvcessValue.getText().toString()))));
         Log.d("InsertBillDetail", "cessAmount : " + objBillDetail.getCessAmount());
         // Delivery Charge
         objBillDetail.setDeliveryCharge(Float.parseFloat(txtOthercharges.getText().toString()));
@@ -4895,7 +4894,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
         // Taxable Value
         double taxval_f = Double.parseDouble(tvSubTotal.getText().toString());
-        objBillDetail.setAmount(String.valueOf(taxval_f));
+        objBillDetail.setAmount(String.format("%.2f", taxval_f));
         Log.d("InsertBillDetail", "Taxable Value:" + taxval_f);
 
         /*float cgstamt_f = 0, sgstamt_f = 0;
@@ -4943,7 +4942,6 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
         /*objBillDetail.setCustStateCode(custStateCode);
         Log.d("InsertBillDetail", "CustStateCode :" + custStateCode);*/
 
-
         // BusinessType
         if (etCustGSTIN.getText().toString().equals("")) {
             objBillDetail.setBusinessType("B2C");
@@ -4968,8 +4966,11 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             Log.d("InsertBillDetail", "Coupon:" + fCouponPayment);
 
             // PettyCash Payment
-            objBillDetail.setPettyCashPayment(fPettCashPayment);
-            Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+//            objBillDetail.setPettyCashPayment(fPettCashPayment);
+//            Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+
+            objBillDetail.setdPettyCashPayment(dPettCashPayment);
+            Log.d("InsertBillDetail", "PettyCash:" + dPettCashPayment);
 
             // Wallet Payment
             objBillDetail.setWalletAmount(fWalletPayment);
@@ -5001,8 +5002,11 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 Log.d("InsertBillDetail", "Coupon:" + fCouponPayment);
 
                 // PettyCash Payment
-                objBillDetail.setPettyCashPayment(fPettCashPayment);
-                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+//                objBillDetail.setPettyCashPayment(fPettCashPayment);
+//                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+
+                objBillDetail.setdPettyCashPayment(dPettCashPayment);
+                Log.d("InsertBillDetail", "PettyCash:" + dPettCashPayment);
 
                 // Wallet Payment
                 objBillDetail.setWalletAmount(fWalletPayment);
@@ -5031,8 +5035,11 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                 Log.d("InsertBillDetail", "Coupon:" + fCouponPayment);
 
                 // PettyCash Payment
-                objBillDetail.setPettyCashPayment(fPettCashPayment);
-                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+//                objBillDetail.setPettyCashPayment(fPettCashPayment);
+//                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+
+                objBillDetail.setdPettyCashPayment(dPettCashPayment);
+                Log.d("InsertBillDetail", "PettyCash:" + dPettCashPayment);
 
                 // Wallet Payment
                 objBillDetail.setWalletAmount(fWalletPayment);
@@ -5088,13 +5095,13 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
         if (edtCustId.getText().toString().equalsIgnoreCase("") || edtCustId.getText().toString().equalsIgnoreCase("0")) {
         } else {
             iCustId = Integer.valueOf(edtCustId.getText().toString());
-            float fTotalTransaction = db.getCustomerTotalTransaction(iCustId);
-            float fCreditAmount = db.getCustomerCreditAmount(iCustId);
-            fCreditAmount = fCreditAmount - Float.parseFloat(tvBillAmount.getText().toString());
-            fTotalTransaction += Float.parseFloat(tvBillAmount.getText().toString());
+            double fTotalTransaction = db.getCustomerTotalTransaction(iCustId);
+            double fCreditAmount = db.getCustomerCreditAmount(iCustId);
+            fCreditAmount = fCreditAmount - Double.parseDouble(tvBillAmount.getText().toString());
+            fTotalTransaction += Double.parseDouble(tvBillAmount.getText().toString());
 
             long lResult1 = db.updateCustomerTransaction(iCustId,
-                    Float.parseFloat(tvBillAmount.getText().toString()), fTotalTransaction, fCreditAmount);
+                    Double.parseDouble(tvBillAmount.getText().toString()), fTotalTransaction, fCreditAmount);
         }
 
         // Bill No Reset Configuration
@@ -6216,9 +6223,9 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
                                         tvIGSTValue.setText(String.format("%.2f", cursor.getFloat(cursor.getColumnIndex("IGSTAmount"))));
                                         tvTaxTotal.setText(String.format("%.2f", cursor.getFloat(cursor.getColumnIndex("CGSTAmount"))));
-                                        tvServiceTaxTotal.setText(String.format("%.2f", cursor.getFloat(cursor.getColumnIndex("SGSTAmount"))));
+                                        tvServiceTaxTotal.setText(String.format("%.2f", cursor.getDouble(cursor.getColumnIndex("SGSTAmount"))));
                                         tvSubTotal.setText(String.format("%.2f", cursor.getFloat(cursor.getColumnIndex("TaxableValue"))));
-                                        tvBillAmount.setText(String.format("%.2f", cursor.getFloat(cursor.getColumnIndex("BillAmount"))));
+                                        tvBillAmount.setText(String.format("%.2f", cursor.getDouble(cursor.getColumnIndex("BillAmount"))));
                                         edtCustId.setText(cursor.getString(cursor.getColumnIndex("CustId")));
 
                                         LoadItemsForReprintBill(LoadItemForReprint);
@@ -6511,7 +6518,8 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                         fTotalDiscount = 0;
                         fTotalDiscount = data.getFloatExtra(PayBillActivity.DISCOUNT_AMOUNT, 0);
 
-                        fPettCashPayment = data.getFloatExtra(PayBillActivity.TENDER_PETTYCASH_VALUE, 0);
+//                        fPettCashPayment = data.getFloatExtra(PayBillActivity.TENDER_PETTYCASH_VALUE, 0);
+                        dPettCashPayment = data.getDoubleExtra(PayBillActivity.TENDER_PETTYCASH_VALUE, 0);
                         fPaidTotalPayment = data.getFloatExtra(PayBillActivity.TENDER_PAIDTOTAL_VALUE, 0);
                         fWalletPayment = data.getFloatExtra(PayBillActivity.TENDER_WALLET_VALUE, 0);
                         fChangePayment = data.getFloatExtra(PayBillActivity.TENDER_CHANGE_AMOUNT, 0);
@@ -6544,7 +6552,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                     tvIGSTValue.setText(String.format("%.2f", igst));
                                     tvTaxTotal.setText(String.format("%.2f", igst));
                                     tvServiceTaxTotal.setText("0.00");
-                                }else {
+                                } else {
                                     tvTaxTotal.setText(String.format("%.2f", cgst));
                                     tvServiceTaxTotal.setText(String.format("%.2f", sgst));
                                 }
@@ -6586,7 +6594,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                                 TextView cessAmount = (TextView) RowBillItem.getChildAt(26);
                                                 cessAmount.setText(String.format("%.2f",item.getCessAmt()));
                                             }
-                                            double quantity_dd =0.00;
+                                            double quantity_dd = 0.00;
                                             if (RowBillItem.getChildAt(3) != null ) {
                                                 TextView qty = (TextView) RowBillItem.getChildAt(3);
                                                 quantity_dd = qty.getText().toString().trim().equals("")?0.00:
@@ -6749,7 +6757,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                                         System.out.println("Cursor:"+cursorBillInfo.getCount());
                                         if (cursorBillInfo.moveToNext()) {
                                             fRoundOfValue = cursorBillInfo.getString(cursorBillInfo.getColumnIndex("TotalDiscountAmount"))== null?
-                                                                0: Float.parseFloat(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("RoundOff"))));
+                                                    0: Float.parseFloat(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("RoundOff"))));
                                             tvDiscountAmount.setText(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("TotalDiscountAmount"))));
                                             tvDiscountPercentage.setText(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("DiscPercentage"))));
                                             tvBillAmount.setText(String.format("%.2f", cursorBillInfo.getDouble(cursorBillInfo.getColumnIndex("BillAmount"))));

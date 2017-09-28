@@ -17,32 +17,33 @@
 package com.wep.common.app.Database;
 
 public class BillItem {
-	
+
 	// Private variables
 	String CustName, CustStateCode,Uom,strItemName, HSNCode, BusinessType, iBillNumber,  SupplyType,
 			SupplierPhone, SupplierName, SupplierAddress,SupplierGSTIN,
-            GSTIN;
+			GSTIN;
 	int  iItemNumber, iDeptCode, iCategCode, iKitchenCode, iTaxType;
 	float  fDiscountAmount, fDiscountPercent, fQuantity, fvalue,fTaxAmount, fTaxPercent, fServiceTaxPercent, fServiceTaxAmount, fModifierAmount,
-	IGSTRate, IGSTAmount, CGSTRate, CGSTAmount, SGSTRate, SGSTAmount;
+			IGSTRate, IGSTAmount, CGSTRate, SGSTRate;
+	double SGSTAmount, CGSTAmount;
 	String TaxationType,SupplierType ;
 	String InvoiceDate;
 	String BillingMode; // richa_2012
 	int isGoodInwarded, billStatus;
 	int Suppliercode, PurchaseOrderNo;
-    String additionalChargeName, isReverTaxEnabled;
-    float additionalChargeAmount;
+	String additionalChargeName, isReverTaxEnabled;
+	float additionalChargeAmount, cessRate;
 
 	double TaxableValue, originalRate;
-	double cessRate, cessAmount,fAmount, SubTotal;
+	double cessAmount,fAmount, SubTotal;
 	// Default constructor
 	public BillItem(){
 		this.Suppliercode=-1;
-        this.PurchaseOrderNo=0;
+		this.PurchaseOrderNo=0;
 		this.originalRate = 0.00;
-        this.SupplierAddress = "";
-        this.additionalChargeAmount = 0;
-        this.additionalChargeName = "";
+		this.SupplierAddress = "";
+		this.additionalChargeAmount = 0;
+		this.additionalChargeName = "";
 		this.Uom="";
 		this.isReverTaxEnabled="";
 		this.CustStateCode="";
@@ -112,11 +113,11 @@ public class BillItem {
 		this.billStatus = billStatus;
 	}
 
-	public double getCessRate() {
+	public float getCessRate() {
 		return cessRate;
 	}
 
-	public void setCessRate(double cessRate) {
+	public void setCessRate(float cessRate) {
 		this.cessRate = cessRate;
 	}
 
@@ -145,38 +146,38 @@ public class BillItem {
 	}
 
 	public int getPurchaseOrderNo() {
-        return PurchaseOrderNo;
-    }
+		return PurchaseOrderNo;
+	}
 
-    public void setPurchaseOrderNo(int purchaseOrderNo) {
-        PurchaseOrderNo = purchaseOrderNo;
-    }
+	public void setPurchaseOrderNo(int purchaseOrderNo) {
+		PurchaseOrderNo = purchaseOrderNo;
+	}
 
-    public float getAdditionalChargeAmount() {
-        return additionalChargeAmount;
-    }
+	public float getAdditionalChargeAmount() {
+		return additionalChargeAmount;
+	}
 
-    public void setAdditionalChargeAmount(float additionalChargeAmount) {
-        this.additionalChargeAmount = additionalChargeAmount;
-    }
+	public void setAdditionalChargeAmount(float additionalChargeAmount) {
+		this.additionalChargeAmount = additionalChargeAmount;
+	}
 
-    public String getAdditionalChargeName() {
-        return additionalChargeName;
-    }
+	public String getAdditionalChargeName() {
+		return additionalChargeName;
+	}
 
-    public void setAdditionalChargeName(String additionalChargeName) {
-        this.additionalChargeName = additionalChargeName;
-    }
+	public void setAdditionalChargeName(String additionalChargeName) {
+		this.additionalChargeName = additionalChargeName;
+	}
 
-    public String getSupplierAddress() {
-        return SupplierAddress;
-    }
+	public String getSupplierAddress() {
+		return SupplierAddress;
+	}
 
-    public void setSupplierAddress(String supplierAddress) {
-        SupplierAddress = supplierAddress;
-    }
+	public void setSupplierAddress(String supplierAddress) {
+		SupplierAddress = supplierAddress;
+	}
 
-    public int getSuppliercode() {
+	public int getSuppliercode() {
 		return Suppliercode;
 	}
 
@@ -210,10 +211,10 @@ public class BillItem {
 
 	// Parameterized constructor
 	public BillItem(String ItemName,int CategCode,int DeptCode,int ItemNumber,
-			int KitchenCode,String BillNumber,int TaxType,float Amount,float DiscountAmount,
-			float DiscountPercent,float Quantity,float Value,float TaxAmount,float TaxPercent,
-			float ServiceTaxAmount,float ServiceTaxPercent,float ModifierAmount,
-			String BusinessType, String InvoiceDate, String hsn, String TaxationType){
+					int KitchenCode,String BillNumber,int TaxType,float Amount,float DiscountAmount,
+					float DiscountPercent,float Quantity,float Value,float TaxAmount,float TaxPercent,
+					float ServiceTaxAmount,float ServiceTaxPercent,float ModifierAmount,
+					String BusinessType, String InvoiceDate, String hsn, String TaxationType){
 
 		this.TaxationType=TaxationType;
 		this.HSNCode = hsn;
@@ -237,21 +238,21 @@ public class BillItem {
 		this.fModifierAmount = ModifierAmount;
 		this.BusinessType = BusinessType;
 		this.InvoiceDate = InvoiceDate;
-		
+
 	}
 
-    //richa_2012 starts
+	//richa_2012 starts
 
-    public String getBillingMode() {
-        return BillingMode;
-    }
+	public String getBillingMode() {
+		return BillingMode;
+	}
 
-    public void setBillingMode(String billingMode) {
-        BillingMode = billingMode;
-    }
+	public void setBillingMode(String billingMode) {
+		BillingMode = billingMode;
+	}
 
 
-    //richa_2012 ends
+	//richa_2012 ends
 
 	public String getSupplierName() {
 		return SupplierName;
@@ -345,12 +346,12 @@ public class BillItem {
 	public String getItemName(){
 		return this.strItemName;
 	}
-	
+
 	// getting BillNumber
 	public String getBillNumber(){
 		return this.iBillNumber;
 	}
-	
+
 	// getting CategCode
 	public int getCategCode(){
 		return this.iCategCode;
@@ -380,11 +381,11 @@ public class BillItem {
 		this.CGSTRate = CGSTRate;
 	}
 
-	public float getCGSTAmount() {
+	public double getCGSTAmount() {
 		return CGSTAmount;
 	}
 
-	public void setCGSTAmount(float CGSTAmount) {
+	public void setCGSTAmount(double CGSTAmount) {
 		this.CGSTAmount = CGSTAmount;
 	}
 
@@ -396,11 +397,11 @@ public class BillItem {
 		this.SGSTRate = SGSTRate;
 	}
 
-	public float getSGSTAmount() {
+	public double getSGSTAmount() {
 		return SGSTAmount;
 	}
 
-	public void setSGSTAmount(float SGSTAmount) {
+	public void setSGSTAmount(double SGSTAmount) {
 		this.SGSTAmount = SGSTAmount;
 	}
 
@@ -408,152 +409,152 @@ public class BillItem {
 	public int getDeptCode(){
 		return this.iDeptCode;
 	}
-			
+
 	// getting ItemNumber
 	public int getItemNumber(){
 		return this.iItemNumber;
 	}
-			
+
 	// getting KitchenCode
 	public int getKitchenCode(){
 		return this.iKitchenCode;
 	}
-				
+
 	// getting TaxType
 	public int getTaxType(){
 		return this.iTaxType;
 	}
-				
+
 	// getting Amount
 	public double getAmount(){
 		return this.fAmount;
 	}
-		
+
 	// getting DiscountAmount
 	public float getDiscountAmount(){
 		return this.fDiscountAmount;
 	}
-			
+
 	// getting DiscountPercent
 	public float getDiscountPercent(){
 		return this.fDiscountPercent;
 	}
-			
+
 	// getting Quantity
 	public float getQuantity(){
 		return this.fQuantity;
 	}
-			
+
 	// getting Value
 	public float getValue(){
 		return this.fvalue;
 	}
-			
+
 	// getting TaxAmount
 	public float getTaxAmount(){
 		return this.fTaxAmount;
 	}
-			
+
 	// getting TaxPercent
 	public float getTaxPercent(){
 		return this.fTaxPercent;
 	}
-	
+
 	// getting ServiceTaxAmount
 	public float getServiceTaxAmount(){
 		return this.fServiceTaxAmount;
 	}
-		
+
 	// getting ServiceTaxPercent
 	public float getServiceTaxPercent(){
 		return this.fServiceTaxPercent;
 	}
-	
+
 	// getting ModifierAmount
 	public float getModifierAmount(){
 		return this.fModifierAmount;
 	}
-	
+
 	// setting ItemName
 	public void setItemName(String ItemName){
 		this.strItemName = ItemName;
 	}
-		
+
 	// setting BillNumber
 	public void setBillNumber(String BillNumber){
 		this.iBillNumber = BillNumber;
 	}
-		
+
 	// setting CategCode
 	public void setCategCode(int CategCode){
 		this.iCategCode = CategCode;
 	}
-			
+
 	// setting DeptCode
 	public void setDeptCode(int DeptCode){
 		this.iDeptCode = DeptCode;
 	}
-				
+
 	// setting ItemNumber
 	public void setItemNumber(int ItemNumber){
 		this.iItemNumber = ItemNumber;
 	}
-				
+
 	// setting KitchenCode
 	public void setKitchenCode(int KitchenCode){
 		this.iKitchenCode = KitchenCode;
 	}
-					
+
 	// setting TaxType
 	public void setTaxType(int TaxType){
 		this.iTaxType = TaxType;
 	}
-					
+
 	// setting Amount
 	public void setAmount(double Amount){
 		this.fAmount = Amount;
 	}
-			
+
 	// setting DiscountAmount
 	public void setDiscountAmount(float DiscountAmount){
 		this.fDiscountAmount = DiscountAmount;
 	}
-				
+
 	// setting DiscountPercent
 	public void setDiscountPercent(float DiscountPercent){
 		this.fDiscountPercent = DiscountPercent;
 	}
-				
+
 	// setting Quantity
 	public void setQuantity(float Quantity){
 		this.fQuantity = Quantity;
 	}
-				
+
 	// setting Value
 	public void setValue(float Value){
 		this.fvalue = Value;
 	}
-				
+
 	// setting TaxAmount
 	public void setTaxAmount(float TaxAmount){
 		this.fTaxAmount = TaxAmount;
 	}
-				
+
 	// setting TaxPercent
 	public void setTaxPercent(float TaxPercent){
 		this.fTaxPercent = TaxPercent;
 	}
-	
+
 	// setting ServiceTaxAmount
 	public void setServiceTaxAmount(float ServiceTaxAmount){
 		this.fServiceTaxAmount = ServiceTaxAmount;
 	}
-			
+
 	// setting ServiceTaxPercent
 	public void setServiceTaxPercent(float ServiceTaxPercent){
 		this.fServiceTaxPercent = ServiceTaxPercent;
 	}
-	
+
 	// setting ModifierAmount
 	public void setModifierAmount(float ModifierAmount){
 		this.fModifierAmount = ModifierAmount;

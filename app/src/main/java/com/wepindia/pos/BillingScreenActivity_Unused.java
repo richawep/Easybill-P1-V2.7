@@ -3929,8 +3929,8 @@ public class BillingScreenActivity_Unused extends WepPrinterBaseActivity {
         }
         else
         {
-            float fTotalTransaction = dbBillScreen.getCustomerTotalTransaction(iCustId);
-            float fCreditAmount = dbBillScreen.getCustomerCreditAmount(iCustId);
+            double fTotalTransaction = dbBillScreen.getCustomerTotalTransaction(iCustId);
+            double fCreditAmount = dbBillScreen.getCustomerCreditAmount(iCustId);
             //fCreditAmount = fCreditAmount - Float.parseFloat(tvBillAmount.getText().toString());
             fCreditAmount = fCreditAmount - fPettCashPayment;
             fTotalTransaction += Float.parseFloat(tvBillAmount.getText().toString());

@@ -1444,7 +1444,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put(KEY_USER_EMAIL, "wep@india.com");
         cvDbValues.put(KEY_USER_ADDRESS, "lavelle road");
         cvDbValues.put(KEY_USER_FILE_LOCATION, "xx");
-         status = 0;
+        status = 0;
         try {
             status = db.insert(TBL_USERS, null, cvDbValues);
 
@@ -4029,9 +4029,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return dbFNB.rawQuery("SELECT * FROM " + TBL_CUSTOMER + " WHERE CustName LIKE '" + Name + "%'", null);
     }
 
-    public float getCustomerTotalTransaction(int iCustId) {
+    public double getCustomerTotalTransaction(int iCustId) {
         SQLiteDatabase db = getWritableDatabase();
-        float result = 0;
+        double result = 0;
         try {
             Cursor cursor = db.query(TBL_CUSTOMER, new String[]{"TotalTransaction"}, "CustId=" + iCustId, null, null,
                     null, null);
@@ -4063,15 +4063,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return list;
     }
 
-    public float getCustomerCreditAmount(int iCustId) {
+    public double getCustomerCreditAmount(int iCustId) {
         SQLiteDatabase db = getWritableDatabase();
-        float result = 0;
+        double result = 0;
         try {
             Cursor cursor = db.query(TBL_CUSTOMER, new String[]{"CreditAmount"}, "CustId=" + iCustId, null, null,
                     null, null);
 
             if (cursor.moveToFirst()) {
-                result = cursor.getFloat(0);
+                result = cursor.getDouble(0);
             } else {
                 result = 0;
             }
@@ -4084,7 +4084,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // -----Update Customer table-----
     public int updateCustomer(String strCustAddress, String strCustContactNumber, String strCustName, int iCustId,
-                              float fLastTransaction, float fTotalTransaction, float fCreditAmount, String gstin) {
+                              double fLastTransaction, double fTotalTransaction, double fCreditAmount, String gstin) {
         cvDbValues = new ContentValues();
 
         cvDbValues.put("CustAddress", strCustAddress);
@@ -4099,7 +4099,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // -----Update Customer table-----
-    public int updateCustomerTransaction(int iCustId, float fLastTransaction, float fTotalTransaction, double fCreditAmount) {
+    public int updateCustomerTransaction(int iCustId, double fLastTransaction, double fTotalTransaction, double fCreditAmount) {
         SQLiteDatabase db = getWritableDatabase();
         int result = 0;
         try {
@@ -4747,8 +4747,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public long updateKOT(int ItemNo, float Qty, double Amount, float TaxAmt, float SerTaxAmt, int OrderMode, int PrintKOTStatus
-            ,float IAmt, float cessAmt, double taxableValue) {
+    public long updateKOT(int ItemNo, float Qty, double Amount, double TaxAmt, double SerTaxAmt, int OrderMode, int PrintKOTStatus
+            ,float IAmt, double cessAmt, double taxableValue) {
         cvDbValues = new ContentValues();
         cvDbValues.put("Quantity", Qty);
         cvDbValues.put("Amount", Amount);
@@ -5156,9 +5156,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put(KEY_TableNo, objBillDetail.getTableNo());
         cvDbValues.put(KEY_Table_Split_No, objBillDetail.getTableSplitNo());
         cvDbValues.put(KEY_InvoiceDate, objBillDetail.getDate());
-        cvDbValues.put(KEY_GrandTotal, objBillDetail.getBillAmount());
+        cvDbValues.put(KEY_GrandTotal, objBillDetail.getdBillAmount());
         cvDbValues.put("TotalItems", objBillDetail.getTotalItems());
-        cvDbValues.put("BillAmount", objBillDetail.getBillAmount());
+        cvDbValues.put("BillAmount", objBillDetail.getdBillAmount());
         cvDbValues.put("TotalDiscountAmount", objBillDetail.getTotalDiscountAmount());
         cvDbValues.put(KEY_DiscPercentage, objBillDetail.getTotalDiscountPercentage());
         cvDbValues.put("TotalServiceTaxAmount", objBillDetail.getTotalServiceTaxAmount());
@@ -5172,7 +5172,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("EmployeeId", objBillDetail.getEmployeeId());
         cvDbValues.put("UserId", objBillDetail.getUserId());
         cvDbValues.put("CustId", objBillDetail.getCustId());
-        cvDbValues.put("PettyCashPayment", objBillDetail.getPettyCashPayment());
+//        cvDbValues.put("PettyCashPayment", objBillDetail.getPettyCashPayment());
+        cvDbValues.put("PettyCashPayment", objBillDetail.getdPettyCashPayment());
         cvDbValues.put(KEY_WalletPayment, objBillDetail.getWalletAmount());
         cvDbValues.put(KEY_RoundOff, objBillDetail.getfRoundOff());
         cvDbValues.put("PaidTotalPayment", objBillDetail.getPaidTotalPayment());
@@ -5193,7 +5194,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public long updateBill(BillDetail objBillDetail) {
         ContentValues cv = new ContentValues();
-        cv.put(KEY_BillAmount,objBillDetail.getBillAmount());
+        cv.put(KEY_BillAmount,objBillDetail.getdBillAmount());
         return dbFNB.update(TBL_BILLDETAIL,cv,KEY_InvoiceNo+"="+objBillDetail.getBillNumber()+" AND "
                 +KEY_InvoiceDate+"="+objBillDetail.getDate()+" AND "+KEY_CustId+" ="+objBillDetail.getCustId(),null);
 
@@ -5430,7 +5431,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // -----Retrieve single bill details by Customer Id-----
-    public Cursor getBillDetailByCustomer(int CustId, int BillStatus, float BillAmount) {
+    public Cursor getBillDetailByCustomer(int CustId, int BillStatus, double BillAmount) {
         try {
             Date date1 = new Date();
             CharSequence sdate = android.text.format.DateFormat.format("dd-MM-yyyy", date1.getTime());
@@ -5449,7 +5450,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 
     // -----Retrieve single bill details by Customer Id-----
-    public Cursor getBillDetailByCustomerWithTime(int CustId, int BillStatus, float BillAmount ) {
+    public Cursor getBillDetailByCustomerWithTime(int CustId, int BillStatus, double BillAmount ) {
         try {
             Date date1 = new Date();
             CharSequence sdate = android.text.format.DateFormat.format("dd-MM-yyyy", date1.getTime());
@@ -5611,7 +5612,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // -----Update Bill Status Delivery Charge, Rider Code of Pending Delivery
     // bill-----
-    public int updatePendingDeliveryBill(int InvoiceNo, int EmployeeId, float DeliveryCharge, float CashPayment, float PaidTotalPayment) {
+    public int updatePendingDeliveryBill(int InvoiceNo, int EmployeeId, double DeliveryCharge, double CashPayment, double PaidTotalPayment) {
         cvDbValues = new ContentValues();
 
         cvDbValues.put("EmployeeId", EmployeeId);
@@ -5622,7 +5623,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return dbFNB.update(TBL_BILLDETAIL, cvDbValues, KEY_InvoiceNo + "=" + InvoiceNo, null);
     }
-    public int updatePendingDeliveryBill_Ledger(int InvoiceNo, float PaidTotalPayment) {
+    public int updatePendingDeliveryBill_Ledger(int InvoiceNo, double PaidTotalPayment) {
         cvDbValues = new ContentValues();
         cvDbValues.put("BillStatus", 1);
 
@@ -5848,7 +5849,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // -----Update pending rider delivery-----
-    public int updateRiderPendingDelivery(int InvoiceNo, float SettledAmount) {
+    public int updateRiderPendingDelivery(int InvoiceNo, double SettledAmount) {
         cvDbValues = new ContentValues();
 
         cvDbValues.put("SettledAmount", SettledAmount);
@@ -7810,7 +7811,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<String> getAllUsersforReport() {
         List<String> list = new ArrayList<String>();
 
-       // Cursor cursor = dbFNB.rawQuery("SELECT  UserId as _id, Name FROM Users where RoleId not in ('3','4')", null);// selectQuery,selectedArguments
+        // Cursor cursor = dbFNB.rawQuery("SELECT  UserId as _id, Name FROM Users where RoleId not in ('3','4')", null);// selectQuery,selectedArguments
         Cursor cursor = dbFNB.rawQuery("SELECT  UserId as _id, Name FROM Users ", null);// selectQuery,selectedArguments
 
         list.add("Select");
@@ -9103,7 +9104,8 @@ public Cursor getGSTR1B2CL_invoices_ammend(String InvoiceNo, String InvoiceDate,
             cvDbValues.put("EmployeeId", objBillDetail.getEmployeeId());
             cvDbValues.put("UserId", objBillDetail.getUserId());
             cvDbValues.put("CustId", objBillDetail.getCustId());
-            cvDbValues.put("PettyCashPayment", objBillDetail.getPettyCashPayment());
+//            cvDbValues.put("PettyCashPayment", objBillDetail.getPettyCashPayment());
+            cvDbValues.put("PettyCashPayment", objBillDetail.getdPettyCashPayment());
             cvDbValues.put(KEY_WalletPayment, objBillDetail.getWalletAmount());
             cvDbValues.put(KEY_RoundOff, objBillDetail.getfRoundOff());
             cvDbValues.put("PaidTotalPayment", objBillDetail.getPaidTotalPayment());

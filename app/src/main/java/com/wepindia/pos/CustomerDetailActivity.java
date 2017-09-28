@@ -24,6 +24,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
@@ -51,6 +52,7 @@ import com.wep.common.app.Database.Customer;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.WepBaseActivity;
 import com.wep.common.app.views.WepButton;
+import com.wepindia.pos.GenericClasses.DecimalDigitsInputFilter;
 import com.wepindia.pos.GenericClasses.MessageDialog;
 import com.wepindia.pos.utils.ActionBarUtils;
 
@@ -135,6 +137,7 @@ public class CustomerDetailActivity extends WepBaseActivity {
             txtName = (EditText) findViewById(R.id.etCustomerName);
             txtPhone = (EditText) findViewById(R.id.etCustomerPhone);
             txtCreditAmount = (EditText) findViewById(R.id.etCreditAmount);
+            txtCreditAmount.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(7,2)});
             txtSearchName = (AutoCompleteTextView) findViewById(R.id.etSearchCustomerName);
             txtSearchPhone = (EditText) findViewById(R.id.etSearchCustomerPhone);
             txGSTIN = (EditText) findViewById(R.id.etCustomerGSTIN);
@@ -594,14 +597,14 @@ public class CustomerDetailActivity extends WepBaseActivity {
                     tvLastTransaction.setTextSize(18);
                     tvLastTransaction.setGravity(Gravity.LEFT);
                     tvLastTransaction.setPadding(15,0,0,0);
-                    tvLastTransaction.setText(String.format("%.2f",crsrCustomer.getFloat(crsrCustomer.getColumnIndex("LastTransaction"))));
+                    tvLastTransaction.setText(String.format("%.2f",crsrCustomer.getDouble(crsrCustomer.getColumnIndex("LastTransaction"))));
                     rowCustomer.addView(tvLastTransaction);
 
                     tvTotalTransaction = new TextView(myContext);
                     tvTotalTransaction.setTextSize(18);
                     tvTotalTransaction.setGravity(Gravity.LEFT);
                     tvTotalTransaction.setPadding(38,0,0,0);
-                    tvTotalTransaction.setText(String.format("%.2f",crsrCustomer.getFloat(crsrCustomer.getColumnIndex("TotalTransaction"))));
+                    tvTotalTransaction.setText(String.format("%.2f",crsrCustomer.getDouble(crsrCustomer.getColumnIndex("TotalTransaction"))));
                     rowCustomer.addView(tvTotalTransaction);
 
                     tvPhone = new TextView(myContext);
@@ -738,8 +741,8 @@ public class CustomerDetailActivity extends WepBaseActivity {
         return isCustomerExists;
     }
 
-    private void InsertCustomer(String strAddress, String strContactNumber, String strName, float fLastTransaction,
-                                float fTotalTransaction, float fCreditAmount, String gstin) {
+    private void InsertCustomer(String strAddress, String strContactNumber, String strName, double fLastTransaction,
+                                double fTotalTransaction, double fCreditAmount, String gstin) {
         long lRowId;
 
         Customer objCustomer = new Customer(strAddress, strName, strContactNumber, fLastTransaction, fTotalTransaction,
@@ -824,7 +827,11 @@ public class CustomerDetailActivity extends WepBaseActivity {
                 }
                 if(mFlag)
                 {
-                    InsertCustomer(Address, Phone, Name, 0, 0, Float.parseFloat(CreditAmount),GSTIN);
+
+                    double dCreditAmount = txtCreditAmount.getText().toString().trim().equals("")?0.00:
+                            Double.parseDouble(String.format("%.2f", Double.parseDouble(txtCreditAmount.getText().toString().trim())));
+
+                    InsertCustomer(Address, Phone, Name, 0, 0, dCreditAmount,GSTIN);
                     Toast.makeText(myContext, "Customer Added Successfully", Toast.LENGTH_LONG).show();
                     ResetCustomer();
                     ClearCustomerTable();
@@ -904,10 +911,13 @@ public class CustomerDetailActivity extends WepBaseActivity {
         }
         if (mFlag)
         {
+            double dCreditAmount = txtCreditAmount.getText().toString().trim().equals("")?0.00:
+                    Double.parseDouble(String.format("%.2f", Double.parseDouble(txtCreditAmount.getText().toString().trim())));
+
             Log.d("Customer Selection", "Id: " + Id + " Name: " + Name + " Phone:" + Phone + " Address:" + Address
                     + " Last Transn.:" + LastTransaction + " Total Transan.:" + TotalTransaction+" GSTIN : "+GSTIN);
             int iResult = dbCustomer.updateCustomer(Address, Phone, Name, Integer.parseInt(Id),
-                    Float.parseFloat(LastTransaction), Float.parseFloat(TotalTransaction), Float.parseFloat(CreditAmount), GSTIN);
+                    Double.parseDouble(LastTransaction), Double.parseDouble(TotalTransaction), dCreditAmount, GSTIN);
             Log.d("updateCustomer", "Updated Rows: " + String.valueOf(iResult));
             Toast.makeText(myContext, "Customer Updated Successfully", Toast.LENGTH_LONG).show();
             ResetCustomer();

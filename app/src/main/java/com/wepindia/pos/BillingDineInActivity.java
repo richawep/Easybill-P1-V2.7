@@ -142,6 +142,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
     int BillwithStock = 0;
     int iTaxType = 0, iTotalItems = 0, iCustId = 0, iTokenNumber = 0;
     float fTotalDiscount = 0, fCashPayment = 0, fCardPayment = 0, fCouponPayment = 0, fPettCashPayment = 0, fPaidTotalPayment = 0;
+    double dPettCashPayment = 0;
     float fChangePayment = 0, fRoundOfValue =0;
     double dFinalBillValue=0;
     float fWalletPayment = 0;
@@ -3308,7 +3309,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
             // Sales Tax Amount
             if (RowKOTItem.getChildAt(7) != null) {
-                objPendingKOT.setTaxAmount(Float.parseFloat(SalesTaxAmount.getText().toString()));
+                objPendingKOT.setTaxAmount(Double.parseDouble(SalesTaxAmount.getText().toString()));
             }
 
             // Discount %
@@ -3353,7 +3354,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
             // Service Tax Amount
             if (RowKOTItem.getChildAt(16) != null) {
-                objPendingKOT.setServiceTaxAmount(Float.parseFloat(ServiceTaxAmount.getText().toString()));
+                objPendingKOT.setServiceTaxAmount(Double.parseDouble(ServiceTaxAmount.getText().toString()));
             }
 
             // SupplyType - G/S
@@ -3378,7 +3379,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             }
             if(RowKOTItem.getChildAt(26)!=null)
             {
-                objPendingKOT.setCessAmount(Float.parseFloat(cessAmt.getText().toString()));
+                objPendingKOT.setCessAmount(Double.parseDouble(cessAmt.getText().toString()));
             }
             if(RowKOTItem.getChildAt(27)!=null)
             {
@@ -3409,15 +3410,20 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
             Cursor crsrItemsUpdate = dbBillScreen.getItemsForUpdatingKOT(tblno, subudfno, tblsplitno, itemno, jBillingMode);
             if (crsrItemsUpdate.moveToFirst()) {
-                float Qty = 0,  TaxAmt = 0, SerTaxAmt = 0;
-                double Amt = 0;
+                float Qty = 0;
+                double Amt = 0, TaxAmt = 0, SerTaxAmt = 0;
                 float qty_temp = Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("Quantity")));
                 Qty = Float.valueOf(Quantity.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("Quantity")));
                 Amt = Double.valueOf(Amount.getText().toString()) + (crsrItemsUpdate.getDouble(crsrItemsUpdate.getColumnIndex("Amount")));
-                TaxAmt = Float.valueOf(SalesTaxAmount.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("TaxAmount")));
-                SerTaxAmt = Float.valueOf(ServiceTaxAmount.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("ServiceTaxAmount")));
+
+
+
+
+
+                TaxAmt = Double.valueOf(SalesTaxAmount.getText().toString()) + Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("TaxAmount")));
+                SerTaxAmt = Double.valueOf(ServiceTaxAmount.getText().toString()) + Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("ServiceTaxAmount")));
                 float IAmt = Float.valueOf(IGSTAmt.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("IGSTAmount")));
-                float cessAmount = Float.valueOf(cessAmt.getText().toString()) + Float.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("cessAmount")));
+                double cessAmount = Double.valueOf(cessAmt.getText().toString()) + Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("cessAmount")));
                 double  taxableValue = Double.valueOf(TaxableValue.getText().toString()) +
                         Double.valueOf(crsrItemsUpdate.getString(crsrItemsUpdate.getColumnIndex("TaxableValue")));
 
@@ -3605,7 +3611,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
                     // Sales Tax Amount
                     tvTaxAmt = new TextView(myContext);
-                    tvTaxAmt.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("TaxAmount")));
+                    tvTaxAmt.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("TaxAmount"))));
 
                     // Discount %
                     tvDiscPercent = new TextView(myContext);
@@ -3641,7 +3647,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
                     // Service Tax Amount
                     tvServiceTaxAmt = new TextView(myContext);
-                    tvServiceTaxAmt.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("ServiceTaxAmount")));
+                    tvServiceTaxAmt.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("ServiceTaxAmount"))));
 
                     // Service Tax Amount
                     TextView tvSupplyType = new TextView(myContext);
@@ -3678,7 +3684,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     tvcessRate.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("cessRate")));
 
                     TextView tvcessAmt = new TextView(BillingDineInActivity.this);
-                    tvcessAmt.setText(crsrBillItems.getString(crsrBillItems.getColumnIndex("cessAmount")));
+                    tvcessAmt.setText(String.format("%.2f", crsrBillItems.getDouble(crsrBillItems.getColumnIndex("cessAmount"))));
 
                     TextView tvOriginalRate = new TextView(BillingDineInActivity.this);
                     tvOriginalRate.setText(String.format("%.2f",crsrBillItems.getDouble(crsrBillItems.getColumnIndex("OriginalRate"))));
@@ -4824,17 +4830,16 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             }
 
             // Service Tax Amount
-            float sgstAmt = 0;
+            double sgstAmt = 0;
             if (RowBillItem.getChildAt(16) != null) {
                 TextView ServiceTaxAmount = (TextView) RowBillItem.getChildAt(16);
-                sgstAmt = Float.parseFloat(ServiceTaxAmount.getText().toString());
+                sgstAmt = Double.parseDouble(ServiceTaxAmount.getText().toString());
                 if (chk_interstate.isChecked()) {
                     objBillItem.setSGSTAmount(0.00f);
                     Log.d("InsertBillItems", "SGST Amount : 0" );
 
                 } else {
-                    objBillItem.setSGSTAmount(Float.parseFloat(String.format("%.2f",
-                            Float.parseFloat(ServiceTaxAmount.getText().toString()))));
+                    objBillItem.setSGSTAmount(Double.parseDouble(String.format("%.2f", sgstAmt)));
                     Log.d("InsertBillItems", "SGST Amount : " + objBillItem.getSGSTAmount());
                 }
             }
@@ -4858,7 +4863,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             // Sales Tax Amount
             if (RowBillItem.getChildAt(7) != null) {
                 TextView SalesTaxAmount = (TextView) RowBillItem.getChildAt(7);
-                float cgstAmt = (Float.parseFloat(SalesTaxAmount.getText().toString()));
+                double cgstAmt = (Double.parseDouble(SalesTaxAmount.getText().toString()));
                 if (chk_interstate.isChecked()) {
                     //objBillItem.setIGSTAmount(Float.parseFloat(String.format("%.2f",cgstAmt+sgstAmt)));
                     //Log.d("InsertBillItems", "IGST Amt: " + objBillItem.getIGSTAmount());
@@ -4867,8 +4872,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 } else {
                     // objBillItem.setIGSTAmount(0.00f);
                     //Log.d("InsertBillItems", "IGST Amt: 0");
-                    objBillItem.setCGSTAmount(Float.parseFloat(String.format("%.2f",
-                            Float.parseFloat(SalesTaxAmount.getText().toString()))));
+                    objBillItem.setCGSTAmount(Double.parseDouble(String.format("%.2f", cgstAmt)));
                     Log.d("InsertBillItems", "CGST Amt: " + SalesTaxAmount.getText().toString());
                 }
             }
@@ -4908,8 +4912,8 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             // cessTax Amount
             if (RowBillItem.getChildAt(26) != null) {
                 TextView cessTaxAmount = (TextView) RowBillItem.getChildAt(26);
-                float cessAmt = (Float.parseFloat(cessTaxAmount.getText().toString()));
-                objBillItem.setCessAmount(Float.parseFloat(String.format("%.2f",cessAmt)));
+                double cessAmt = (Double.parseDouble(cessTaxAmount.getText().toString()));
+                objBillItem.setCessAmount(Double.parseDouble(String.format("%.2f",cessAmt)));
                 Log.d("InsertBillItems", "cess Amt: " + objBillItem.getCessAmount());
             }
             // Discount %
@@ -5201,9 +5205,6 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 Log.d("InsertBillItems_Preview", "Amount :" + objBillItem.getAmount()+reverseTax);
             }
 
-
-
-
             // Service Tax Percent
             float sgatTax = 0;
             if (RowBillItem.getChildAt(15) != null) {
@@ -5220,17 +5221,16 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             }
 
             // Service Tax Amount
-            float sgstAmt = 0;
+            double sgstAmt = 0;
             if (RowBillItem.getChildAt(16) != null) {
                 TextView ServiceTaxAmount = (TextView) RowBillItem.getChildAt(16);
-                sgstAmt = Float.parseFloat(ServiceTaxAmount.getText().toString());
+                sgstAmt = Double.parseDouble(ServiceTaxAmount.getText().toString());
                 if (chk_interstate.isChecked()) {
                     objBillItem.setSGSTAmount(0.00f);
                     Log.d("InsertBillItems_Preview", "SGST Amount : 0" );
 
                 } else {
-                    objBillItem.setSGSTAmount(Float.parseFloat(String.format("%.2f",
-                            Float.parseFloat(ServiceTaxAmount.getText().toString()))));
+                    objBillItem.setSGSTAmount(Double.parseDouble(String.format("%.2f", sgstAmt)));
                     Log.d("InsertBillItems_Preview", "SGST Amount : " + objBillItem.getSGSTAmount());
                 }
             }
@@ -5254,7 +5254,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             // Sales Tax Amount
             if (RowBillItem.getChildAt(7) != null) {
                 TextView SalesTaxAmount = (TextView) RowBillItem.getChildAt(7);
-                float cgstAmt = (Float.parseFloat(SalesTaxAmount.getText().toString()));
+                double cgstAmt = (Double.parseDouble(SalesTaxAmount.getText().toString()));
                 if (chk_interstate.isChecked()) {
                     //objBillItem.setIGSTAmount(Float.parseFloat(String.format("%.2f",cgstAmt+sgstAmt)));
                     //Log.d("InsertBillItems_Preview", "IGST Amt: " + objBillItem.getIGSTAmount());
@@ -5263,8 +5263,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 } else {
                     // objBillItem.setIGSTAmount(0.00f);
                     //Log.d("InsertBillItems_Preview", "IGST Amt: 0");
-                    objBillItem.setCGSTAmount(Float.parseFloat(String.format("%.2f",
-                            Float.parseFloat(SalesTaxAmount.getText().toString()))));
+                    objBillItem.setCGSTAmount(Double.parseDouble(String.format("%.2f", cgstAmt)));
                     Log.d("InsertBillItems_Preview", "CGST Amt: " + SalesTaxAmount.getText().toString());
                 }
             }
@@ -5304,8 +5303,8 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             // cessTax Amount
             if (RowBillItem.getChildAt(26) != null) {
                 TextView cessTaxAmount = (TextView) RowBillItem.getChildAt(26);
-                float cessAmt = (Float.parseFloat(cessTaxAmount.getText().toString()));
-                objBillItem.setCessAmount(Float.parseFloat(String.format("%.2f",cessAmt)));
+                double cessAmt = (Double.parseDouble(cessTaxAmount.getText().toString()));
+                objBillItem.setCessAmount(Double.parseDouble(String.format("%.2f",cessAmt)));
                 Log.d("InsertBillItems_Preview", "cess Amt: " + objBillItem.getCessAmount());
             }
             // Discount %
@@ -5509,8 +5508,9 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
         Log.d("InsertBillDetail", "Total Items:" + iTotalItems);
 
         // Bill Amount
-        String billamt_temp = String.format("%.2f",Float.parseFloat(tvBillAmount.getText().toString()));
-        objBillDetail.setBillAmount(Float.parseFloat(billamt_temp));
+        String billamt_temp = String.format("%.2f",Double.parseDouble(tvBillAmount.getText().toString()));
+//        objBillDetail.setBillAmount(Double.parseDouble(billamt_temp));
+        objBillDetail.setdBillAmount(Double.parseDouble(billamt_temp));
         Log.d("InsertBillDetail", "Bill Amount:" + tvBillAmount.getText().toString());
 
         // Discount Percentage
@@ -5531,15 +5531,15 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             objBillDetail.setSGSTAmount(0.00f);
         } else {
             objBillDetail.setIGSTAmount(0.00f);
-            objBillDetail.setCGSTAmount(Float.parseFloat(String.format("%.2f",Float.parseFloat(tvTaxTotal.getText().toString()))));
-            objBillDetail.setSGSTAmount(Float.parseFloat(String.format("%.2f",Float.parseFloat(tvServiceTaxTotal.getText().toString()))));
+            objBillDetail.setCGSTAmount(Double.parseDouble(String.format("%.2f",Double.parseDouble(tvTaxTotal.getText().toString()))));
+            objBillDetail.setSGSTAmount(Double.parseDouble(String.format("%.2f",Double.parseDouble(tvServiceTaxTotal.getText().toString()))));
         }
         Log.d("InsertBillDetail", "IGSTAmount : " + objBillDetail.getIGSTAmount());
         Log.d("InsertBillDetail", "CGSTAmount : " + objBillDetail.getCGSTAmount());
         Log.d("InsertBillDetail", "SGSTAmount : " + objBillDetail.getSGSTAmount());
 
 
-        objBillDetail.setCessAmount(Float.parseFloat(String.format("%.2f",Float.parseFloat(tvcessValue.getText().toString()))));
+        objBillDetail.setCessAmount(Double.parseDouble(String.format("%.2f",Double.parseDouble(tvcessValue.getText().toString()))));
         Log.d("InsertBillDetail", "cessAmount : " + objBillDetail.getCessAmount());
         // Delivery Charge
         objBillDetail.setDeliveryCharge(Float.parseFloat(txtOthercharges.getText().toString()));
@@ -5604,8 +5604,11 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
             Log.d("InsertBillDetail", "Coupon:" + fCouponPayment);
 
             // PettyCash Payment
-            objBillDetail.setPettyCashPayment(fPettCashPayment);
-            Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+//            objBillDetail.setPettyCashPayment(fPettCashPayment);
+//            Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+
+            objBillDetail.setdPettyCashPayment(dPettCashPayment);
+            Log.d("InsertBillDetail", "PettyCash:" + dPettCashPayment);
 
             // Wallet Payment
             objBillDetail.setWalletAmount(fWalletPayment);
@@ -5637,8 +5640,11 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 Log.d("InsertBillDetail", "Coupon:" + fCouponPayment);
 
                 // PettyCash Payment
-                objBillDetail.setPettyCashPayment(fPettCashPayment);
-                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+//                objBillDetail.setPettyCashPayment(fPettCashPayment);
+//                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+
+                objBillDetail.setdPettyCashPayment(dPettCashPayment);
+                Log.d("InsertBillDetail", "PettyCash:" + dPettCashPayment);
 
                 // Wallet Payment
                 objBillDetail.setWalletAmount(fWalletPayment);
@@ -5667,8 +5673,11 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 Log.d("InsertBillDetail", "Coupon:" + fCouponPayment);
 
                 // PettyCash Payment
-                objBillDetail.setPettyCashPayment(fPettCashPayment);
-                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+//                objBillDetail.setPettyCashPayment(fPettCashPayment);
+//                Log.d("InsertBillDetail", "PettyCash:" + fPettCashPayment);
+
+                objBillDetail.setdPettyCashPayment(dPettCashPayment);
+                Log.d("InsertBillDetail", "PettyCash:" + dPettCashPayment);
 
                 // Wallet Payment
                 objBillDetail.setWalletAmount(fWalletPayment);
@@ -5720,13 +5729,13 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
         else
         {
             iCustId = Integer.parseInt(edtCustId.getText().toString());
-            float fTotalTransaction = dbBillScreen.getCustomerTotalTransaction(iCustId);
-            float fCreditAmount = dbBillScreen.getCustomerCreditAmount(iCustId);
+            double fTotalTransaction = dbBillScreen.getCustomerTotalTransaction(iCustId);
+            double fCreditAmount = dbBillScreen.getCustomerCreditAmount(iCustId);
             //fCreditAmount = fCreditAmount - Float.parseFloat(tvBillAmount.getText().toString());
-            fCreditAmount = fCreditAmount - fPettCashPayment;
-            fTotalTransaction += Float.parseFloat(tvBillAmount.getText().toString());
+            fCreditAmount = fCreditAmount - dPettCashPayment;
+            fTotalTransaction += Double.parseDouble(tvBillAmount.getText().toString());
 
-            long lResult1 = dbBillScreen.updateCustomerTransaction(iCustId, Float.parseFloat(tvBillAmount.getText().toString()), fTotalTransaction, fCreditAmount);
+            long lResult1 = dbBillScreen.updateCustomerTransaction(iCustId, Double.parseDouble(tvBillAmount.getText().toString()), fTotalTransaction, fCreditAmount);
         }
         // Bill No Reset Configuration
 //        Log.d("Richa : ", tvBillNumber.getText().toString());
@@ -6869,7 +6878,8 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                     fTotalDiscount = 0;
                     fTotalDiscount = data.getFloatExtra(PayBillActivity.DISCOUNT_AMOUNT, 0);
 
-                    fPettCashPayment = data.getFloatExtra(PayBillActivity.TENDER_PETTYCASH_VALUE, 0);
+//                    fPettCashPayment = data.getFloatExtra(PayBillActivity.TENDER_PETTYCASH_VALUE, 0);
+                    dPettCashPayment = data.getDoubleExtra(PayBillActivity.TENDER_PETTYCASH_VALUE, 0);
                     fPaidTotalPayment = data.getFloatExtra(PayBillActivity.TENDER_PAIDTOTAL_VALUE, 0);
                     fWalletPayment = data.getFloatExtra(PayBillActivity.TENDER_WALLET_VALUE, 0);
                     fChangePayment = data.getFloatExtra(PayBillActivity.TENDER_CHANGE_AMOUNT, 0);

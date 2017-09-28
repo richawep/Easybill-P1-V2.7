@@ -663,19 +663,19 @@ public class SplitBillActivity extends WepBaseActivity {
         objBillDetail.setTotalItems(iTotalItems);
 
         // Bill Amount
-        objBillDetail.setBillAmount(Float.
-                parseFloat(BillTotal.getText().toString()));
+//        objBillDetail.setBillAmount(Float.parseFloat(BillTotal.getText().toString()));
+        objBillDetail.setdBillAmount(Double.parseDouble(BillTotal.getText().toString()));
 
         // Discount Amount
         objBillDetail.setTotalDiscountAmount(fTotalDiscount);
 
         // Sales Tax Amount
-        objBillDetail.setTotalTaxAmount(Float.
-                parseFloat(Tax.getText().toString()));
+        objBillDetail.setTotalTaxAmount(Double.
+                parseDouble(Tax.getText().toString()));
 
         // Service Tax Amount
-        objBillDetail.setTotalTaxAmount(Float.
-                parseFloat(ServiceTax.getText().toString()));
+        objBillDetail.setTotalTaxAmount(Double.
+                parseDouble(ServiceTax.getText().toString()));
 
         // Delivery Charge
         objBillDetail.setDeliveryCharge(0);

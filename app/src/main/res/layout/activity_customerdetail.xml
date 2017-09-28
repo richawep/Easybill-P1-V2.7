@@ -213,7 +213,6 @@
                                     android:layout_height="wrap_content"
                                     android:ems="5"
                                     android:inputType="numberDecimal"
-                                    android:maxLength="6"
                                     android:text="0" />
                             </TableRow>
 

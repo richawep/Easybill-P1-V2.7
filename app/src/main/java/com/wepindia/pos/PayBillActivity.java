@@ -495,7 +495,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
                 Toast.makeText(myContext, "Change Due is : " + strChange + ", Please Give.", Toast.LENGTH_SHORT).show();
             }
             else if(dTenderAmount < dTotalValue && RESETCALLED==0) {
-                Toast.makeText(myContext, "Amount Due is : " + String.valueOf(dChangeAmount) + ", Please Collect.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(myContext, "Amount Due is : " + String.format("%.2f",dChangeAmount)+ ", Please Collect.", Toast.LENGTH_SHORT).show();
             }
 
         }catch (Exception e)
@@ -621,7 +621,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
             intentResult.putExtra(TENDER_CASH_VALUE, Float.parseFloat(edtPaid.getText().toString()));
             intentResult.putExtra(TENDER_CARD_VALUE, cardAmount);
             intentResult.putExtra(TENDER_COUPON_VALUE, Float.parseFloat(edtCoupon.getText().toString()));
-            intentResult.putExtra(TENDER_PETTYCASH_VALUE, (float) getPettyCash());
+            intentResult.putExtra(TENDER_PETTYCASH_VALUE, getPettyCash());
             intentResult.putExtra(TENDER_PAIDTOTAL_VALUE, Float.parseFloat(edtTenderTotalValue.getText().toString()));
             intentResult.putExtra(TENDER_CHANGE_VALUE, Float.parseFloat(edtChange.getText().toString()));
             intentResult.putExtra(TENDER_ROUNDOFF, Float.parseFloat(edtRoundOff.getText().toString()));
@@ -654,7 +654,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         }
         else
         {
-            return toPayAmount-effectiveVal;
+            return toPayAmount - effectiveVal;
         }
     }
 
@@ -676,7 +676,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
         }
 
 
-       // edtDiscount.setEnabled(true);
+        // edtDiscount.setEnabled(true);
         // custom dialog
         PayBillDialog = new Dialog(myContext);
         PayBillDialog.setContentView(R.layout.paybill_tablelist);
@@ -739,7 +739,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
                     tvAmount.setTextSize(20);
                     tvAmount.setTextColor(Color.parseColor("#000000"));
                     tvAmount.setText(crsrDiscount.getString(3));
-                   // rowPayBill.addView(tvAmount);
+                    // rowPayBill.addView(tvAmount);
 
                     rowPayBill.setOnClickListener(new View.OnClickListener() {
 
@@ -1080,7 +1080,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
                     edtPettyCash.setText(getEffectivePaybleAmountForCreditCustomer()+"");
                 }*/
 
-                edtPettyCash.setText(getEffectivePaybleAmountForCreditCustomer()+"");
+                edtPettyCash.setText(String.format("%.2f",getEffectivePaybleAmountForCreditCustomer()));
             }
         });
         final Button btnOk = (Button) promptsView.findViewById(R.id.btnOk);
@@ -1093,19 +1093,19 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
                 {
                     //Exceed Payble Amount
                     //edtPettyCash.setText(toPayAmount+"");
-                    float fCreditAmount = dbPayBill.getCustomerCreditAmount(Integer.parseInt(tvCustId.getText().toString()));
+                    double fCreditAmount = dbPayBill.getCustomerCreditAmount(Integer.parseInt(tvCustId.getText().toString()));
                     if(fCreditAmount < 0)
                     {
                         edtPettyCash.setText(0+"");
                     }
                     else
                     {
-                        edtPettyCash.setText(toPayAmount+"");
+                        edtPettyCash.setText(String.format("%.2f",toPayAmount));
                     }
                 }
                 else
                 {
-                    edtPettyCash.setText(getEffectivePaybleAmountForCreditCustomer()+"");
+                    edtPettyCash.setText(String.format("%.2f",getEffectivePaybleAmountForCreditCustomer()));
                 }
                 ((AlertDialog) alertDialog).cancel();
             }
@@ -1128,7 +1128,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
                                 double custBalance = cursor.getDouble(cursor.getColumnIndex("CreditAmount"));
                                 toPayAmount = custBalance;
                                 editTextName.setText(custName);
-                                editTextBalance.setText(custBalance+"");
+                                editTextBalance.setText(String.format("%.2f",custBalance));
                                 //Balance After Payment: 100-46=54
                                 double newBlnc = getUpdatedAmountForCreditCustomer(custBalance,getEffectivePaybleAmountForCreditCustomer());
                                 if(newBlnc >= 0)
@@ -1219,8 +1219,9 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
     public double getEffectivePaybleAmountForCreditCustomer(){
         double amount = 0.0;
         try{
-            double paybleAmount = Double.parseDouble(edtTotalValue.getText().toString());
-            double paidAmount = Double.parseDouble(edtTenderTotalValue.getText().toString());
+//            double paybleAmount = Double.parseDouble(edtTotalValue.getText().toString().trim());
+            double paybleAmount = Double.parseDouble(String.format("%.2f",Double.parseDouble(edtTotalValue.getText().toString().trim())));
+            double paidAmount = Double.parseDouble(edtTenderTotalValue.getText().toString().trim());
             amount = paybleAmount - paidAmount;
         }catch (Exception e){
 
