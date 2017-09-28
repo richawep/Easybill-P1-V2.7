@@ -100,7 +100,8 @@ public class OwnerDetailsActivity extends WepBaseActivity {
                                 && CHECK_STRING_VALUE == checkDataypeValue(part[3],"String")
                                 && CHECK_INTEGER_VALUE == checkDataypeValue(part[4],"Int")
                                 && CHECK_STRING_VALUE == checkDataypeValue(part[5],"String")
-                                && CHECK_INTEGER_VALUE == checkDataypeValue(part[6],"Int")) {
+                                && (CHECK_INTEGER_VALUE == checkDataypeValue(str.substring(14),"Int") ||
+                                        CHECK_STRING_VALUE == checkDataypeValue(str.substring(14),"String"))) {
 
                             mFlag = true;
                         } else {
