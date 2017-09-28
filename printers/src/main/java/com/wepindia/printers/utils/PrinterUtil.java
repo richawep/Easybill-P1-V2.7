@@ -530,7 +530,7 @@ public class PrinterUtil {
             {
                 preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
                         +billKotItem.getTaxIndex(),9,1),10,1);
-                pre = preId+" "+preName+/*HSN+*/preQty+preRate+preAmount;
+                pre = preId+preName+/*HSN+*/preQty+preRate+preAmount;
             }
 
 

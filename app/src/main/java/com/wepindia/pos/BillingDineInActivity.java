@@ -60,6 +60,7 @@ import com.wep.common.app.Database.Customer;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.Database.DeletedKOT;
 import com.wep.common.app.Database.PendingKOT;
+import com.wep.common.app.models.Items;
 import com.wep.common.app.print.BillKotItem;
 import com.wep.common.app.print.BillServiceTaxItem;
 import com.wep.common.app.print.BillSubTaxItem;
@@ -96,7 +97,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BillingDineInActivity extends WepPrinterBaseActivity implements TextWatcher , TestImageAdapter.OnItemsImageClickListener {
+public class BillingDineInActivity extends WepPrinterBaseActivity implements TextWatcher , TestItemsAdapter.OnItemsImageClickListener {
 
     String tx ="";
     int CUSTOMER_FOUND =0;
@@ -195,7 +196,10 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
     private RecyclerView mRecyclerGridView;
     private GridLayoutManager mGridLayoutManager;
-    private TestImageAdapter mTestImageAdapter;
+    //  private TestImageAdapter mTestImageAdapter;
+    private TestItemsAdapter mTestItemsAdapter;
+
+    private ArrayList<Items> mItemsList = new ArrayList<>();
 
     public void onConfigurationRequired() {
 
@@ -607,10 +611,22 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     if (Name.length > 0) {
                         // Assign item grid to image adapter
                         //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
-                        mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
-                        mRecyclerGridView.setAdapter(mTestImageAdapter);
-                        mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        mTestImageAdapter.notifyDataSetChanged();
+                        //    mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
+
+
+                        if (mTestItemsAdapter == null) {
+                            mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
+                            mRecyclerGridView.setAdapter(mTestItemsAdapter);
+                            mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                        } else {
+                            mTestItemsAdapter.notifyDataSetChanged(mItemsList);
+                        }
+
+
+
+                        // mRecyclerGridView.setAdapter(mTestImageAdapter);
+                        //   mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                        //    mTestImageAdapter.notifyDataSetChanged();
                         // Make the item grid visible
                         // grdItems.setVisibility(View.VISIBLE);
                         // mRecyclerGridView.setVisibility(View.VISIBLE);
@@ -658,10 +674,23 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             if (Name.length > 0) {
                 // Assign item grid to image adapter
                 //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
-                mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
+
+
+              /*  mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                 mRecyclerGridView.setAdapter(mTestImageAdapter);
                 mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                mTestImageAdapter.notifyDataSetChanged();
+                mTestImageAdapter.notifyDataSetChanged();*/
+
+                if (mTestItemsAdapter == null) {
+                    mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
+                    mRecyclerGridView.setAdapter(mTestItemsAdapter);
+                    mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                } else {
+                    mTestItemsAdapter.notifyDataSetChanged(mItemsList);
+                }
+
+
+
                 // Make the item grid visible
                 //    grdItems.setVisibility(View.VISIBLE);
                 mRecyclerGridView.setVisibility(View.VISIBLE);
@@ -1448,7 +1477,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
         public void onClick(View v) {
             // TODO Auto-generated method stub
-           // ((EditText) v).setSelection(((EditText) v).getText().length());
+            // ((EditText) v).setSelection(((EditText) v).getText().length());
         }
 
     };
@@ -1518,10 +1547,23 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     if (Name.length > 0) {
                         // Assign item grid to image adapter
                         // grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
+
+                    /*
                         mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                         mRecyclerGridView.setAdapter(mTestImageAdapter);
                         mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        mTestImageAdapter.notifyDataSetChanged();
+                        mTestImageAdapter.notifyDataSetChanged();*/
+
+
+                        if (mTestItemsAdapter == null) {
+                            mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
+                            mRecyclerGridView.setAdapter(mTestItemsAdapter);
+                            mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                        } else {
+                            mTestItemsAdapter.notifyDataSetChanged(mItemsList);
+                        }
+
+
                         // Make the item grid visible
                         // grdItems.setVisibility(View.VISIBLE);
                         mRecyclerGridView.setVisibility(View.VISIBLE);
@@ -1539,10 +1581,23 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     if (Name.length > 0) {
                         // Assign item grid to image adapter
                         //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
-                        mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
+
+
+                      /*  mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                         mRecyclerGridView.setAdapter(mTestImageAdapter);
                         mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        mTestImageAdapter.notifyDataSetChanged();
+                        mTestImageAdapter.notifyDataSetChanged();*/
+
+                        if (mTestItemsAdapter == null) {
+                            mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
+                            mRecyclerGridView.setAdapter(mTestItemsAdapter);
+                            mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                        } else {
+                            mTestItemsAdapter.notifyDataSetChanged(mItemsList);
+                        }
+
+
+
                         // Make the item grid visible
                         //      grdItems.setVisibility(View.VISIBLE);
                         mRecyclerGridView.setVisibility(View.VISIBLE);
@@ -1578,10 +1633,23 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                 if (Name.length > 0) {
                     // Assign item grid to image adapter
                     //     grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
-                    mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
+
+
+                 /*   mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                     mRecyclerGridView.setAdapter(mTestImageAdapter);
                     mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                    mTestImageAdapter.notifyDataSetChanged();
+                    mTestImageAdapter.notifyDataSetChanged();*/
+
+
+                    if (mTestItemsAdapter == null) {
+                        mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
+                        mRecyclerGridView.setAdapter(mTestItemsAdapter);
+                        mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                    } else {
+                        mTestItemsAdapter.notifyDataSetChanged(mItemsList);
+                    }
+
+
                     // Make the item grid visible
                     // grdItems.setVisibility(View.VISIBLE);
                     mRecyclerGridView.setVisibility(View.VISIBLE);
@@ -1620,10 +1688,23 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                 if (Name.length > 0) {
                     // Assign item grid to image adapter
                     //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
+
+            /*
                     mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                     mRecyclerGridView.setAdapter(mTestImageAdapter);
                     mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                    mTestImageAdapter.notifyDataSetChanged();
+                    mTestImageAdapter.notifyDataSetChanged();*/
+
+
+                    if (mTestItemsAdapter == null) {
+                        mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
+                        mRecyclerGridView.setAdapter(mTestItemsAdapter);
+                        mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
+                    } else {
+                        mTestItemsAdapter.notifyDataSetChanged(mItemsList);
+                    }
+
+
                     // Make the item grid visible
                     //     grdItems.setVisibility(View.VISIBLE);
                     mRecyclerGridView.setVisibility(View.VISIBLE);
@@ -1676,11 +1757,18 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             Name = new String[Items.getCount()];
             ImageUri = new String[Items.getCount()];
             MenuCode = new int[Items.getCount()];
+            mItemsList.clear();
 
             do {
                 MenuCode[Items.getPosition()] = Items.getInt(Items.getColumnIndex("MenuCode"));
                 Name[Items.getPosition()] = Items.getString(Items.getColumnIndex("ItemName"));
                 ImageUri[Items.getPosition()] = Items.getString(Items.getColumnIndex("ImageUri"));
+
+                Items items = new Items(Items.getString(Items.getColumnIndex("ItemName"))
+                        , Items.getString(Items.getColumnIndex("ImageUri"))
+                        , Items.getInt(Items.getColumnIndex("MenuCode")));
+                mItemsList.add(items);
+
             } while (Items.moveToNext());
 
         } else {
@@ -1699,11 +1787,18 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             Name = new String[Items.getCount()];
             ImageUri = new String[Items.getCount()];
             MenuCode = new int[Items.getCount()];
+            mItemsList.clear();
 
             do {
                 MenuCode[Items.getPosition()] = Items.getInt(Items.getColumnIndex("MenuCode"));
                 Name[Items.getPosition()] = Items.getString(Items.getColumnIndex("ItemName"));
                 ImageUri[Items.getPosition()] = Items.getString(Items.getColumnIndex("ImageUri"));
+
+                Items items = new Items(Items.getString(Items.getColumnIndex("ItemName"))
+                        , Items.getString(Items.getColumnIndex("ImageUri"))
+                        , Items.getInt(Items.getColumnIndex("MenuCode")));
+                mItemsList.add(items);
+
             } while (Items.moveToNext());
 
         } else {
@@ -1722,11 +1817,18 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             Name = new String[Items.getCount()];
             ImageUri = new String[Items.getCount()];
             MenuCode = new int[Items.getCount()];
+            mItemsList.clear();
 
             do {
                 MenuCode[Items.getPosition()] = Items.getInt(Items.getColumnIndex("MenuCode"));
                 Name[Items.getPosition()] = Items.getString(Items.getColumnIndex("ItemName"));
                 ImageUri[Items.getPosition()] = Items.getString(Items.getColumnIndex("ImageUri"));
+
+                Items items = new Items(Items.getString(Items.getColumnIndex("ItemName"))
+                        , Items.getString(Items.getColumnIndex("ImageUri"))
+                        , Items.getInt(Items.getColumnIndex("MenuCode")));
+                mItemsList.add(items);
+
             } while (Items.moveToNext());
 
         } else {
@@ -1749,10 +1851,18 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             ImageUri = new String[Items.getCount()];
             MenuCode = new int[Items.getCount()];
 
+            mItemsList.clear();
+
             do {
                 MenuCode[Items.getPosition()] = Items.getInt(Items.getColumnIndex("MenuCode"));
                 Name[Items.getPosition()] = Items.getString(Items.getColumnIndex("ItemName"));
                 ImageUri[Items.getPosition()] = Items.getString(Items.getColumnIndex("ImageUri"));
+
+                Items items = new Items(Items.getString(Items.getColumnIndex("ItemName"))
+                        , Items.getString(Items.getColumnIndex("ImageUri"))
+                        , Items.getInt(Items.getColumnIndex("MenuCode")));
+                mItemsList.add(items);
+
             } while (Items.moveToNext());
 
         } else {
@@ -3277,7 +3387,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             if(RowKOTItem.getChildAt(28)!=null)
             {
                 objPendingKOT.setTaxableValue(Double.parseDouble(TaxableValue.getText().toString()));
-                Log.d("","Richa : taxableVal:"+objPendingKOT.getTaxableValue());
+                //Log.d("","Richa : taxableVal:"+objPendingKOT.getTaxableValue());
             }
 
 
@@ -8766,7 +8876,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
      * selected item is not present otherwise increments the quantity by one
      *************************************************************************************************************************************/
     @Override
-    public void onItemClick(int position, View v) {
+    public void onItemClick(int position,int itemCode, View v) {
 
         Cursor Item = null;
         if (jBillingMode == Byte.parseByte("1")) {
@@ -8786,7 +8896,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 finish();
                 return;
             } else {
-                Item = dbBillScreen.getItem(position + 1);
+                Item = dbBillScreen.getItem(itemCode);
                 btnClear.setEnabled(true);
                 AddItemToOrderTable(Item);
             }
