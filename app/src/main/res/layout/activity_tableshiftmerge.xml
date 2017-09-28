@@ -256,6 +256,7 @@
                 android:background="@drawable/background_btn"
                 android:onClick="Close"
                 android:text="Cancel"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
             <com.wep.common.app.views.WepButton
@@ -266,6 +267,7 @@
                 android:background="@drawable/background_btn"
                 android:onClick="Shift"
                 android:text="Shift"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
             <com.wep.common.app.views.WepButton
@@ -276,6 +278,7 @@
                 android:background="@drawable/background_btn"
                 android:onClick="Merge"
                 android:text="Merge"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
             <com.wep.common.app.views.WepButton
@@ -286,6 +289,7 @@
                 android:background="@drawable/background_btn"
                 android:onClick="LoadKOT"
                 android:text="Load KOT"
+                android:textAllCaps="false"
                 android:textColor="@color/white" />
 
         </TableRow>
