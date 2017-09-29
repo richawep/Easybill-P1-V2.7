@@ -3998,11 +3998,12 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                             /*Amt.setText(String.format("%.2f",
                                     Double.parseDouble(Amt.getText().toString()) +
                                             Report.getDouble(Report.getColumnIndex("TaxableValue"))));*/
-                            float amt_f = Float.parseFloat(Amt.getText().toString());
+                            double amt_f = Double.parseDouble(Amt.getText().toString());
                             float rate_f = Float.parseFloat(Report.getString(Report.getColumnIndex("Value")));
                             float quant_f = Float.parseFloat(Report.getString(Report.getColumnIndex("Quantity")));
                             float discount_f = Float.parseFloat(Report.getString(Report.getColumnIndex("DiscountAmount")));
-                            amt_f += ((rate_f-discount_f)*quant_f);
+                            //amt_f += ((rate_f-discount_f)*quant_f);
+                            amt_f += (Report.getDouble(Report.getColumnIndex("TaxableValue")));;
                             Amt.setText(String.format("%.2f", amt_f));
                             Amt.setGravity(Gravity.END);
                             Amt.setPadding(0,0,30,0);
@@ -4050,7 +4051,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                     float rate_f = Float.parseFloat(Report.getString(Report.getColumnIndex("Value")));
                     float quant_f = Float.parseFloat(Report.getString(Report.getColumnIndex("Quantity")));
                     float discount_f = Float.parseFloat(Report.getString(Report.getColumnIndex("DiscountAmount")));
-                    Amount.setText(String.format("%.2f", (rate_f-discount_f)*quant_f));
+                    Amount.setText(String.format("%.2f", Report.getDouble(Report.getColumnIndex("TaxableValue"))));
                     Amount.setGravity(Gravity.END);
                     Amount.setPadding(0,0,30,0);
 

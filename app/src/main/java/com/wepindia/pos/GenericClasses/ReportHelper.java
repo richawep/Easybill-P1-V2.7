@@ -561,7 +561,7 @@ public class ReportHelper{
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
-			Amount.setText("Total Price");
+			Amount.setText("Taxable Value");
 			
 			TextView SalesTax = new TextView(activityContext);
 			SalesTax.setWidth(100);
@@ -1541,7 +1541,7 @@ public class ReportHelper{
 			SGSTAmt.setWidth(75);
 			SGSTAmt.setTextSize(15);
 			SGSTAmt.setTextColor(Color.WHITE);
-			SGSTAmt.setGravity(Gravity.END);
+			SGSTAmt.setGravity(Gravity.CENTER);
 			SGSTAmt.setText("UTGST/SGST      Amt");
 			
 			TextView cessAmt = new TextView(activityContext);
