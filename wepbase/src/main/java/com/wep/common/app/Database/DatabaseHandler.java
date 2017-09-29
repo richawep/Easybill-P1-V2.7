@@ -3225,6 +3225,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         return dbFNB.update(TBL_DEPARTMENT, cvDbValues, "DeptCode=" + strDeptCode, null);
     }
+    public Cursor getDepartmentNameByName(String strDeptName) {
+        String query = "Select * from "+TBL_DEPARTMENT+" WHERE DeptName LIKE '"+strDeptName+"'";
+        return dbFNB.rawQuery(query,null);
+    }
 
     // -----Delete Department from Dept Table-----
     public int DeleteDept(String DeptCode) {
@@ -3351,7 +3355,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public List<String> getAllDeptforCateg() {
         List<String> list = new ArrayList<String>();
 
-        Cursor cursor = dbFNB.rawQuery("SELECT  DeptCode as _id, Deptname FROM Department", null);// selectQuery,selectedArguments
+        Cursor cursor = dbFNB.rawQuery("SELECT  DeptCode as _id, Deptname FROM Department Order By Deptname ASC", null);// selectQuery,selectedArguments
 
         list.add("Select");
         // looping through all rows and adding to list
@@ -3401,6 +3405,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     // -----Retrieve single Kitchen-----
     public Cursor getKitchen(int KitchenCode) {
         return dbFNB.query(TBL_KITCHEN, new String[]{"KitchenCode", "KitchenName"}, "KitchenCode=" + KitchenCode,
+                null, null, null, null);
+    }
+    public Cursor getKitchenByName(String KitchenName) {
+        return dbFNB.query(TBL_KITCHEN, new String[]{"KitchenCode", "KitchenName"}, "KitchenName like'" + KitchenName+"'",
                 null, null, null, null);
     }
 
@@ -3490,6 +3498,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("DescriptionText", strDescriptionText);
 
         return dbFNB.update(TBL_DESCRIPTION, cvDbValues, "DescriptionId=" + strDescriptionId, null);
+    }
+
+    public Cursor getPaymentDescription(String strDescriptionText) {
+        String query  = " Select * from "+TBL_DESCRIPTION+" WHERE DescriptionText like '"+strDescriptionText+"'";
+        return dbFNB.rawQuery(query, null);
     }
 
     // -----Delete Payment Descriptiom
@@ -3718,6 +3731,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         cvDbValues.put("DiscAmount", strDiscAmt);
         return dbFNB.update(TBL_DISCOUNTCONFIG, cvDbValues, "DiscId=" + strDiscId, null);
     }
+
 
     // -----Delete Discount
     public int DeleteDiscount(String DiscId) {

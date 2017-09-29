@@ -194,7 +194,7 @@
             android:name=".RiderSettlementActivity"
             android:configChanges="screenSize|screenLayout|smallestScreenSize"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:name=".AddRolesActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize"

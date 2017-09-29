@@ -252,7 +252,7 @@ public class FragmentPayment extends Fragment {
     }
 
     public void AddDescription(){
-        String strDescriptionText = txtDescriptionText.getText().toString();
+        String strDescriptionText = txtDescriptionText.getText().toString().trim();
         int iDescriptionId;
         if(strDescriptionText.equalsIgnoreCase("")){
             MsgBox.Show("Warning", "Please enter description text");
@@ -273,8 +273,14 @@ public class FragmentPayment extends Fragment {
     }
 
     public void EditDescription(){
-        strDescriptionText = txtDescriptionText.getText().toString();
-        Log.d("Category Selection","Code: " + strDescriptionId + " Name: " + strDescriptionText);
+        strDescriptionText = txtDescriptionText.getText().toString().trim();
+        Cursor payment_crsr = dbDescription.getPaymentDescription(strDescriptionText);
+        if(payment_crsr !=null && payment_crsr.moveToFirst())
+        {
+            MsgBox.Show("Warning", "Description already present");
+            return;
+        }
+        Log.d("Payment description","Code: " + strDescriptionId + " Name: " + strDescriptionText);
         int iResult = dbDescription.updateDescription(strDescriptionId, strDescriptionText);
         Log.d("updateCategory","Updated Rows: " + String.valueOf(iResult));
         ResetDescription();
@@ -285,11 +291,7 @@ public class FragmentPayment extends Fragment {
         else{
             MsgBox.Show("Warning", "Update failed");
         }
-		/*if(IsDescriptionExists(strDescriptionText)){
-			MsgBox.Show("Warning", "Department already present");
-		} else {
 
-		}*/
     }
 
     public void ClearDescription(){

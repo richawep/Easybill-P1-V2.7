@@ -298,7 +298,7 @@ public class FragmentCategory extends Fragment {
     }
 
     public void AddCateg(){
-        String strCategName = txtCategName.getText().toString();
+        String strCategName = txtCategName.getText().toString().trim();
         int iCategCode, iDeptCode;
         //iDeptCode = spinner.getSelectedItemPosition() + 1;
         iDeptCode =  dbCategory.getDepartmentIdByName(labels.get(spinner.getSelectedItemPosition()));
@@ -330,9 +330,16 @@ public class FragmentCategory extends Fragment {
     }
 
     public void EditCateg(){
-        strCategName = txtCategName.getText().toString();
+        strCategName = txtCategName.getText().toString().trim();
         iDeptCode =  dbCategory.getDepartmentIdByName(labels.get(spinner.getSelectedItemPosition()));
         Log.d("Category Selection","Code: " + strCategCode + " Name: " + strCategName);
+
+        int categ_code_recvd = dbCategory.getCategoryIdByName(strCategName);
+        if(categ_code_recvd != Integer.valueOf(strCategCode))
+        {
+            MsgBox.Show("Warning", "Category already present with categ code"+categ_code_recvd);
+            return;
+        }
 
         int iResult = dbCategory.updateCategory(strCategCode, strCategName, iDeptCode);
         Log.d("updateCategory", "Updated Rows: " + String.valueOf(iResult));

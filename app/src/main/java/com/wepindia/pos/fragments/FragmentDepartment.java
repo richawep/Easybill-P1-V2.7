@@ -257,7 +257,7 @@ public class FragmentDepartment extends Fragment {
     }
 
     public void AddDept(){
-        String strDeptName = txtDeptName.getText().toString();
+        String strDeptName = txtDeptName.getText().toString().trim();
         int iDeptCode;
         if(strDeptName.equalsIgnoreCase("")){
             MsgBox.Show("Warning", "Please fill department name before adding");
@@ -279,7 +279,16 @@ public class FragmentDepartment extends Fragment {
     }
 
     public void EditDept(){
-        strDeptName = txtDeptName.getText().toString();
+        strDeptName = txtDeptName.getText().toString().trim();
+        Cursor cc = dbDepartment.getDepartmentNameByName(strDeptName);
+        if(cc !=null && cc.moveToFirst())
+        {
+            if(!cc.getString(cc.getColumnIndex("DeptCode")).equalsIgnoreCase(strDeptCode))
+            {
+                MsgBox.Show("Warning", "Department Name already present with dept code "+cc.getString(cc.getColumnIndex("DeptCode")));
+                return;
+            }
+        }
         Log.d("Department Selection","Code: " + strDeptCode + " Name: " + strDeptName);
         int iResult = dbDepartment.updateDepartment(strDeptCode, strDeptName);
         Log.d("updateDept","Updated Rows: " + String.valueOf(iResult));

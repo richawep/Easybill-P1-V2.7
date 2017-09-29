@@ -251,7 +251,7 @@ public class FragmentKitchen extends Fragment {
     }
 
     public void AddKitchen(){
-        String strKitchenName = txtKitchenName.getText().toString();
+        String strKitchenName = txtKitchenName.getText().toString().trim();
         int iKitchenCode;
         if(strKitchenName.equalsIgnoreCase("")){
             MsgBox.Show("Warning", "Please Enter Kitchen Name");
@@ -271,7 +271,13 @@ public class FragmentKitchen extends Fragment {
     }
 
     public void EditCateg(){
-        strKitchenName = txtKitchenName.getText().toString();
+        strKitchenName = txtKitchenName.getText().toString().trim();
+        Cursor cursor = dbKitchen.getKitchenByName(strKitchenName);
+        if(cursor!=null && cursor.moveToFirst())
+        {
+            MsgBox.Show("Warning", "Kitchen already present");
+            return;
+        }
         Log.d("Kitchen Selection","Code: " + strKitchenCode + " Name: " + strKitchenName);
         int iResult = dbKitchen.updateKitchen(strKitchenCode, strKitchenName);
         Log.d("updateKitchen","Updated Rows: " + String.valueOf(iResult));

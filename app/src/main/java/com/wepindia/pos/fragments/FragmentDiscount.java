@@ -145,7 +145,8 @@ public class FragmentDiscount extends Fragment {
                 tvDiscAmount.setTextSize(18);
                 tvDiscAmount.setGravity(1);
                 tvDiscAmount.setText(crsrDiscConfig.getString(3));
-                //rowDiscountConfig.addView(tvDiscAmount);
+                tvDiscAmount.setVisibility(View.GONE);
+                rowDiscountConfig.addView(tvDiscAmount);
 
                 // Delete
                 int res = getResources().getIdentifier("delete", "drawable", getActivity().getPackageName());
@@ -275,14 +276,15 @@ public class FragmentDiscount extends Fragment {
     }
 
     public void AddDiscConfig(View v){
-        String strDiscDescription = txtDiscountDesc.getText().toString();
+        String strDiscDescription = txtDiscountDesc.getText().toString().trim();
         String strDiscPercent = txtDiscountPercent.getText().toString();
         String strDiscAmount = txtDiscountAmount.getText().toString();
         int iDiscId;
         if(strDiscDescription.equalsIgnoreCase("")){
             MsgBox.Show("Warning", "Please Enter Discount description before adding");
         } else if(strDiscPercent.equalsIgnoreCase("") && strDiscAmount.equals("")) {
-            MsgBox.Show("Warning", "Please enter atleast percent or amount before adding");
+            MsgBox.Show("Warning", "Please enter discount percent before adding");
+           // MsgBox.Show("Warning", "Please enter atleast percent or amount before adding");
         }else{
             if (strDiscAmount== null || strDiscAmount.equals(""))
             {
@@ -324,10 +326,9 @@ public class FragmentDiscount extends Fragment {
     }
 
     public void EditDiscConfig(View v){
-        strDiscDesc = txtDiscountDesc.getText().toString();
+        strDiscDesc = txtDiscountDesc.getText().toString().trim();
         strDiscPercent = txtDiscountPercent.getText().toString();
         strDiscAmount = txtDiscountAmount.getText().toString();
-
         if(strDiscDesc.equalsIgnoreCase("")){
             MsgBox.Show("Warning", "Please Enter Discount description before adding");
         } else if(strDiscPercent.equalsIgnoreCase("") && strDiscAmount.equals("")) {
@@ -343,6 +344,7 @@ public class FragmentDiscount extends Fragment {
             {
                 strDiscPercent="0";
             }
+
             if(Float.parseFloat(strDiscPercent) >0 && Float.parseFloat(strDiscAmount)>0) {
                 MsgBox.Show("Warning", "Please enter any one, percent or amount before adding");
                 return;
