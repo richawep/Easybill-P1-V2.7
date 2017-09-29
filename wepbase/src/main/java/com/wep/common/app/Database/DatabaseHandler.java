@@ -9104,7 +9104,7 @@ public Cursor getGSTR1B2CL_invoices_ammend(String InvoiceNo, String InvoiceDate,
             cvDbValues.put(KEY_InvoiceDate, objBillDetail.getDate());
             cvDbValues.put(KEY_GrandTotal, objBillDetail.getBillAmount());
             cvDbValues.put("TotalItems", objBillDetail.getTotalItems());
-            cvDbValues.put("BillAmount", objBillDetail.getBillAmount());
+            cvDbValues.put("BillAmount", objBillDetail.getdBillAmount());
             cvDbValues.put("TotalDiscountAmount", objBillDetail.getTotalDiscountAmount());
             cvDbValues.put(KEY_DiscPercentage, objBillDetail.getTotalDiscountPercentage());
             cvDbValues.put("TotalServiceTaxAmount", objBillDetail.getTotalServiceTaxAmount());
