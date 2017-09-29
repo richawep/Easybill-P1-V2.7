@@ -1026,7 +1026,7 @@ public class PayBillActivity extends FragmentActivity implements FragmentLogin.O
             dCouponAmount = dCouponAmount + (dAmount * iQty);
 
         }
-
+        edtCoupon.setText(String.format("%.2f",dCouponAmount));
 //        if(dCouponAmount <= dRoundoffTotal )
 //        {
 //            edtCoupon.setText(String.format("%.2f",dCouponAmount));
