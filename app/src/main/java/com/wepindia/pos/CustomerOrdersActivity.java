@@ -1162,7 +1162,7 @@ public class CustomerOrdersActivity extends WepBaseActivity{
 		strBillAmt = txtBillAmount.getText().toString();
 
 		Log.d("Delivery Result", "Rider Code:" + iRiderCode +
-				" Delivery Cahrge:" + dDeliveryCharge + " Petty Cash:" + dPettyCash);
+				" Delivery Charge:" + dDeliveryCharge + " Petty Cash:" + dPettyCash);
 		String time = txtTime.getText().toString();
 		if(time == null)
 			time = "";
@@ -1174,12 +1174,12 @@ public class CustomerOrdersActivity extends WepBaseActivity{
 //        }
 
 		int paid = dbCustomerOrder.getBillDetailByCustomerWithTime1(Integer.valueOf(strCustId), 2, Double.parseDouble(strBillAmt), time);
-		if(paid >0) {
+		if(txtPaidStatus.getText().toString().trim().equalsIgnoreCase("Paid")) {
 			txtBillAmount.setText(strBillAmt);
 			// Insert details to RiderSettlement table
-			String billNo = String.valueOf(paid);
-			txtBillNo.setText(billNo);
-			SaveRiderdelivery(strCustId,billNo );
+			//String billNo = String.valueOf(paid);
+			//txtBillNo.setText(billNo);
+			SaveRiderdelivery(strCustId,txtBillNo.getText().toString().trim() );
 
 			// Launch bill screen to save bill to database
 			Toast.makeText(myContext, "This Customer already Paid the amount", Toast.LENGTH_LONG).show();
