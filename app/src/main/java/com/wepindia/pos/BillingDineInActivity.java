@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDelegate;
@@ -55,10 +56,12 @@ import android.widget.Toast;
 import com.mswipetech.wisepad.sdktest.view.ApplicationData;
 import com.wep.common.app.Database.BillDetail;
 import com.wep.common.app.Database.BillItem;
+import com.wep.common.app.Database.Category;
 import com.wep.common.app.Database.ComplimentaryBillDetail;
 import com.wep.common.app.Database.Customer;
 import com.wep.common.app.Database.DatabaseHandler;
 import com.wep.common.app.Database.DeletedKOT;
+import com.wep.common.app.Database.Department;
 import com.wep.common.app.Database.PendingKOT;
 import com.wep.common.app.models.Items;
 import com.wep.common.app.print.BillKotItem;
@@ -74,6 +77,8 @@ import com.wepindia.pos.GenericClasses.DecimalDigitsInputFilter;
 import com.wepindia.pos.GenericClasses.EditTextInputHandler;
 import com.wepindia.pos.GenericClasses.MessageDialog;
 import com.wepindia.pos.RecyclerDirectory.TestItemsAdapter;
+import com.wepindia.pos.adapters.CategoryAdapter;
+import com.wepindia.pos.adapters.DepartmentAdapter;
 import com.wepindia.pos.adapters.TestImageAdapter;
 import com.wepindia.pos.utils.ActionBarUtils;
 import com.wepindia.pos.utils.AddedItemsToOrderTableClass;
@@ -107,6 +112,8 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
     int AMOUNTPRINTINNEXTLINE = 0;
     private static final String TAG = BillingDineInActivity.class.getSimpleName();
     private DatabaseHandler db;
+    private DepartmentAdapter departmentAdapter;
+    private CategoryAdapter categoryAdapter;
     Context myContext;
     DatabaseHandler dbBillScreen = new DatabaseHandler(BillingDineInActivity.this);
     MessageDialog MsgBox;
@@ -116,6 +123,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
     private TextView tvServiceTax_text;
     private int UTGSTENABLED = 0,HSNPRINTENABLED=0;
+    String fastBillingMode ="1";
 
     TableLayout tblOrderItems;
     TextView tvSalesTax, tvServiceTax;
@@ -536,7 +544,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             else
                 tvServiceTax_text.setText("SGST-Tax :");
 
-            String fastBillingMode = crsrSettings.getString(crsrSettings.getColumnIndex("FastBillingMode"));
+             fastBillingMode = crsrSettings.getString(crsrSettings.getColumnIndex("FastBillingMode"));
             if(fastBillingMode == null)
             {
                 fastBillingMode = "1";
@@ -558,86 +566,35 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             btndepart.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View arg0) {
                     // TODO Auto-generated method stub
-                    lstvwDepartment.setVisibility(View.VISIBLE);
-                    Cursor Departments = null;
-                    // Get departments
-                    Departments = dbBillScreen.getAllDepartments();
-                    // Load departments to Department list
-                    if (crsrSettings.getString(crsrSettings.getColumnIndex("FastBillingMode")).equalsIgnoreCase("3")) {
-                        LoadDepartments(Departments);
-                    } else if (crsrSettings.getString(crsrSettings.getColumnIndex("FastBillingMode")).equalsIgnoreCase("2")) {
-                        LoadDepartmentsItems(Departments);
-                    }
-                    lstvwCategory.setAdapter(null);
-                    //  grdItems.setAdapter(null);
-                    mRecyclerGridView.setAdapter(null);
+                    if(fastBillingMode.equals("3"))
+                        lstvwCategory.setVisibility(View.INVISIBLE);
+
+                    //  gridViewItems.setVisibility(View.INVISIBLE);
+                    mRecyclerGridView.setVisibility(View.INVISIBLE);
+                    loadDepartments();
                 }
             });
 
             btncateg.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View arg0) {
                     // TODO Auto-generated method stub
-                    lstvwCategory.setVisibility(View.VISIBLE);
-                    Cursor Category = null;
-                    // Get Category
-                    //Category = dbBillScreen.getCategories();
-                    //Category = dbBillScreen.getCategorybyDept();
-                    Category = dbBillScreen.getAllCategories();
-                    // Load Category to Category List
-                    LoadCategories(Category);
-                    lstvwDepartment.setAdapter(null);
-                    //   grdItems.setAdapter(null);
-                    mRecyclerGridView.setAdapter(null);
+                    lstvwDepartment.setVisibility(View.INVISIBLE);
+
+                    //  gridViewItems.setVisibility(View.INVISIBLE);
+                    mRecyclerGridView.setVisibility(View.INVISIBLE);
+                    loadCategories(0);
 
                 }
             });
 
             btnitem.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View arg0) {
-                    // TODO Auto-generated method stub
-                    //  grdItems.setVisibility(View.VISIBLE);
-                    mRecyclerGridView.setVisibility(View.VISIBLE);
-                    // Get Department items detail
-                    if (crsrSettings.getString(crsrSettings.getColumnIndex("FastBillingMode")).equalsIgnoreCase("1")) {
-                        //   grdItems.setNumColumns(6);
-                        mGridLayoutManager = new GridLayoutManager(BillingDineInActivity.this, 6);
-                        mRecyclerGridView.setLayoutManager(mGridLayoutManager);
-                        GetItemDetails();
-                    } else {
-                        //GetItemDetailswithoutDeptCateg();
-                        GetItemDetails();
+                    switch (Integer.parseInt(fastBillingMode))
+                    {
+                        case 3 : lstvwCategory.setVisibility(View.INVISIBLE);
+                        case 2 : lstvwDepartment.setVisibility(View.INVISIBLE);
                     }
-                    // This condition is to avoid NullReferenceException in getCount()
-                    // in ImageAdapter class.
-                    if (Name.length > 0) {
-                        // Assign item grid to image adapter
-                        //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
-                        //    mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
-
-
-                        if (mTestItemsAdapter == null) {
-                            mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
-                            mRecyclerGridView.setAdapter(mTestItemsAdapter);
-                            mTestItemsAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        } else {
-                            mTestItemsAdapter.notifyDataSetChanged(mItemsList);
-                        }
-
-
-
-                        // mRecyclerGridView.setAdapter(mTestImageAdapter);
-                        //   mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        //    mTestImageAdapter.notifyDataSetChanged();
-                        // Make the item grid visible
-                        // grdItems.setVisibility(View.VISIBLE);
-                        // mRecyclerGridView.setVisibility(View.VISIBLE);
-                    } else {
-                        // Make the item grid invisible
-                        //   grdItems.setVisibility(View.INVISIBLE);
-                        mRecyclerGridView.setVisibility(View.INVISIBLE);
-                    }
-                    lstvwDepartment.setAdapter(null);
-                    lstvwCategory.setAdapter(null);
+                    loadItems(0);
                 }
             });
 
@@ -926,7 +883,9 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
         tvBillAmount = (TextView) findViewById(R.id.tvBillTotalValue);
 
         lstvwDepartment = (ListView) findViewById(R.id.lstDepartmentNames);
+        lstvwDepartment.setOnItemClickListener(deptClick);
         lstvwCategory = (ListView) findViewById(R.id.lstCategoryNames);
+        lstvwCategory.setOnItemClickListener(catClick);
 
     /*
         grdItems = (GridView) findViewById(R.id.gridItems);
@@ -1523,7 +1482,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
      *
      * @param crsrDept : Cursor containing all the departments from list
      *************************************************************************************************************************************/
-    private void LoadDepartments(Cursor crsrDept) {
+   /* private void LoadDepartments(Cursor crsrDept) {
 
         Cursor cursor = dbBillScreen.getDepartments();
         String columns[] = new String[]{"_id", "DeptName"};
@@ -1549,11 +1508,11 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                         // Assign item grid to image adapter
                         // grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
 
-                    /*
+                    *//*
                         mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                         mRecyclerGridView.setAdapter(mTestImageAdapter);
                         mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        mTestImageAdapter.notifyDataSetChanged();*/
+                        mTestImageAdapter.notifyDataSetChanged();*//*
 
 
                         if (mTestItemsAdapter == null) {
@@ -1584,10 +1543,10 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                         //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
 
 
-                      /*  mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
+                      *//*  mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                         mRecyclerGridView.setAdapter(mTestImageAdapter);
                         mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                        mTestImageAdapter.notifyDataSetChanged();*/
+                        mTestImageAdapter.notifyDataSetChanged();*//*
 
                         if (mTestItemsAdapter == null) {
                             mTestItemsAdapter = new TestItemsAdapter(BillingDineInActivity.this, mItemsList);
@@ -1611,8 +1570,182 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
             }
         });
     }
+*/
+    private void loadDepartments() {
+        new AsyncTask<Void, Void, ArrayList<Department>>() {
 
-    private void LoadDepartmentsItems(Cursor crsrDept) {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected ArrayList<Department> doInBackground(Void... params) {
+                return db.getItemDepartment();
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Department> list) {
+                super.onPostExecute(list);
+                //tvBillNumber.setText(String.valueOf(db.getNewBillNumber()));
+                if(list!=null)
+                    setDepartmentAdapter(list);
+                lstvwDepartment.setVisibility(View.VISIBLE);
+            }
+        }.execute();
+    }
+
+    private void loadCategories(final int deptCode) {
+        new AsyncTask<Void, Void, ArrayList<Category>>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected ArrayList<Category> doInBackground(Void... params) {
+                if(deptCode == 0)
+                    return db.getAllItemCategory();
+                else
+                    return db.getAllItemCategory(deptCode);
+
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Category> list) {
+                super.onPostExecute(list);
+                //tvBillNumber.setText(String.valueOf(db.getNewBillNumber()));
+                if(list!=null)
+                    setCategoryAdapter(list);
+                lstvwCategory.setVisibility(View.VISIBLE);
+            }
+        }.execute();
+    }
+
+    public void setDepartmentAdapter(ArrayList<Department> list)
+    {
+        if(departmentAdapter==null){
+            departmentAdapter = new DepartmentAdapter(this,list);
+            lstvwDepartment.setAdapter(departmentAdapter);
+        }
+        else
+            departmentAdapter.notifyDataSetChanged(list);
+    }
+
+    public void setCategoryAdapter(ArrayList<Category> list)
+    {
+        if(categoryAdapter==null){
+            categoryAdapter = new CategoryAdapter(this,list);
+            lstvwCategory.setAdapter(categoryAdapter);
+        }
+        else
+            categoryAdapter.notifyDataSetChanged(list);
+    }
+
+    public void setItemsAdapter(ArrayList<Items> list)
+    {
+        if (mTestItemsAdapter == null) {
+            mTestItemsAdapter = new TestItemsAdapter(this, list);
+
+            mTestItemsAdapter.setOnItemClickListener(new TestItemsAdapter.OnItemsImageClickListener() {
+                @Override
+                public void onItemClick(int position, int itemCode, View v) {
+                    Cursor cursor = db.getItemss(itemCode);
+                    btnClear.setEnabled(true);
+                    AddItemToOrderTable(cursor);
+                }
+            });
+            mRecyclerGridView.setAdapter(mTestItemsAdapter);
+
+        } else
+            mTestItemsAdapter.notifyDataSetChanged(list);
+    }
+
+    private AdapterView.OnItemClickListener deptClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Department department = (Department) departmentAdapter.getItem(position);
+            int deptCode = department.getDeptCode();
+            if(fastBillingMode.equals("3"))// dept+cat+items
+            {
+                loadCategories(deptCode);
+            }
+            loadItems_for_dept(deptCode);
+
+
+        }
+    };
+
+    private AdapterView.OnItemClickListener catClick = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Category cat = (Category) categoryAdapter.getItem(position);
+            int categcode = cat.getCategCode();
+            loadItems(categcode);
+
+        }
+    };
+
+    private void loadItems_for_dept(final int deptCode) {
+        new AsyncTask<Void, Void, ArrayList<Items>>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected ArrayList<Items> doInBackground(Void... params) {
+                ArrayList<Items> list = null;
+                try {
+                    list =  db.getItemItems_dept(deptCode);
+                } catch (Exception e) {
+                    list = null;
+                }
+                return list;
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Items> list) {
+                super.onPostExecute(list);
+                // tvBillNumber.setText(String.valueOf(db.getNewBillNumber()));
+                if(list!=null)
+                    setItemsAdapter(list);
+                //   gridViewItems.setVisibility(View.VISIBLE);
+                mRecyclerGridView.setVisibility(View.VISIBLE);
+            }
+        }.execute();
+    }
+    private void loadItems(final int categcode) {
+        new AsyncTask<Void, Void, ArrayList<Items>>() {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected ArrayList<Items> doInBackground(Void... params) {
+                if(categcode == 0)
+                    return db.getItemItems();
+                else
+                    return db.getItemItems(categcode);
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Items> list) {
+                super.onPostExecute(list);
+                //tvBillNumber.setText(String.valueOf(db.getNewBillNumber()));
+                if(list!=null)
+                    setItemsAdapter(list);
+                //    gridViewItems.setVisibility(View.VISIBLE);
+                mRecyclerGridView.setVisibility(View.VISIBLE);
+            }
+        }.execute();
+    }
+
+    /*private void LoadDepartmentsItems(Cursor crsrDept) {
 
         Cursor cursor = dbBillScreen.getDepartments();
         String columns[] = new String[]{"_id", "DeptName"};
@@ -1636,10 +1769,10 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     //     grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
 
 
-                 /*   mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
+                 *//*   mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                     mRecyclerGridView.setAdapter(mTestImageAdapter);
                     mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                    mTestImageAdapter.notifyDataSetChanged();*/
+                    mTestImageAdapter.notifyDataSetChanged();*//*
 
 
                     if (mTestItemsAdapter == null) {
@@ -1690,11 +1823,11 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
                     // Assign item grid to image adapter
                     //   grdItems.setAdapter(new ImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1")));
 
-            /*
+            *//*
                     mTestImageAdapter = new TestImageAdapter(myContext, Name, MenuCode, ImageUri, Byte.parseByte("1"));
                     mRecyclerGridView.setAdapter(mTestImageAdapter);
                     mTestImageAdapter.setOnItemClickListener(BillingDineInActivity.this);
-                    mTestImageAdapter.notifyDataSetChanged();*/
+                    mTestImageAdapter.notifyDataSetChanged();*//*
 
 
                     if (mTestItemsAdapter == null) {
@@ -1717,7 +1850,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
 
             }
         });
-    }
+    }*/
 
     /*************************************************************************************************************************************
      * Loads all the KOT modifiers to list

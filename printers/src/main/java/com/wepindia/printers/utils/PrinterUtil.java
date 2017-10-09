@@ -437,7 +437,7 @@ public class PrinterUtil {
         //esc.addPrintAndFeedLines((byte)2);
         esc.addSelectJustification(EscCommand.JUSTIFICATION.CENTER);
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
-        esc.addText("OUTWARDS INVOICE"+item.getIsDuplicate()+"\n");
+        esc.addText("TAX INVOICE"+item.getIsDuplicate()+"\n");
 
         if (item.getBoldHeader() == 1)
             esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.ON, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF);
@@ -496,11 +496,33 @@ public class PrinterUtil {
 
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.ON, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
         esc.addText("================================================"+"\n");
-        esc.addText("SI  ITEM NAME            QTY     RATE    AMOUNT "+"\n");
+        /*if(item.getAmountInNextLine() ==0)
+            esc.addText("SI  ITEM NAME            QTY     RATE    AMOUNT "+"\n");
+        else
+            esc.addText("SI  ITEM NAME            QTY     RATE    \nAMOUNT "+"\n");
         if(item.getHSNPrintEnabled_out()== 1)
         {
             esc.addText("HSN"+"\n");
+        }*/
+        if(item.getAmountInNextLine() ==0) {
+            esc.addText("SI  ITEM NAME            QTY     RATE    AMOUNT " + "\n");
+            if(item.getHSNPrintEnabled_out()== 1)
+            {
+                esc.addText("HSN"+"\n");
+            }
         }
+        else {
+            if(item.getHSNPrintEnabled_out()== 1)
+            {
+                esc.addText("SI  ITEM NAME            QTY     RATE           ");
+                esc.addText("HSN                                     AMOUNT " + "\n");
+            }
+            else {
+                esc.addText("SI  ITEM NAME            QTY     RATE            ");
+                esc.addText("                                         AMOUNT" + "\n");
+            }
+        }
+
         esc.addText("================================================"+"\n");
         esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
         ArrayList<BillKotItem> billKotItems = item.getBillKotItems();
@@ -520,24 +542,34 @@ public class PrinterUtil {
             String preRate = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getRate()),7,1),8,1);
             String preAmount = "0";
             String pre = "";
-            if(String.format("%.2f",billKotItem.getAmount()).length()>8)
-            {
-                preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
-                        +billKotItem.getTaxIndex(),(String.format("%.2f",billKotItem.getAmount()) +billKotItem.getTaxIndex() ).length(),1),10,1);
-                pre = preId+preName+/*HSN+*/preQty+preRate+"\n"+preAmount;
-
-            }else
+            if(item.getAmountInNextLine() ==0)
             {
                 preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
                         +billKotItem.getTaxIndex(),9,1),10,1);
                 pre = preId+preName+/*HSN+*/preQty+preRate+preAmount;
+                esc.addText(pre+"\n");
+                if(item.getHSNPrintEnabled_out() == 1) {
+                    esc.addText(HSN+"\n");
+                }
+            }
+            else // item.getAmountInNextLine() ==1
+            {
+                preAmount = getPostAddedSpaceFormat("",getFormatedCharacterForPrint_init(String.format("%.2f",billKotItem.getAmount())
+                        +billKotItem.getTaxIndex(),(String.format("%.2f",billKotItem.getAmount()) +billKotItem.getTaxIndex() ).length(),1),(String.format("%.2f",billKotItem.getAmount()) +billKotItem.getTaxIndex() ).length(),1);
+                String pre2 = "", pre3 ="";
+                if(item.getHSNPrintEnabled_out() == 1) {
+                    pre2 = getPostAddedSpaceFormat("",HSN,8,1);
+                    pre3 = getFormatedCharacterForPrint_init(preAmount,40,1);
+                }else
+                {
+                    pre3 = getFormatedCharacterForPrint_init(preAmount,48,1);
+                }
+                pre = preId+preName+/*HSN+*/preQty+preRate+"\n"+pre2+pre3;
+                esc.addText(pre+"\n");
             }
 
 
-            esc.addText(pre+"\n");
-            if(item.getHSNPrintEnabled_out() == 1) {
-                esc.addText(HSN+"\n");
-            }
+
             totalitemtypes++;
             totalquantitycount += billKotItem.getQty();
             subtotal += billKotItem.getAmount();
@@ -585,7 +617,7 @@ public class PrinterUtil {
                 if(item.getUTGSTEnabled() ==0) // disabled
                     esc.addText("Tax(%)   TaxableVal   CGSTAmt  SGSTAmt    TaxAmt"+"\n");
                 else
-                    esc.addText("Tax(%)   TaxableVal   CGSTAmt  UTGSTAmt    TaxAmt"+"\n");
+                    esc.addText("Tax(%)   TaxableVal   CGSTAmt  UTGSTAmt   TaxAmt"+"\n");
                 esc.addText("================================================"+"\n");
                 esc.addSelectPrintModes(EscCommand.FONT.FONTA, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF, EscCommand.ENABLE.OFF);
                 do

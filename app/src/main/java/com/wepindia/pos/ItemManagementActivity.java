@@ -172,6 +172,8 @@ public class ItemManagementActivity extends WepBaseActivity  implements  TextWat
     private String mHSN = "";
     private String mtaxationType = "";
 
+    private String mCategoryNameByDept;
+
 
     //  private Map<CheckCSVResponse,ItemOutward> mHashMap= new HashMap<>();
     private Map<Integer, ItemOutward> mHashMapItemCode = new TreeMap<>();
@@ -755,6 +757,12 @@ public void onFocusChange(View v, boolean hasFocus) {
                     /*int categid = getIndexCateg(categName + "");
                     spnrCategory.setSelection(categid);*/
                         loadSpinnerData_cat(categName);
+
+                        if(mCategoryNameByDept != null && mCategoryNameByDept.length() > 0) {
+                            int categid = getIndexCategByDept(mCategoryNameByDept ,categName);
+                            spnrCategory.setSelection(categid);
+                            mCategoryNameByDept = "";
+                        }
                     }
                     else
                     {
@@ -1568,16 +1576,16 @@ public void onFocusChange(View v, boolean hasFocus) {
                             }
 
                             if (categoryFlag) {
-                                for (Map.Entry map : mCategoryCodeList.entrySet()) {
-                                    if (map.getKey().equals(Integer.parseInt(colums[14])) && map.getValue().equals(mDeptCode)) {
-                                        mCategCode = Integer.parseInt(colums[14]);
-                                    }
+
+                                if(checkDeptandCategoryTogether(mDeptCode ,Integer.parseInt(colums[14])) != 0) {
+                                    mCategCode = checkDeptandCategoryTogether(mDeptCode ,Integer.parseInt(colums[14]));
+                                } else  {
+                                    mFlag = true;
+                                    mUserCSVInvalidValue = "Category code " + colums[14] + " is not linked to department code " + mDeptCode + " for Item Name " + mItemName
+                                            + "  in category tab of configurations feature";
+                                    break;
                                 }
 
-                            } else {
-                                mFlag = true;
-                                mUserCSVInvalidValue = "Category code " + colums[14] + " is not linked to department code " + mDeptCode + " for Item Name " + mItemName;
-                                break;
                             }
                         } else {
                             mFlag = true;
@@ -1651,6 +1659,20 @@ public void onFocusChange(View v, boolean hasFocus) {
             exp.printStackTrace();
         }
     }
+
+    private int checkDeptandCategoryTogether(int departmentCSVValue , int categoryCSVValue) {
+        int categoryCode = 0;
+
+        for (Map.Entry entry : mCategoryCodeList.entrySet()) {
+
+            if (entry.getKey().equals(categoryCSVValue) && entry.getValue().equals(departmentCSVValue)) {
+                categoryCode = categoryCSVValue;
+                return categoryCode;
+            }
+        }
+        return categoryCode;
+    }
+
 
 
     private void saveCSVinDatabase() {
@@ -1793,11 +1815,15 @@ public void onFocusChange(View v, boolean hasFocus) {
         if (deptid ==0) {
             spnrCategory.setSelection(0);
         }else {
-            Cursor crsrCateg = dbItems.getCategory(Integer.valueOf(item.getCategCode()));
+            int categoryId = Integer.valueOf(item.getCategCode());
+            Cursor crsrCateg = dbItems.getCategory(categoryId);
             String categName = "";
+            mCategoryNameByDept = "";
             if (crsrCateg.moveToFirst()) {
                 categName = crsrCateg.getString(crsrCateg.getColumnIndex("CategName"));
             }
+
+            mCategoryNameByDept = categName;
             boolean bool = false;
             int i =0;
             for( i =0; !categName.equals("")&&bool == false && i<listCateg.size();i++)
@@ -2521,6 +2547,20 @@ public void onFocusChange(View v, boolean hasFocus) {
         }
         return -1;
     }
+
+    public int getIndexCategByDept(String item , List<String> listCategory)
+    {
+        for (int i = 0; i < listCategory.size(); i++)
+        {
+            String auction = listCategory.get(i);
+            if (item.equals(auction))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 
 
 

@@ -3047,7 +3047,7 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
             String inv_no = Report_detail.getString(Report_detail.getColumnIndex("InvoiceNo"));
             String inv_date = Report_detail.getString(Report_detail.getColumnIndex("InvoiceDate"));
             Cursor Report = dbReport.getTaxDetailforBill(inv_no, inv_date,TaxPercentName,TaxAmountName);
-            Log.d("Richa",String.valueOf(Report.getCount()));
+            //Log.d("Richa",String.valueOf(Report.getCount()));
             while (Report.moveToNext()) {
                 for (int iPosition = count; iPosition < tblReport.getChildCount(); iPosition++) {
 
@@ -3063,20 +3063,22 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                         String reporttax_str = String.format("%.2f",reporttax);
                         if (presenttax_str.equals(reporttax_str)) {
 
-                            double taxper = Double.parseDouble(TaxPercent.getText().toString());
-                            TextView TaxDes = (TextView) rowItem.getChildAt(1);
+//                            double taxper = Double.parseDouble(TaxPercent.getText().toString());
+//                            TextView TaxDes = (TextView) rowItem.getChildAt(1);
 
                             // if (TaxDes.getText().toString().equalsIgnoreCase(TaxPercentName)) {
                             // Sales Tax
+
                             TextView Tax = (TextView) rowItem.getChildAt(3);
                             Tax.setText(String.format("%.2f",
-                                    Double.parseDouble(Tax.getText().toString()) +
-                                            Report.getDouble(Report.getColumnIndex(TaxAmountName))));
+                                    Double.parseDouble(Tax.getText().toString())
+                                            + Double.parseDouble(String.format("%.2f", Report.getDouble(Report.getColumnIndex(TaxAmountName))))));
                             Tax.setGravity(Gravity.END);
                             Tax.setPadding(0,0,30,0);
 
-                            double taxamt = Report.getDouble(Report.getColumnIndex(TaxAmountName));
-                            double tottaxamt = Double.parseDouble(Tax.getText().toString());
+//                            double taxamt = Report.getDouble(Report.getColumnIndex(TaxAmountName));
+//                            double tottaxamt = Double.parseDouble(Tax.getText().toString());
+
                             // Amount
                             TextView Amt = (TextView) rowItem.getChildAt(4);
                             Amt.setText(String.format("%.2f",
@@ -3085,10 +3087,10 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                             Amt.setGravity(Gravity.END);
                             Amt.setPadding(0,0,25,0);
 
-                            double taxval = Report.getDouble(Report.getColumnIndex("TaxableValue"));
-                            double disc = Report.getDouble(Report.getColumnIndex("DiscountAmount"));
-                            double toadd = taxval-disc;
-                            double amt = Double.parseDouble(Amt.getText().toString());
+//                            double taxval = Report.getDouble(Report.getColumnIndex("TaxableValue"));
+//                            double disc = Report.getDouble(Report.getColumnIndex("DiscountAmount"));
+//                            double toadd = taxval-disc;
+//                            double amt = Double.parseDouble(Amt.getText().toString());
                             isTaxExists = true;
                             break;
                             //}
@@ -3121,12 +3123,11 @@ public class ReportFragment extends Fragment implements View.OnClickListener {
                         Description.setText(TaxPercentName);
 
                     TaxAmount = new TextView(myContext);
-                    TaxAmount.setText(String.format("%.2f",Float.parseFloat(Report.getString(Report
-                            .getColumnIndex(TaxAmountName)))));
+                    TaxAmount.setText(String.format("%.2f", Double.parseDouble(String.format("%.2f", Report.getDouble(Report.getColumnIndex(TaxAmountName))))));
                     TaxAmount.setGravity(Gravity.END);
                     TaxAmount.setPadding(0,0,30,0);
 
-                    double taxamt = Double.parseDouble(Report.getString(Report.getColumnIndex(TaxAmountName)));
+//                    double taxamt = Double.parseDouble(Report.getString(Report.getColumnIndex(TaxAmountName)));
 
                     TotalAmount = new TextView(myContext);
                     double taxVal =Report.getDouble(Report.getColumnIndex("TaxableValue"));
