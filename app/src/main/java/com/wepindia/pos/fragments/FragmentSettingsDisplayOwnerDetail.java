@@ -138,11 +138,11 @@ public class FragmentSettingsDisplayOwnerDetail extends Fragment {
         String gstin = Gstin.getText().toString().trim().toUpperCase();
         if (!Gstin.getText().toString().trim().toUpperCase().equals("") && Gstin.getText().toString().trim().toUpperCase().length()!=15)
         {
-            Toast.makeText(myContext, "GSTIN can either be empty or of 15 characters", Toast.LENGTH_SHORT);
+            Toast.makeText(myContext, "GSTIN can either be empty or of 15 characters", Toast.LENGTH_SHORT).show();
             return;
         }if(!checkGSTINValidation(gstin))
         {
-            Toast.makeText(myContext, "Invalid GSTIN", Toast.LENGTH_SHORT);
+            Toast.makeText(myContext, "Invalid GSTIN", Toast.LENGTH_SHORT).show();
             return;
         }
         String referenceNo = RefernceNo.getText().toString().trim();
@@ -182,7 +182,9 @@ public class FragmentSettingsDisplayOwnerDetail extends Fragment {
             mFlag = false;
         }
 
-        return mFlag;
+        finally {
+            return mFlag;
+        }
     }
 
     public static int checkDataypeValue(String value, String type) {
