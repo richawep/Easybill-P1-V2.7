@@ -127,11 +127,13 @@ public class FragmentDepartment extends Fragment {
 
                 tvDeptCode = new TextView(myContext);
                 tvDeptCode.setTextSize(18);
+                tvDeptCode.setGravity(1);
                 tvDeptCode.setText(crsrDepartment.getString(0));
                 rowDept.addView(tvDeptCode);
 
                 tvDeptName = new TextView(myContext);
                 tvDeptName.setTextSize(18);
+                tvDeptName.setPadding(3,0,0,0);
                 tvDeptName.setText(crsrDepartment.getString(1));
                 rowDept.addView(tvDeptName);
 
@@ -152,7 +154,7 @@ public class FragmentDepartment extends Fragment {
                             TextView DeptCode = (TextView)Row.getChildAt(1);
                             TextView DeptName = (TextView)Row.getChildAt(2);
                             strDeptCode = DeptCode.getText().toString();
-                            txtDeptName.setText(DeptName.getText());
+                            txtDeptName.setText(DeptName.getText().toString());
                             btnAddDept.setEnabled(false);
                             btnEditDept.setEnabled(true);
                         }

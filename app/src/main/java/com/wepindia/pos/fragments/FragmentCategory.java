@@ -152,6 +152,7 @@ public class FragmentCategory extends Fragment {
 
                 tvCategName = new TextView(myContext);
                 tvCategName.setTextSize(18);
+                tvCategName.setPadding(5,0,0,0);
                 tvCategName.setText(crsrCategory.getString(crsrCategory.getColumnIndex("CategName")));
                 rowCateg.addView(tvCategName);
 

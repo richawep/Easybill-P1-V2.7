@@ -51,7 +51,7 @@
             android:id="@+id/tblDepartments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:collapseColumns="1">
+            >
 
             <TableRow
                 android:id="@+id/rowCaption"
@@ -74,7 +74,8 @@
                     android:id="@+id/tvCaptionDeptCode"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:text="Code"
+                    android:text=" Dept Code"
+                    android:gravity="center"
                     android:textAllCaps="false"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#ffffff"
@@ -86,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:text="Dept Name"
                     android:textSize="@dimen/table_text_heading_16sp_720dp_14sp_600dp"
+                    android:layout_marginLeft="5dp"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="#ffffff" />
             </TableRow>

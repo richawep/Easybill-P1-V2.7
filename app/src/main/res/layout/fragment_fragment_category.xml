@@ -84,7 +84,7 @@
                 android:id="@+id/tblCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:collapseColumns="1">
+               >
 
                 <TableRow
                     android:id="@+id/rowCaption"
@@ -107,17 +107,18 @@
                         android:id="@+id/tvCaptionCategCode"
                         android:layout_width="@dimen/_100dp_720dp_95dp_600dp"
                         android:layout_height="wrap_content"
-                        android:text="Code	"
+                        android:text="Categ Code "
                         android:textAllCaps="false"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="#ffffff"
-                        android:textSize="@dimen/text_size_14sp_720dp_12sp_600dp" />
+                        android:textSize="@dimen/table_text_heading_16sp_720dp_14sp_600dp" />
 
                     <TextView
                         android:id="@+id/tvCaptionCategName"
                         android:layout_width="180dp"
                         android:layout_height="wrap_content"
-                        android:text="Category"
+                        android:text="Categ Name"
+                        android:layout_marginStart="5dp"
                         android:textAllCaps="false"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textColor="#ffffff"
