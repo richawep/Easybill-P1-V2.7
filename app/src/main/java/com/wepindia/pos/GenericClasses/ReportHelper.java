@@ -1,15 +1,15 @@
 /****************************************************************************
  * Project Name		:	VAJRA
- * 
+ *
  * File Name		:	ReportColumns
- * 
+ *
  * Purpose			:	Represents report column caption drawing to report table
  * 						based on reprt type selection.
- * 
+ *
  * DateOfCreation	:	16-January-2013
- * 
+ *
  * Author			:	Balasubramanya Bharadwaj B S
- * 
+ *
  ****************************************************************************/
 package com.wepindia.pos.GenericClasses;
 
@@ -35,15 +35,15 @@ import android.widget.TextView;
 
 
 public class ReportHelper{
-	
+
 	private static final String REPORT_PATH = Environment.getExternalStorageDirectory().getPath() + "/WeP_FnB_Reports/";
 	MessageDialog MsgBox;
-	
+
 	public ReportHelper(Context activityContext){
-		
+
 		MsgBox = new MessageDialog(activityContext);
 	}
-	
+
 	private void CheckReportsDirectory(){
 		File ReportDirectory = new File(REPORT_PATH);
 		Log.d("ReportHelper", "Does ReportDirectory exists? Ans:" + ReportDirectory.exists());
@@ -55,7 +55,7 @@ public class ReportHelper{
 			}
 		}
 	}
-	
+
 	public void setReportColumnCaptions(Context activityContext,String ReportName,TableLayout ReportTable){
 		TableRow rowColumnCaption;
 		String GSTEnable="0", POSEnable="0",HSNEnable="0",ReverseChargeEnabe="0";
@@ -94,12 +94,12 @@ public class ReportHelper{
 		rowColumnCaption.setLayoutParams(new LayoutParams
 				(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
 		rowColumnCaption.setBackgroundColor(activityContext.getResources().getColor(R.color.colorPrimaryLight));
-		
+
 		if(/*ReportName.equalsIgnoreCase("Bill wise Report") ||*/
 				ReportName.equalsIgnoreCase("Void Bill Report") ||
-				ReportName.equalsIgnoreCase("Day wise Report") || ReportName.equalsIgnoreCase("Month wise Report") ||
-				ReportName.equalsIgnoreCase("Duplicate Bill Report")){
-			
+						ReportName.equalsIgnoreCase("Day wise Report") || ReportName.equalsIgnoreCase("Month wise Report") ||
+						ReportName.equalsIgnoreCase("Duplicate Bill Report")){
+
 			TextView Date = new TextView(activityContext);
 			Date.setWidth(120);
 			Date.setTextSize(15);
@@ -108,31 +108,31 @@ public class ReportHelper{
 				Date.setText("Month");
 			else
 				Date.setText("Date");
-			
+
 			TextView BillNumber = new TextView(activityContext);
 			BillNumber.setWidth(100);
 			BillNumber.setTextSize(15);
 			BillNumber.setTextColor(Color.WHITE);
-			if(ReportName.equalsIgnoreCase("Day wise Report") || 
+			if(ReportName.equalsIgnoreCase("Day wise Report") ||
 					ReportName.equalsIgnoreCase("Month wise Report")){
 				BillNumber.setText("Total Bills");
 			} else {
 				BillNumber.setText("Bill Number");
 			}
-			
+
 			TextView TotalItems = null;
 			TotalItems = new TextView(activityContext);
 			TotalItems.setWidth(100);
 			TotalItems.setTextSize(15);
 			TotalItems.setTextColor(Color.WHITE);
 			TotalItems.setText("Items");
-						
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Bill Amount");
-			
+
 			TextView IGSTTax = new TextView(activityContext);
 			IGSTTax.setWidth(100);
 			IGSTTax.setTextSize(15);
@@ -144,7 +144,7 @@ public class ReportHelper{
 			SalesTax.setTextSize(15);
 			SalesTax.setTextColor(Color.WHITE);
 			SalesTax.setText("CGST Amt");
-			
+
 			TextView ServiceTax = new TextView(activityContext);
 			ServiceTax.setWidth(100);
 			ServiceTax.setTextSize(15);
@@ -156,26 +156,26 @@ public class ReportHelper{
 			cessTax.setTextSize(15);
 			cessTax.setTextColor(Color.WHITE);
 			cessTax.setText("cess Amt");
-			
+
 			TextView Discount = new TextView(activityContext);
 			Discount.setWidth(100);
 			Discount.setTextSize(15);
 			Discount.setTextColor(Color.WHITE);
 			Discount.setText("Discount");
-			
+
 			TextView ReprintCount = new TextView(activityContext);
 			ReprintCount.setWidth(100);
 			ReprintCount.setTextSize(15);
 			ReprintCount.setTextColor(Color.WHITE);
 			ReprintCount.setText("Reprint Count");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Date);
 			rowColumnCaption.addView(BillNumber);
-			if(ReportName.equalsIgnoreCase("Bill wise Report") || 
-					ReportName.equalsIgnoreCase("Void Bill Report") || 
+			if(ReportName.equalsIgnoreCase("Bill wise Report") ||
+					ReportName.equalsIgnoreCase("Void Bill Report") ||
 					ReportName.equalsIgnoreCase("Duplicate Bill Report")){
-				
+
 				rowColumnCaption.addView(TotalItems);
 			}
 			rowColumnCaption.addView(Discount);
@@ -187,7 +187,7 @@ public class ReportHelper{
 			if (ReportName.equalsIgnoreCase("Duplicate Bill Report")) {
 				rowColumnCaption.addView(ReprintCount);
 			}
-			
+
 		}
 		else if(ReportName.equalsIgnoreCase("GSTR1-Documents Issued") ){
 			TextView SNo = new TextView(activityContext);
@@ -313,13 +313,13 @@ public class ReportHelper{
 			rowColumnCaption.addView(Amount);
 
 		}
-        else if(ReportName.equalsIgnoreCase("Outward Stock Report") || ReportName.equalsIgnoreCase("Inward Stock Report") ){
+		else if(ReportName.equalsIgnoreCase("Outward Stock Report") || ReportName.equalsIgnoreCase("Inward Stock Report") ){
 
 			TextView Date = new TextView(activityContext);
 			Date.setWidth(80);
 			Date.setTextSize(15);
 			Date.setTextColor(Color.WHITE);
-            Date.setText("ItemCode");
+			Date.setText("ItemCode");
 
 
 
@@ -356,72 +356,72 @@ public class ReportHelper{
 			rowColumnCaption.addView(TotalItems);
 			rowColumnCaption.addView(SalesTax);
 			rowColumnCaption.addView(ServiceTax);
-            if (ReportName.equalsIgnoreCase("Outward Stock Report"))
-                rowColumnCaption.addView(Amount);
+			if (ReportName.equalsIgnoreCase("Outward Stock Report"))
+				rowColumnCaption.addView(Amount);
 
 
 
 		}
 
 		else if(ReportName.equalsIgnoreCase("Transaction Report")){
-			
+
 			TextView Date = new TextView(activityContext);
 			Date.setWidth(100);
 			Date.setTextSize(15);
 			Date.setTextColor(Color.WHITE);
 			Date.setText("Date");
-			
+
 			TextView BillNumber = new TextView(activityContext);
 			BillNumber.setWidth(100);
 			BillNumber.setTextSize(15);
 			BillNumber.setTextColor(Color.WHITE);
 			BillNumber.setText("Bill Number");
-			
+
 			TextView TotalItems = new TextView(activityContext);
 			TotalItems.setWidth(100);
 			TotalItems.setTextSize(15);
 			TotalItems.setTextColor(Color.WHITE);
 			TotalItems.setText("Items");
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(135);
 			Amount.setTextSize(15);
 			Amount.setGravity(Gravity.CENTER);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Bill Amount");
-			
+
 			TextView Cash = new TextView(activityContext);
 			Cash.setWidth(120);
 			Cash.setTextSize(15);
 			Cash.setTextColor(Color.WHITE);
 			Cash.setText("Cash Payment");
-			
+
 			TextView Card = new TextView(activityContext);
 			Card.setWidth(120);
 			Card.setTextSize(15);
 			Card.setTextColor(Color.WHITE);
 			Card.setText("Card Payment");
-			
+
 			TextView Coupon = new TextView(activityContext);
 			Coupon.setWidth(120);
 			Coupon.setTextSize(15);
 			Coupon.setTextColor(Color.WHITE);
 			Coupon.setText("Coupon Payment");
 
-            TextView PettyCash = new TextView(activityContext);
-            PettyCash.setWidth(135);
-            PettyCash.setTextSize(15);
-            PettyCash.setGravity(Gravity.CENTER);
-            PettyCash.setTextColor(Color.WHITE);
-            PettyCash.setText("PettyCash Payment");
+			TextView PettyCash = new TextView(activityContext);
+			PettyCash.setWidth(135);
+			PettyCash.setTextSize(15);
+			PettyCash.setGravity(Gravity.CENTER);
+			PettyCash.setTextColor(Color.WHITE);
+			PettyCash.setText("PettyCash Payment");
 
-            TextView eWallet = new TextView(activityContext);
-            eWallet.setWidth(120);
-            eWallet.setTextSize(15);
-            eWallet.setTextColor(Color.WHITE);
-            eWallet.setText("Wallet Payment");
+			TextView eWallet = new TextView(activityContext);
+			eWallet.setWidth(120);
+			eWallet.setTextSize(15);
+			eWallet.setTextColor(Color.WHITE);
+			eWallet.setText("Wallet Payment");
 
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Date);
 			rowColumnCaption.addView(BillNumber);
@@ -434,10 +434,10 @@ public class ReportHelper{
 			rowColumnCaption.addView(eWallet);
 
 		}
-		
+
 		else if(ReportName.equalsIgnoreCase("Tax Report") ||
 				ReportName.equalsIgnoreCase("Service Tax Report")){
-			
+
 			TextView SNo = new TextView(activityContext);
 			SNo.setWidth(130);
 			SNo.setTextSize(15);
@@ -449,63 +449,63 @@ public class ReportHelper{
 			Percent.setTextSize(15);
 			Percent.setTextColor(Color.WHITE);
 			Percent.setText("Tax Percent");
-			
+
 			TextView Description = new TextView(activityContext);
 			Description.setWidth(130);
 			Description.setTextSize(15);
 			Description.setTextColor(Color.WHITE);
 			Description.setText("Description");
-			
+
 			TextView Tax = new TextView(activityContext);
 			Tax.setWidth(135);
 			Tax.setTextSize(15);
 			Tax.setGravity(Gravity.CENTER);
 			Tax.setTextColor(Color.WHITE);
 			Tax.setText("Tax Amount");
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(135);
 			Amount.setTextSize(15);
 			Amount.setGravity(Gravity.CENTER);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Taxable Amount");
-									
+
 			// Add views to row
 			rowColumnCaption.addView(SNo);
 			rowColumnCaption.addView(Description);
 			rowColumnCaption.addView(Percent);
 			rowColumnCaption.addView(Tax);
 			rowColumnCaption.addView(Amount);
-			
+
 		}
-		
-		else if(ReportName.equalsIgnoreCase("KOT Pending Report") || 
+
+		else if(ReportName.equalsIgnoreCase("KOT Pending Report") ||
 				ReportName.equalsIgnoreCase("KOT Deleted Report")){
-			
+
 			TextView Token = new TextView(activityContext);
 			Token.setWidth(115);
 			Token.setTextSize(15);
 			Token.setTextColor(Color.WHITE);
 			Token.setText("Token Number");
-			
+
 			TextView Table = new TextView(activityContext);
 			Table.setWidth(115);
 			Table.setTextSize(15);
 			Table.setTextColor(Color.WHITE);
 			Table.setText("Table Number");
-			
+
 			TextView Time = new TextView(activityContext);
 			Time.setWidth(125);
 			Time.setTextSize(15);
 			Time.setTextColor(Color.WHITE);
 			Time.setText("Time");
-			
+
 			TextView Waiter = new TextView(activityContext);
 			Waiter.setWidth(100);
 			Waiter.setTextSize(15);
 			Waiter.setTextColor(Color.WHITE);
 			Waiter.setText("Waiter");
-			
+
 			TextView Items = null;
 			if (ReportName.equalsIgnoreCase("KOT Pending Report")) {
 				Items = new TextView(activityContext);
@@ -514,7 +514,7 @@ public class ReportHelper{
 				Items.setTextColor(Color.WHITE);
 				Items.setText("Items");
 			}
-			
+
 			TextView Reason = null;
 			if (ReportName.equalsIgnoreCase("KOT Deleted Report")) {
 				Reason = new TextView(activityContext);
@@ -528,41 +528,41 @@ public class ReportHelper{
 			rowColumnCaption.addView(Table);
 			rowColumnCaption.addView(Time);
 			rowColumnCaption.addView(Waiter);
-			
+
 			if (ReportName.equalsIgnoreCase("KOT Pending Report")) {
 				rowColumnCaption.addView(Items);
 			} else {
 				rowColumnCaption.addView(Reason);
 			}
-			
+
 		}
-		
+
 		else if(ReportName.equalsIgnoreCase("Item wise Report")){
-			
+
 			TextView Number = new TextView(activityContext);
 			Number.setWidth(100);
 			Number.setTextSize(15);
 			Number.setTextColor(Color.WHITE);
 			Number.setText("Item No");
-			
+
 			TextView Name = new TextView(activityContext);
 			Name.setWidth(180);
 			Name.setTextSize(15);
 			Name.setTextColor(Color.WHITE);
 			Name.setText("Item Name");
-			
+
 			TextView Quantity = new TextView(activityContext);
 			Quantity.setWidth(100);
 			Quantity.setTextSize(15);
 			Quantity.setTextColor(Color.WHITE);
 			Quantity.setText("Sold Quantity");
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Taxable Value");
-			
+
 			TextView SalesTax = new TextView(activityContext);
 			SalesTax.setWidth(100);
 			SalesTax.setTextSize(15);
@@ -575,19 +575,19 @@ public class ReportHelper{
 			ServiceTax.setTextSize(15);
 			ServiceTax.setTextColor(Color.WHITE);
 			ServiceTax.setText("Service Tax");
-			
+
 			TextView Discount = new TextView(activityContext);
 			Discount.setWidth(100);
 			Discount.setTextSize(15);
 			Discount.setTextColor(Color.WHITE);
 			Discount.setText("Discount");
-			
+
 			TextView Modifier = new TextView(activityContext);
 			Modifier.setWidth(125);
 			Modifier.setTextSize(15);
 			Modifier.setTextColor(Color.WHITE);
 			Modifier.setText("Modifier Amount");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Number);
 			rowColumnCaption.addView(Name);
@@ -597,13 +597,13 @@ public class ReportHelper{
 			//rowColumnCaption.addView(ServiceTax); richa - making single tax
 			rowColumnCaption.addView(Amount);
 			rowColumnCaption.addView(Modifier);
-			
+
 		}
-		
-		else if(ReportName.equalsIgnoreCase("Department wise Report") || 
-				ReportName.equalsIgnoreCase("Category wise Report") || 
+
+		else if(ReportName.equalsIgnoreCase("Department wise Report") ||
+				ReportName.equalsIgnoreCase("Category wise Report") ||
 				ReportName.equalsIgnoreCase("Kitchen wise Report")){
-			
+
 			TextView Code = new TextView(activityContext);
 			Code.setWidth(100);
 			Code.setTextSize(15);
@@ -615,25 +615,25 @@ public class ReportHelper{
 			else if (ReportName.equalsIgnoreCase("Kitchen wise Report"))
 				Code.setText("Kitchen Code");
 
-			
+
 			TextView Name = new TextView(activityContext);
 			Name.setWidth(100);
 			Name.setTextSize(15);
 			Name.setTextColor(Color.WHITE);
 			Name.setText("Name");
-			
+
 			TextView Items = new TextView(activityContext);
 			Items.setWidth(100);
 			Items.setTextSize(15);
 			Items.setTextColor(Color.WHITE);
 			Items.setText("Total Items");
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Taxable Value");
-			
+
 			TextView IGSTTax = new TextView(activityContext);
 			IGSTTax.setWidth(100);
 			IGSTTax.setTextSize(15);
@@ -645,7 +645,7 @@ public class ReportHelper{
 			SalesTax.setTextSize(15);
 			SalesTax.setTextColor(Color.WHITE);
 			SalesTax.setText("CGST Amt");
-			
+
 			TextView ServiceTax = new TextView(activityContext);
 			ServiceTax.setWidth(100);
 			ServiceTax.setTextSize(15);
@@ -657,13 +657,13 @@ public class ReportHelper{
 			cessTax.setTextSize(15);
 			cessTax.setTextColor(Color.WHITE);
 			cessTax.setText("cess Amt");
-			
+
 			TextView Discount = new TextView(activityContext);
 			Discount.setWidth(100);
 			Discount.setTextSize(15);
 			Discount.setTextColor(Color.WHITE);
 			Discount.setText("Discount");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Code);
 			rowColumnCaption.addView(Name);
@@ -674,11 +674,11 @@ public class ReportHelper{
 			rowColumnCaption.addView(ServiceTax);
 			rowColumnCaption.addView(cessTax);
 			rowColumnCaption.addView(Amount);
-			
+
 		}
-		
-		else if(ReportName.equalsIgnoreCase("Waiter wise Report") || 
-				ReportName.equalsIgnoreCase("Rider wise Report") || 
+
+		else if(ReportName.equalsIgnoreCase("Waiter wise Report") ||
+				ReportName.equalsIgnoreCase("Rider wise Report") ||
 				ReportName.equalsIgnoreCase("User wise Report") ||
 				ReportName.equalsIgnoreCase("Supplier wise Report")){
 
@@ -687,53 +687,53 @@ public class ReportHelper{
 			Id.setTextSize(15);
 			Id.setTextColor(Color.WHITE);
 			Id.setText("Id");
-			
+
 			TextView Name = new TextView(activityContext);
 			Name.setWidth(100);
 			Name.setTextSize(15);
 			Name.setTextColor(Color.WHITE);
 			Name.setText("Name");
-			
+
 			TextView Bills = new TextView(activityContext);
 			Bills.setWidth(100);
 			Bills.setTextSize(15);
 			Bills.setTextColor(Color.WHITE);
 			Bills.setText("Total Bills");
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Bill Amount");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Id);
 			rowColumnCaption.addView(Name);
 			rowColumnCaption.addView(Bills);
 			rowColumnCaption.addView(Amount);
-			
+
 		}
-		
+
 		else if(ReportName.equalsIgnoreCase("Customer wise Report")){
-			
+
 			TextView Id = new TextView(activityContext);
 			Id.setWidth(100);
 			Id.setTextSize(15);
 			Id.setTextColor(Color.WHITE);
 			Id.setText("Cust. Id");
-			
+
 			TextView Name = new TextView(activityContext);
 			Name.setWidth(100);
 			Name.setTextSize(15);
 			Name.setTextColor(Color.WHITE);
 			Name.setText("Name");
-			
+
 			TextView Bills = new TextView(activityContext);
 			Bills.setWidth(100);
 			Bills.setTextSize(15);
 			Bills.setTextColor(Color.WHITE);
 			Bills.setText("Total Bills");
-			
+
 			TextView LastTransaction = new TextView(activityContext);
 			LastTransaction.setWidth(125);
 			LastTransaction.setTextSize(15);
@@ -770,13 +770,13 @@ public class ReportHelper{
 			wallet.setTextSize(15);
 			wallet.setTextColor(Color.WHITE);
 			wallet.setText("Wallet Payment");
-			
+
 			TextView TotalTransaction = new TextView(activityContext);
 			TotalTransaction.setWidth(125);
 			TotalTransaction.setTextSize(15);
 			TotalTransaction.setTextColor(Color.WHITE);
 			TotalTransaction.setText("Total Transaction");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Id);
 			rowColumnCaption.addView(Name);
@@ -788,42 +788,42 @@ public class ReportHelper{
 			rowColumnCaption.addView(credit);
 			rowColumnCaption.addView(wallet);
 			rowColumnCaption.addView(TotalTransaction);
-			
+
 		}
-		
+
 		else if(ReportName.equalsIgnoreCase("Waiter Detailed Report") ||
 				ReportName.equalsIgnoreCase("Rider Detailed Report") ||
 				ReportName.equalsIgnoreCase("User Detailed Report"))
 		{
-			
+
 			TextView Date = new TextView(activityContext);
 			Date.setWidth(100);
 			Date.setTextSize(15);
 			Date.setTextColor(Color.WHITE);
 			Date.setText("Date");
-			
+
 			TextView BillNumber = new TextView(activityContext);
 			BillNumber.setWidth(100);
 			BillNumber.setTextSize(15);
 			BillNumber.setTextColor(Color.WHITE);
 			BillNumber.setText("Bill Number");
-			
+
 			TextView TotalItems = new TextView(activityContext);
 			TotalItems.setWidth(100);
 			TotalItems.setTextSize(15);
 			TotalItems.setTextColor(Color.WHITE);
 			TotalItems.setText("Total Items");
-			
+
 			TextView Discount = new TextView(activityContext);
 			Discount.setWidth(100);
 			Discount.setTextSize(15);
 			Discount.setTextColor(Color.WHITE);
 			Discount.setText("Discount");
-			
+
 			TextView SalesTax = new TextView(activityContext);
 			SalesTax.setWidth(105);
 			SalesTax.setTextSize(15);
-            SalesTax.setGravity(Gravity.CENTER);
+			SalesTax.setGravity(Gravity.CENTER);
 			SalesTax.setTextColor(Color.WHITE);
 			SalesTax.setText("Tax");
 			
@@ -832,13 +832,13 @@ public class ReportHelper{
 			ServiceTax.setTextSize(15);
 			ServiceTax.setTextColor(Color.WHITE);
 			ServiceTax.setText("Service Tax");*/
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Bill Amount");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Date);
 			rowColumnCaption.addView(BillNumber);
@@ -847,7 +847,7 @@ public class ReportHelper{
 			rowColumnCaption.addView(SalesTax);
 			//rowColumnCaption.addView(ServiceTax);
 			rowColumnCaption.addView(Amount);
-			
+
 		}
 
 		else if(ReportName.equalsIgnoreCase("Customer Detailed Report"))
@@ -926,40 +926,40 @@ public class ReportHelper{
 			rowColumnCaption.addView(Amount);
 
 		}
-		
-		else if(ReportName.equalsIgnoreCase("Payments Report") || 
+
+		else if(ReportName.equalsIgnoreCase("Payments Report") ||
 				ReportName.equalsIgnoreCase("Receipts Report")){
-			
+
 			TextView Date = new TextView(activityContext);
 			Date.setWidth(100);
 			Date.setTextSize(15);
 			Date.setTextColor(Color.WHITE);
 			Date.setText("Date");
-			
+
 			TextView Description = new TextView(activityContext);
 			Description.setWidth(100);
 			Description.setTextSize(15);
 			Description.setTextColor(Color.WHITE);
 			Description.setText("Description");
-			
+
 			TextView Reason = new TextView(activityContext);
 			Reason.setWidth(130);
 			Reason.setTextSize(15);
 			Reason.setTextColor(Color.WHITE);
 			Reason.setText("Reason");
-			
+
 			TextView Amount = new TextView(activityContext);
 			Amount.setWidth(100);
 			Amount.setTextSize(15);
 			Amount.setTextColor(Color.WHITE);
 			Amount.setText("Bill Amount");
-			
+
 			// Add views to row
 			rowColumnCaption.addView(Date);
 			rowColumnCaption.addView(Description);
 			rowColumnCaption.addView(Amount);
 			rowColumnCaption.addView(Reason);
-			
+
 		}
 		else if(ReportName.equalsIgnoreCase("Fast Selling Itemwise Report")){
 
@@ -1004,7 +1004,7 @@ public class ReportHelper{
 			TextView Rate = new TextView(activityContext);
 			Rate.setWidth(150);
 			Rate.setTextSize(15);
-            Rate.setGravity(Gravity.CENTER);
+			Rate.setGravity(Gravity.CENTER);
 			Rate.setTextColor(Color.WHITE);
 			Rate.setText("Total Price");
 
@@ -1085,102 +1085,102 @@ public class ReportHelper{
 			SNo.setText("S.No");
 
 			TextView NoteType = new TextView(activityContext);
-            NoteType.setWidth(60);
-            NoteType.setTextSize(15);
-            NoteType.setTextColor(Color.WHITE);
-            NoteType.setText("Note Type");
+			NoteType.setWidth(60);
+			NoteType.setTextSize(15);
+			NoteType.setTextColor(Color.WHITE);
+			NoteType.setText("Note Type");
 
 			TextView NoteNo = new TextView(activityContext);
-            NoteNo.setWidth(85);
-            NoteNo.setTextSize(15);
-            NoteNo.setTextColor(Color.WHITE);
-            NoteNo.setText("Note No");
+			NoteNo.setWidth(85);
+			NoteNo.setTextSize(15);
+			NoteNo.setTextColor(Color.WHITE);
+			NoteNo.setText("Note No");
 
 			TextView NoteDate = new TextView(activityContext);
-            NoteDate.setWidth(110);
-            NoteDate.setTextSize(15);
-            NoteDate.setTextColor(Color.WHITE);
-            NoteDate.setText("Note Date");
+			NoteDate.setWidth(110);
+			NoteDate.setTextSize(15);
+			NoteDate.setTextColor(Color.WHITE);
+			NoteDate.setText("Note Date");
 
 			TextView InvoiceNo = new TextView(activityContext);
-            InvoiceNo.setWidth(85);
-            InvoiceNo.setTextSize(15);
-            InvoiceNo.setTextColor(Color.WHITE);
-            InvoiceNo.setText("Invoice No");
+			InvoiceNo.setWidth(85);
+			InvoiceNo.setTextSize(15);
+			InvoiceNo.setTextColor(Color.WHITE);
+			InvoiceNo.setText("Invoice No");
 
 			TextView InvoiceDate = new TextView(activityContext);
-            InvoiceDate.setWidth(110);
-            InvoiceDate.setTextSize(15);
-            InvoiceDate.setTextColor(Color.WHITE);
-            InvoiceDate.setText("Invoice Date");
+			InvoiceDate.setWidth(110);
+			InvoiceDate.setTextSize(15);
+			InvoiceDate.setTextColor(Color.WHITE);
+			InvoiceDate.setText("Invoice Date");
 
 			TextView Reason = new TextView(activityContext);
-            Reason.setWidth(180);
-            Reason.setTextSize(15);
-            Reason.setTextColor(Color.WHITE);
-            Reason.setGravity(Gravity.CENTER);
-            Reason.setText("Reason");
+			Reason.setWidth(180);
+			Reason.setTextSize(15);
+			Reason.setTextColor(Color.WHITE);
+			Reason.setGravity(Gravity.CENTER);
+			Reason.setText("Reason");
 
 			TextView DifferentialValue = new TextView(activityContext);
-            DifferentialValue.setWidth(100);
-            DifferentialValue.setTextSize(15);
-            DifferentialValue.setGravity(Gravity.CENTER);
-            DifferentialValue.setTextColor(Color.WHITE);
-            DifferentialValue.setText("Differential    Value");
+			DifferentialValue.setWidth(100);
+			DifferentialValue.setTextSize(15);
+			DifferentialValue.setGravity(Gravity.CENTER);
+			DifferentialValue.setTextColor(Color.WHITE);
+			DifferentialValue.setText("Differential    Value");
 
 			TextView IAmt = new TextView(activityContext);
-            IAmt.setWidth(65);
-            IAmt.setTextSize(15);
-            IAmt.setGravity(Gravity.CENTER);
-            IAmt.setTextColor(Color.WHITE);
-            IAmt.setText("IGST   Amt");
+			IAmt.setWidth(65);
+			IAmt.setTextSize(15);
+			IAmt.setGravity(Gravity.CENTER);
+			IAmt.setTextColor(Color.WHITE);
+			IAmt.setText("IGST   Amt");
 
 			TextView CAmt = new TextView(activityContext);
-            CAmt.setWidth(65);
-            CAmt.setGravity(Gravity.CENTER);
-            CAmt.setTextSize(15);
-            CAmt.setTextColor(Color.WHITE);
-            CAmt.setText("CGST Amt");
+			CAmt.setWidth(65);
+			CAmt.setGravity(Gravity.CENTER);
+			CAmt.setTextSize(15);
+			CAmt.setTextColor(Color.WHITE);
+			CAmt.setText("CGST Amt");
 
 			TextView SAmt = new TextView(activityContext);
-            SAmt.setWidth(65);
-            SAmt.setGravity(Gravity.CENTER);
-            SAmt.setTextSize(15);
-            SAmt.setTextColor(Color.WHITE);
-            SAmt.setText("UTGST/SGST Amt");
+			SAmt.setWidth(65);
+			SAmt.setGravity(Gravity.CENTER);
+			SAmt.setTextSize(15);
+			SAmt.setTextColor(Color.WHITE);
+			SAmt.setText("UTGST/SGST Amt");
 
-            TextView cessAmt = new TextView(activityContext);
-            cessAmt.setWidth(65);
-            cessAmt.setTextSize(15);
-            cessAmt.setGravity(Gravity.CENTER);
-            cessAmt.setTextColor(Color.WHITE);
-            cessAmt.setText("cess   Amt");
+			TextView cessAmt = new TextView(activityContext);
+			cessAmt.setWidth(65);
+			cessAmt.setTextSize(15);
+			cessAmt.setGravity(Gravity.CENTER);
+			cessAmt.setTextColor(Color.WHITE);
+			cessAmt.setText("cess   Amt");
 
-            TextView GSTRate = new TextView(activityContext);
-            GSTRate.setWidth(65);
-            GSTRate.setTextSize(15);
-            GSTRate.setTextColor(Color.WHITE);
-            GSTRate.setGravity(Gravity.CENTER);
-            GSTRate.setText("GST Rate");
+			TextView GSTRate = new TextView(activityContext);
+			GSTRate.setWidth(65);
+			GSTRate.setTextSize(15);
+			GSTRate.setTextColor(Color.WHITE);
+			GSTRate.setGravity(Gravity.CENTER);
+			GSTRate.setText("GST Rate");
 
 
 
 			// Add views to row
 			rowColumnCaption.addView(SNo);
-            rowColumnCaption.addView(NoteType);
-            rowColumnCaption.addView(NoteNo);
-            rowColumnCaption.addView(NoteDate);
-            rowColumnCaption.addView(InvoiceNo);
-            rowColumnCaption.addView(InvoiceDate);
-            rowColumnCaption.addView(Reason);
-            rowColumnCaption.addView(GSTRate);
-            rowColumnCaption.addView(DifferentialValue);
-            rowColumnCaption.addView(IAmt);
-            rowColumnCaption.addView(CAmt);
-            rowColumnCaption.addView(SAmt);
-            rowColumnCaption.addView(cessAmt);
+			rowColumnCaption.addView(NoteType);
+			rowColumnCaption.addView(NoteNo);
+			rowColumnCaption.addView(NoteDate);
+			rowColumnCaption.addView(InvoiceNo);
+			rowColumnCaption.addView(InvoiceDate);
+			rowColumnCaption.addView(Reason);
+			rowColumnCaption.addView(GSTRate);
+			rowColumnCaption.addView(DifferentialValue);
+			rowColumnCaption.addView(IAmt);
+			rowColumnCaption.addView(CAmt);
+			rowColumnCaption.addView(SAmt);
+			rowColumnCaption.addView(cessAmt);
 		}else if(ReportName.equalsIgnoreCase("GSTR2_Registered_Amend") ||
-                ReportName.equalsIgnoreCase("GSTR2_UnRegistered_Amend")) {
+				ReportName.equalsIgnoreCase("GSTR2_UnRegistered_Amend")) {
 
 			TextView SNo = new TextView(activityContext);
 			SNo.setWidth(60);
@@ -1190,14 +1190,14 @@ public class ReportHelper{
 
 			TextView GSTIN = new TextView(activityContext);
 			GSTIN.setWidth(120);
-            GSTIN.setTextSize(15);
-            GSTIN.setTextColor(Color.WHITE);
-            if(ReportName.equalsIgnoreCase("GSTR2-B2BA"))
-                GSTIN.setText("GSTIN");
-            else
-                GSTIN.setText("Supplier Name");
+			GSTIN.setTextSize(15);
+			GSTIN.setTextColor(Color.WHITE);
+			if(ReportName.equalsIgnoreCase("GSTR2-B2BA"))
+				GSTIN.setText("GSTIN");
+			else
+				GSTIN.setText("Supplier Name");
 
-            TextView InvoiceNo_ori = new TextView(activityContext);
+			TextView InvoiceNo_ori = new TextView(activityContext);
 			InvoiceNo_ori.setWidth(90);
 			InvoiceNo_ori.setTextSize(15);
 			InvoiceNo_ori.setTextColor(Color.WHITE);
@@ -1238,7 +1238,7 @@ public class ReportHelper{
 			Value.setTextSize(15);
 			Value.setTextColor(Color.WHITE);
 			Value.setText("Value");
-            Value.setGravity(Gravity.CENTER);
+			Value.setGravity(Gravity.CENTER);
 
 			TextView TaxableValue = new TextView(activityContext);
 			TaxableValue.setWidth(100);
@@ -1264,19 +1264,19 @@ public class ReportHelper{
 			SAMT.setTextColor(Color.WHITE);
 			SAMT.setText("UTGST/SGST   Amount");
 
-            TextView Subtotal = new TextView(activityContext);
-            Subtotal.setWidth(100);
-            Subtotal.setTextSize(15);
-            Subtotal.setGravity(Gravity.CENTER);
-            Subtotal.setTextColor(Color.WHITE);
-            Subtotal.setText("Sub Total");
+			TextView Subtotal = new TextView(activityContext);
+			Subtotal.setWidth(100);
+			Subtotal.setTextSize(15);
+			Subtotal.setGravity(Gravity.CENTER);
+			Subtotal.setTextColor(Color.WHITE);
+			Subtotal.setText("Sub Total");
 
-            TextView SupplierPOS = new TextView(activityContext);
-            SupplierPOS.setWidth(60);
-            SupplierPOS.setTextSize(15);
-            SupplierPOS.setGravity(Gravity.CENTER);
-            SupplierPOS.setTextColor(Color.WHITE);
-            SupplierPOS.setText("Supplier POS ");
+			TextView SupplierPOS = new TextView(activityContext);
+			SupplierPOS.setWidth(60);
+			SupplierPOS.setTextSize(15);
+			SupplierPOS.setGravity(Gravity.CENTER);
+			SupplierPOS.setTextColor(Color.WHITE);
+			SupplierPOS.setText("Supplier POS ");
 
 
 
@@ -1389,11 +1389,11 @@ public class ReportHelper{
 			SGSTAmt.setTextColor(Color.WHITE);
 			SGSTAmt.setText("UTGST/SGST Amt");
 
-            TextView cessAmt = new TextView(activityContext);
-            cessAmt.setWidth(65);
-            cessAmt.setTextSize(15);
-            cessAmt.setTextColor(Color.WHITE);
-            cessAmt.setText("cess Amt");
+			TextView cessAmt = new TextView(activityContext);
+			cessAmt.setWidth(65);
+			cessAmt.setTextSize(15);
+			cessAmt.setTextColor(Color.WHITE);
+			cessAmt.setText("cess Amt");
 
 			TextView SubTotal = new TextView(activityContext);
 			SubTotal.setWidth(100);
@@ -1433,7 +1433,7 @@ public class ReportHelper{
 			//rowColumnCaption.addView(SGSTRate);
 			rowColumnCaption.addView(SGSTAmt);
 			rowColumnCaption.addView(cessAmt);
-            rowColumnCaption.addView(SubTotal);
+			rowColumnCaption.addView(SubTotal);
 			/*rowColumnCaption.addView(POS);
 			rowColumnCaption.addView(ITC);*/
 
@@ -1456,31 +1456,31 @@ public class ReportHelper{
 			G_S.setText("G/S");
 
 			TextView Description = new TextView(activityContext);
-            Description.setWidth(100);
-            Description.setTextSize(15);
-            Description.setTextColor(Color.WHITE);
-            Description.setText("Description");
-            //Description.setGravity(Gravity.CENTER);
+			Description.setWidth(100);
+			Description.setTextSize(15);
+			Description.setTextColor(Color.WHITE);
+			Description.setText("Description");
+			//Description.setGravity(Gravity.CENTER);
 
-            TextView HSN = new TextView(activityContext);
+			TextView HSN = new TextView(activityContext);
 			HSN.setWidth(100);
 			HSN.setTextSize(15);
 			HSN.setTextColor(Color.WHITE);
 			HSN.setText("HSN/SAC");
-            //HSN.setGravity(Gravity.CENTER);
+			//HSN.setGravity(Gravity.CENTER);
 
 
-            TextView UOM = new TextView(activityContext);
-            UOM.setWidth(60);
-            UOM.setTextSize(15);
-            UOM.setTextColor(Color.WHITE);
-            UOM.setText("UOM");
-            UOM.setGravity(Gravity.CENTER);
+			TextView UOM = new TextView(activityContext);
+			UOM.setWidth(60);
+			UOM.setTextSize(15);
+			UOM.setTextColor(Color.WHITE);
+			UOM.setText("UOM");
+			UOM.setGravity(Gravity.CENTER);
 
 			TextView Value = new TextView(activityContext);
 			Value.setWidth(110);
 			Value.setTextSize(15);
-            Value.setGravity(Gravity.END);
+			Value.setGravity(Gravity.END);
 			Value.setTextColor(Color.WHITE);
 			Value.setText("Value");
 			Value.setPadding(0,0,5,0);
@@ -1495,7 +1495,7 @@ public class ReportHelper{
 			TextView TaxableValue = new TextView(activityContext);
 			TaxableValue.setWidth(100);
 			TaxableValue.setTextSize(15);
-            TaxableValue.setGravity(Gravity.END);
+			TaxableValue.setGravity(Gravity.END);
 			TaxableValue.setTextColor(Color.WHITE);
 			TaxableValue.setText("Taxable Value");
 
@@ -1514,9 +1514,9 @@ public class ReportHelper{
 			TextView IGSTAmt = new TextView(activityContext);
 			IGSTAmt.setWidth(75);
 			IGSTAmt.setTextSize(15);
-            IGSTAmt.setGravity(Gravity.END);
+			IGSTAmt.setGravity(Gravity.END);
 			IGSTAmt.setTextColor(Color.WHITE);
-			IGSTAmt.setText("IGST  Amt");
+			IGSTAmt.setText("IGST Amt");
 
 			/*TextView CGSTRate = new TextView(activityContext);
 			CGSTRate.setWidth(65);
@@ -1529,7 +1529,7 @@ public class ReportHelper{
 			CGSTAmt.setTextSize(15);
 			CGSTAmt.setGravity(Gravity.END);
 			CGSTAmt.setTextColor(Color.WHITE);
-			CGSTAmt.setText("CGST   Amt");
+			CGSTAmt.setText("CGST Amt");
 
 			/*TextView SGSTRate = new TextView(activityContext);
 			SGSTRate.setWidth(65);
@@ -1538,12 +1538,12 @@ public class ReportHelper{
 			SGSTRate.setText("UTGST/SGST Rate");*/
 
 			TextView SGSTAmt = new TextView(activityContext);
-			SGSTAmt.setWidth(75);
+			SGSTAmt.setWidth(105);
 			SGSTAmt.setTextSize(15);
 			SGSTAmt.setTextColor(Color.WHITE);
 			SGSTAmt.setGravity(Gravity.CENTER);
-			SGSTAmt.setText("UTGST/SGST      Amt");
-			
+			SGSTAmt.setText("UTGST/SGST Amt");
+
 			TextView cessAmt = new TextView(activityContext);
 			cessAmt.setWidth(75);
 			cessAmt.setTextSize(15);
@@ -1579,7 +1579,7 @@ public class ReportHelper{
 			rowColumnCaption.addView(Value);
 
 			rowColumnCaption.addView(GSTRate);
-            rowColumnCaption.addView(TaxableValue);
+			rowColumnCaption.addView(TaxableValue);
 			//rowColumnCaption.addView(IGSTRate);
 			rowColumnCaption.addView(IGSTAmt);
 			//rowColumnCaption.addView(CGSTRate);
@@ -1599,7 +1599,7 @@ public class ReportHelper{
 			TextView TaxableValue = new TextView(activityContext);
 			TaxableValue.setWidth(200);
 			TaxableValue.setTextSize(15);
-            TaxableValue.setGravity(Gravity.END);
+			TaxableValue.setGravity(Gravity.END);
 			TaxableValue.setTextColor(Color.WHITE);
 			TaxableValue.setText("Taxable Value");
 
@@ -1636,7 +1636,7 @@ public class ReportHelper{
 
 
 			rowColumnCaption.addView(GSTRate);
-            rowColumnCaption.addView(TaxableValue);
+			rowColumnCaption.addView(TaxableValue);
 			rowColumnCaption.addView(CGSTAmt);
 			rowColumnCaption.addView(SGSTAmt);
 			rowColumnCaption.addView(cessAmt);
@@ -1682,7 +1682,7 @@ public class ReportHelper{
 			TextView Value = new TextView(activityContext);
 			Value.setWidth(100);
 			Value.setTextSize(15);
-            Value.setGravity(Gravity.CENTER);
+			Value.setGravity(Gravity.CENTER);
 			Value.setTextColor(Color.WHITE);
 			Value.setText("Value");
 
@@ -1695,7 +1695,7 @@ public class ReportHelper{
 			TextView TaxableValue = new TextView(activityContext);
 			TaxableValue.setWidth(100);
 			TaxableValue.setTextSize(15);
-            TaxableValue.setGravity(Gravity.CENTER);
+			TaxableValue.setGravity(Gravity.CENTER);
 			TaxableValue.setTextColor(Color.WHITE);
 			TaxableValue.setText("Taxable       Value");
 
@@ -1713,7 +1713,7 @@ public class ReportHelper{
 			TextView IGSTAmt = new TextView(activityContext);
 			IGSTAmt.setWidth(75);
 			IGSTAmt.setTextSize(15);
-            IGSTAmt.setGravity(Gravity.CENTER);
+			IGSTAmt.setGravity(Gravity.CENTER);
 			IGSTAmt.setTextColor(Color.WHITE);
 			IGSTAmt.setText("IGST     Amt");
 
@@ -1788,7 +1788,7 @@ public class ReportHelper{
 			//rowColumnCaption.addView(Quantity);
 
 			rowColumnCaption.addView(GSTRate);
-            rowColumnCaption.addView(TaxableValue);
+			rowColumnCaption.addView(TaxableValue);
 			//rowColumnCaption.addView(IGSTRate);
 			rowColumnCaption.addView(IGSTAmt);
 			//rowColumnCaption.addView(CGSTRate);
@@ -1921,7 +1921,7 @@ public class ReportHelper{
 			rowColumnCaption.addView(InvNo);
 			rowColumnCaption.addView(InvDate);
 			//rowColumnCaption.addView(G_S);
-            //rowColumnCaption.addView(HSN);
+			//rowColumnCaption.addView(HSN);
 
 			rowColumnCaption.addView(Value);
 			//rowColumnCaption.addView(Quantity);
@@ -1931,7 +1931,7 @@ public class ReportHelper{
 			rowColumnCaption.addView(IGSTAmt);
 			rowColumnCaption.addView(cessAmt);
 			//rowColumnCaption.addView(SubTotal);
-            //rowColumnCaption.addView(POS);
+			//rowColumnCaption.addView(POS);
 			if (ReverseChargeEnabe.equals("1"))
 			{
 				rowColumnCaption.addView((Pro));
@@ -2046,8 +2046,8 @@ public class ReportHelper{
 			// Add views to row
 			rowColumnCaption.addView(SNo);
 			//rowColumnCaption.addView(G_S);
-           // rowColumnCaption.addView(HSN);
-            //rowColumnCaption.addView(POS);
+			// rowColumnCaption.addView(HSN);
+			//rowColumnCaption.addView(POS);
 			if (POSEnable.equals("1"))
 			{
 
@@ -2385,11 +2385,11 @@ public class ReportHelper{
 			SGSTAmt.setTextColor(Color.WHITE);
 			SGSTAmt.setText("UTGST/SGST Amt");
 
-            TextView cessAmt = new TextView(activityContext);
-            cessAmt.setWidth(80);
-            cessAmt.setTextSize(15);
-            cessAmt.setTextColor(Color.WHITE);
-            cessAmt.setText("cess Amt");
+			TextView cessAmt = new TextView(activityContext);
+			cessAmt.setWidth(80);
+			cessAmt.setTextSize(15);
+			cessAmt.setTextColor(Color.WHITE);
+			cessAmt.setText("cess Amt");
 
 			TextView SubTotal = new TextView(activityContext);
 			SubTotal.setWidth(105);
@@ -2404,11 +2404,11 @@ public class ReportHelper{
 			POS.setTextColor(Color.WHITE);
 			POS.setText("POS");
 
-            TextView CustStateCode = new TextView(activityContext);
-            CustStateCode.setWidth(80);
-            CustStateCode.setTextSize(15);
-            CustStateCode.setTextColor(Color.WHITE);
-            CustStateCode.setText("Recipient StateCode");
+			TextView CustStateCode = new TextView(activityContext);
+			CustStateCode.setWidth(80);
+			CustStateCode.setTextSize(15);
+			CustStateCode.setTextColor(Color.WHITE);
+			CustStateCode.setText("Recipient StateCode");
 
 			TextView RevCh = new TextView(activityContext);
 			RevCh.setWidth(50);
@@ -2440,7 +2440,7 @@ public class ReportHelper{
 
 			rowColumnCaption.addView(Value);
 			//rowColumnCaption.addView(Quantity);
-            rowColumnCaption.addView(GSTRate);
+			rowColumnCaption.addView(GSTRate);
 			rowColumnCaption.addView(TaxableValue);
 
 			//rowColumnCaption.addView(IGSTRate);
@@ -2452,7 +2452,7 @@ public class ReportHelper{
 			rowColumnCaption.addView(SGSTAmt);
 			rowColumnCaption.addView(cessAmt);
 			//rowColumnCaption.addView(SubTotal);
-            rowColumnCaption.addView(CustStateCode);
+			rowColumnCaption.addView(CustStateCode);
 			if (POSEnable.equals("1"))
 			{
 				//rowColumnCaption.addView(POS);
@@ -2497,7 +2497,7 @@ public class ReportHelper{
 
 			TextView InvNo = new TextView(activityContext);
 			InvNo.setWidth(80);
-            InvNo.setGravity(Gravity.CENTER);
+			InvNo.setGravity(Gravity.CENTER);
 			InvNo.setTextSize(15);
 			InvNo.setTextColor(Color.WHITE);
 			InvNo.setText("Invoice      No.");
@@ -2505,7 +2505,7 @@ public class ReportHelper{
 			TextView InvDate = new TextView(activityContext);
 			InvDate.setWidth(110);
 			InvDate.setTextSize(15);
-            InvDate.setGravity(Gravity.CENTER);
+			InvDate.setGravity(Gravity.CENTER);
 			InvDate.setTextColor(Color.WHITE);
 			InvDate.setText("Invoice          Date");
 
@@ -2524,7 +2524,7 @@ public class ReportHelper{
 			TextView Value = new TextView(activityContext);
 			Value.setWidth(100);
 			Value.setTextSize(15);
-            Value.setGravity(Gravity.CENTER);
+			Value.setGravity(Gravity.CENTER);
 			Value.setTextColor(Color.WHITE);
 			Value.setText("Value");
 
@@ -2537,30 +2537,30 @@ public class ReportHelper{
 			TextView TaxableValue = new TextView(activityContext);
 			TaxableValue.setWidth(100);
 			TaxableValue.setTextSize(15);
-            TaxableValue.setGravity(Gravity.CENTER);
+			TaxableValue.setGravity(Gravity.CENTER);
 			TaxableValue.setTextColor(Color.WHITE);
 			TaxableValue.setText("Taxable    Value");
 
 			TextView IGSTRate = new TextView(activityContext);
 			IGSTRate.setWidth(65);
 			IGSTRate.setTextSize(15);
-            IGSTRate.setGravity(Gravity.CENTER);
+			IGSTRate.setGravity(Gravity.CENTER);
 			IGSTRate.setTextColor(Color.WHITE);
 			IGSTRate.setText("GST     Rate");
 
 			TextView IGSTAmt = new TextView(activityContext);
 			IGSTAmt.setWidth(70);
-            IGSTAmt.setGravity(Gravity.CENTER);
+			IGSTAmt.setGravity(Gravity.CENTER);
 			IGSTAmt.setTextSize(15);
 			IGSTAmt.setTextColor(Color.WHITE);
 			IGSTAmt.setText("IGST      Amt");
 
-            TextView cessAmt = new TextView(activityContext);
-            cessAmt.setWidth(70);
-            cessAmt.setGravity(Gravity.CENTER);
-            cessAmt.setTextSize(15);
-            cessAmt.setTextColor(Color.WHITE);
-            cessAmt.setText("cess     Amt");
+			TextView cessAmt = new TextView(activityContext);
+			cessAmt.setWidth(70);
+			cessAmt.setGravity(Gravity.CENTER);
+			cessAmt.setTextSize(15);
+			cessAmt.setTextColor(Color.WHITE);
+			cessAmt.setText("cess     Amt");
 
 			TextView SubTotal = new TextView(activityContext);
 			SubTotal.setWidth(105);
@@ -2600,7 +2600,7 @@ public class ReportHelper{
 
 			rowColumnCaption.addView(Value);
 			//rowColumnCaption.addView(Quantity);
-            rowColumnCaption.addView(IGSTRate);
+			rowColumnCaption.addView(IGSTRate);
 			rowColumnCaption.addView(TaxableValue);
 
 			rowColumnCaption.addView(IGSTAmt);
@@ -2770,137 +2770,137 @@ public class ReportHelper{
 				rowColumnCaption.addView((Pro));
 			}
 */
-            TextView SNo = new TextView(activityContext);
-            SNo.setWidth(60);
-            SNo.setTextSize(15);
-            SNo.setTextColor(Color.WHITE);
-            SNo.setText("S.No");
+			TextView SNo = new TextView(activityContext);
+			SNo.setWidth(60);
+			SNo.setTextSize(15);
+			SNo.setTextColor(Color.WHITE);
+			SNo.setText("S.No");
 
-            TextView G_S = new TextView(activityContext);
-            G_S.setWidth(60);
-            G_S.setTextSize(15);
-            G_S.setTextColor(Color.WHITE);
-            G_S.setText("G/S");
+			TextView G_S = new TextView(activityContext);
+			G_S.setWidth(60);
+			G_S.setTextSize(15);
+			G_S.setTextColor(Color.WHITE);
+			G_S.setText("G/S");
 
-            TextView HSN = new TextView(activityContext);
-            HSN.setWidth(100);
-            HSN.setTextSize(15);
-            HSN.setTextColor(Color.WHITE);
-            HSN.setText("  HSN/SAC");
+			TextView HSN = new TextView(activityContext);
+			HSN.setWidth(100);
+			HSN.setTextSize(15);
+			HSN.setTextColor(Color.WHITE);
+			HSN.setText("  HSN/SAC");
 
-            TextView TaxableValue = new TextView(activityContext);
-            TaxableValue.setWidth(230);
-            TaxableValue.setGravity(Gravity.CENTER);
-            TaxableValue.setTextSize(15);
-            TaxableValue.setTextColor(Color.WHITE);
-            TaxableValue.setText("Taxable Value");
+			TextView TaxableValue = new TextView(activityContext);
+			TaxableValue.setWidth(230);
+			TaxableValue.setGravity(Gravity.CENTER);
+			TaxableValue.setTextSize(15);
+			TaxableValue.setTextColor(Color.WHITE);
+			TaxableValue.setText("Taxable Value");
 
-            TextView IGSTRate = new TextView(activityContext);
-            IGSTRate.setWidth(70);
-            IGSTRate.setTextSize(15);
-            IGSTRate.setTextColor(Color.WHITE);
-            IGSTRate.setText("IGST    Rate");
+			TextView IGSTRate = new TextView(activityContext);
+			IGSTRate.setWidth(70);
+			IGSTRate.setTextSize(15);
+			IGSTRate.setTextColor(Color.WHITE);
+			IGSTRate.setText("IGST    Rate");
 
-            TextView GSTRate = new TextView(activityContext);
-            GSTRate.setWidth(100);
-            GSTRate.setTextSize(15);
-            GSTRate.setGravity(Gravity.CENTER);
-            GSTRate.setTextColor(Color.WHITE);
-            GSTRate.setText("GST Rate");
+			TextView GSTRate = new TextView(activityContext);
+			GSTRate.setWidth(100);
+			GSTRate.setTextSize(15);
+			GSTRate.setGravity(Gravity.CENTER);
+			GSTRate.setTextColor(Color.WHITE);
+			GSTRate.setText("GST Rate");
 
-            TextView IGSTAmt = new TextView(activityContext);
-            IGSTAmt.setWidth(150);
-            IGSTAmt.setTextSize(15);
-            IGSTAmt.setGravity(Gravity.CENTER);
-            IGSTAmt.setTextColor(Color.WHITE);
-            IGSTAmt.setText("IGST Amt");
+			TextView IGSTAmt = new TextView(activityContext);
+			IGSTAmt.setWidth(150);
+			IGSTAmt.setTextSize(15);
+			IGSTAmt.setGravity(Gravity.CENTER);
+			IGSTAmt.setTextColor(Color.WHITE);
+			IGSTAmt.setText("IGST Amt");
 
-            TextView CGSTRate = new TextView(activityContext);
-            CGSTRate.setWidth(70);
-            CGSTRate.setTextSize(15);
-            CGSTRate.setTextColor(Color.WHITE);
-            CGSTRate.setText("CGST Rate");
+			TextView CGSTRate = new TextView(activityContext);
+			CGSTRate.setWidth(70);
+			CGSTRate.setTextSize(15);
+			CGSTRate.setTextColor(Color.WHITE);
+			CGSTRate.setText("CGST Rate");
 
-            TextView CGSTAmt = new TextView(activityContext);
-            CGSTAmt.setWidth(170);
-            CGSTAmt.setTextSize(15);
-            CGSTAmt.setGravity(Gravity.CENTER);
-            CGSTAmt.setTextColor(Color.WHITE);
-            CGSTAmt.setText("CGST Amt");
+			TextView CGSTAmt = new TextView(activityContext);
+			CGSTAmt.setWidth(170);
+			CGSTAmt.setTextSize(15);
+			CGSTAmt.setGravity(Gravity.CENTER);
+			CGSTAmt.setTextColor(Color.WHITE);
+			CGSTAmt.setText("CGST Amt");
 
-            TextView SGSTRate = new TextView(activityContext);
-            SGSTRate.setWidth(70);
-            SGSTRate.setTextSize(15);
-            SGSTRate.setTextColor(Color.WHITE);
-            SGSTRate.setText("UTGST/SGST Rate");
+			TextView SGSTRate = new TextView(activityContext);
+			SGSTRate.setWidth(70);
+			SGSTRate.setTextSize(15);
+			SGSTRate.setTextColor(Color.WHITE);
+			SGSTRate.setText("UTGST/SGST Rate");
 
-            TextView SGSTAmt = new TextView(activityContext);
-            SGSTAmt.setWidth(170);
-            SGSTAmt.setGravity(Gravity.CENTER);
-            SGSTAmt.setTextSize(15);
-            SGSTAmt.setTextColor(Color.WHITE);
-            SGSTAmt.setText("UTGST/SGST Amt");
+			TextView SGSTAmt = new TextView(activityContext);
+			SGSTAmt.setWidth(170);
+			SGSTAmt.setGravity(Gravity.CENTER);
+			SGSTAmt.setTextSize(15);
+			SGSTAmt.setTextColor(Color.WHITE);
+			SGSTAmt.setText("UTGST/SGST Amt");
 
-            TextView cessAmt = new TextView(activityContext);
-            cessAmt.setWidth(170);
-            cessAmt.setGravity(Gravity.CENTER);
-            cessAmt.setTextSize(15);
-            cessAmt.setTextColor(Color.WHITE);
-            cessAmt.setText("cess Amt");
+			TextView cessAmt = new TextView(activityContext);
+			cessAmt.setWidth(170);
+			cessAmt.setGravity(Gravity.CENTER);
+			cessAmt.setTextSize(15);
+			cessAmt.setTextColor(Color.WHITE);
+			cessAmt.setText("cess Amt");
 
-            TextView SubTotal = new TextView(activityContext);
-            SubTotal.setWidth(110);
-            SubTotal.setTextSize(15);
-            SubTotal.setTextColor(Color.WHITE);
-            SubTotal.setText("SubTotal");
+			TextView SubTotal = new TextView(activityContext);
+			SubTotal.setWidth(110);
+			SubTotal.setTextSize(15);
+			SubTotal.setTextColor(Color.WHITE);
+			SubTotal.setText("SubTotal");
 
-            TextView CustStateCode = new TextView(activityContext);
-            CustStateCode.setWidth(110);
-            CustStateCode.setTextSize(15);
-            CustStateCode.setTextColor(Color.WHITE);
-            CustStateCode.setText("CustStateCode");
+			TextView CustStateCode = new TextView(activityContext);
+			CustStateCode.setWidth(110);
+			CustStateCode.setTextSize(15);
+			CustStateCode.setTextColor(Color.WHITE);
+			CustStateCode.setText("CustStateCode");
 
-            TextView POS = new TextView(activityContext);
-            POS.setWidth(85);
-            POS.setTextSize(15);
-            POS.setTextColor(Color.WHITE);
-            POS.setText("POS");
+			TextView POS = new TextView(activityContext);
+			POS.setWidth(85);
+			POS.setTextSize(15);
+			POS.setTextColor(Color.WHITE);
+			POS.setText("POS");
 
-            TextView Pro = new TextView(activityContext);
-            Pro.setWidth(70);
-            Pro.setTextSize(15);
-            Pro.setTextColor(Color.WHITE);
-            Pro.setText("Pro Assess ");
+			TextView Pro = new TextView(activityContext);
+			Pro.setWidth(70);
+			Pro.setTextSize(15);
+			Pro.setTextColor(Color.WHITE);
+			Pro.setText("Pro Assess ");
 
 
 
-            // Add views to row
-            rowColumnCaption.addView(SNo);
-            //rowColumnCaption.addView(G_S);
-            // rowColumnCaption.addView(HSN);
-            //rowColumnCaption.addView(POS);
-            if (POSEnable.equals("1"))
-            {
+			// Add views to row
+			rowColumnCaption.addView(SNo);
+			//rowColumnCaption.addView(G_S);
+			// rowColumnCaption.addView(HSN);
+			//rowColumnCaption.addView(POS);
+			if (POSEnable.equals("1"))
+			{
 
-            }
-            if (HSNEnable.equals("1"))
-            {
+			}
+			if (HSNEnable.equals("1"))
+			{
 
-            }
-            rowColumnCaption.addView(GSTRate);
-            rowColumnCaption.addView(TaxableValue);
-            //rowColumnCaption.addView(IGSTRate);
-            rowColumnCaption.addView(IGSTAmt);
-            //rowColumnCaption.addView(CGSTRate);
-            rowColumnCaption.addView(CGSTAmt);
-            //rowColumnCaption.addView(SGSTRate);
-            rowColumnCaption.addView(SGSTAmt);
-            rowColumnCaption.addView(cessAmt);
-            //rowColumnCaption.addView(SubTotal);
-            if (ReverseChargeEnabe.equals("1"))
-            {
-                rowColumnCaption.addView((Pro));
-            }
+			}
+			rowColumnCaption.addView(GSTRate);
+			rowColumnCaption.addView(TaxableValue);
+			//rowColumnCaption.addView(IGSTRate);
+			rowColumnCaption.addView(IGSTAmt);
+			//rowColumnCaption.addView(CGSTRate);
+			rowColumnCaption.addView(CGSTAmt);
+			//rowColumnCaption.addView(SGSTRate);
+			rowColumnCaption.addView(SGSTAmt);
+			rowColumnCaption.addView(cessAmt);
+			//rowColumnCaption.addView(SubTotal);
+			if (ReverseChargeEnabe.equals("1"))
+			{
+				rowColumnCaption.addView((Pro));
+			}
 		}else if(ReportName.equalsIgnoreCase("GSTR1-1A Validation")){
 
 			TextView SNo = new TextView(activityContext);
@@ -2989,66 +2989,66 @@ public class ReportHelper{
 				new LayoutParams(LayoutParams.MATCH_PARENT,
 						LayoutParams.MATCH_PARENT));
 	}
-	
+
 	public boolean ExportReportToCSV(Context activityContext,TableLayout ReportTable,String ReportName,String StartDate,String EndDate){
 		FileOutputStream Report;
 		TableRow rowReport;
 		TextView ReportData;
 		int iRow = 0, iColumn = 0;
-        String strData, strReportFileName;
-        byte[] bDataBuffer;
-        byte[] bReportName = ReportName.getBytes();
-        byte[] bColumnSeperator = (",").getBytes();
-        byte[] bLineFeed = ("\n").getBytes();
-        
+		String strData, strReportFileName;
+		byte[] bDataBuffer;
+		byte[] bReportName = ReportName.getBytes();
+		byte[] bColumnSeperator = (",").getBytes();
+		byte[] bLineFeed = ("\n").getBytes();
+
 		try {
 			CheckReportsDirectory();
-			
+
 			// Set default file name.
 			strReportFileName = ReportName +"{"+ StartDate + " To " + EndDate +"}" +".csv";
 			Report = new FileOutputStream(REPORT_PATH + strReportFileName);
 
 			// Set Report name in file.
-            // Center alignment for report name
+			// Center alignment for report name
 			TableRow rowHeading = (TableRow)ReportTable.getChildAt(0);
 			for(iColumn=1; iColumn<((rowHeading.getChildCount() / 2) + 1); iColumn++){
 				Report.write(bColumnSeperator,0,bColumnSeperator.length);
 			}
 			Report.write(bReportName,0,bReportName.length);
-			
+
 			// Line space between column headers and report date range
 			Report.write(bLineFeed,0,bLineFeed.length);
 
 			// Copy all the data to file from report table
 			for(iRow=0; iRow<ReportTable.getChildCount();iRow++){
-				
+
 				try{
-                    rowReport = (TableRow)ReportTable.getChildAt(iRow);
-                }catch (Exception e)
-                {
-                    continue;
-                }
+					rowReport = (TableRow)ReportTable.getChildAt(iRow);
+				}catch (Exception e)
+				{
+					continue;
+				}
 				for(iColumn=0;iColumn<rowReport.getChildCount();iColumn++){
-					
+
 					ReportData = (TextView)rowReport.getChildAt(iColumn);
 					strData = ReportData.getText().toString();
 					if(strData.contains(",")){
 						strData.replace(',', ' ');
 					}
-					
+
 					bDataBuffer = strData.getBytes();
 					Report.write(bDataBuffer,0,bDataBuffer.length);
 					Report.write(bColumnSeperator,0,bColumnSeperator.length);
 				}
 				Report.write(bLineFeed,0,bLineFeed.length);
 			}
-			
+
 			// Flush the buffer and close the file
 			Report.flush();
 			Report.close();
-			
+
 			return true;
-			
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -3061,11 +3061,11 @@ public class ReportHelper{
 			return false;
 		}
 	}
-	
+
 	private String getReportColumn(String ReportName){
 		String strHeader = "";
-		
-		if(ReportName.equalsIgnoreCase("Bill wise Report") || 
+
+		if(ReportName.equalsIgnoreCase("Bill wise Report") ||
 				ReportName.equalsIgnoreCase("Void Bill Report")){
 			strHeader = "------------------------" + "\r";
 			strHeader += "Bill #   Items  Discount" + "\r";
@@ -3081,7 +3081,7 @@ public class ReportHelper{
 			strHeader += "------------------------" + "\r";
 		}
 		else if(ReportName.equalsIgnoreCase("Waiter Detailed Report") || ReportName.equalsIgnoreCase("Rider Detailed Report") ||
-				ReportName.equalsIgnoreCase("User Detailed Report") || ReportName.equalsIgnoreCase("Customer Detailed Report") || 
+				ReportName.equalsIgnoreCase("User Detailed Report") || ReportName.equalsIgnoreCase("Customer Detailed Report") ||
 				ReportName.equalsIgnoreCase("Day wise Report") || ReportName.equalsIgnoreCase("Month wise Report")){
 			strHeader = "------------------------" + "\r";
 			strHeader += "Date       Bill   Disct." + "\r";
@@ -3147,10 +3147,10 @@ public class ReportHelper{
 			strHeader += "  Amount Reason         " + "\r";
 			strHeader += "------------------------" + "\r";
 		}
-		
+
 		return strHeader;
 	}
-	
+
 	public void PrintReport(String ReportName,TableLayout ReportTable){
 		SendDataToSerialPort spPrinter = new SendDataToSerialPort();
 		int iCount = 0;
@@ -3160,37 +3160,37 @@ public class ReportHelper{
 				Date = null,Description = null,Discount = null,Id = null,Items = null,Name = null,
 				Percent = null,Qty = null,Reason = null,SalesTax = null,ServiceTax = null,Table = null,
 				Time = null,Token = null, Waiter = null;
-		
+
 		//strPrintData = crsrSettings.getString(crsrSettings.getColumnIndex("HeaderText")) + "\r\r";
 		//spPrinter.Write(strPrintData.getBytes());
-		
+
 		strPrintData = "\r\r" + ReportName + "\r\r";
 		spPrinter.Write(strPrintData.getBytes());
-		
+
 		strPrintData = getReportColumn(ReportName);
 		spPrinter.Write(strPrintData.getBytes());
-		
-		if(ReportName.equalsIgnoreCase("Bill wise Report") || 
+
+		if(ReportName.equalsIgnoreCase("Bill wise Report") ||
 				ReportName.equalsIgnoreCase("Void Bill Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Bill = (TextView)Row.getChildAt(1);
 					Items = (TextView)Row.getChildAt(2);
 					Discount = (TextView)Row.getChildAt(3);
 					SalesTax = (TextView)Row.getChildAt(4);
 					ServiceTax = (TextView)Row.getChildAt(5);
 					Amount = (TextView)Row.getChildAt(6);
-					
+
 					strPrintData = String.format("%-7s", Bill.getText().toString());
 					strPrintData += String.format("%7s", Items.getText().toString());
 					strPrintData += String.format("%10s", Discount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%8s", SalesTax.getText().toString());
 					strPrintData += String.format("%8s", ServiceTax.getText().toString());
 					strPrintData += String.format("%8s", Amount.getText().toString()) + "\r";
@@ -3199,27 +3199,27 @@ public class ReportHelper{
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("Waiter Detailed Report") || ReportName.equalsIgnoreCase("Rider Detailed Report") ||
-				ReportName.equalsIgnoreCase("User Detailed Report") || ReportName.equalsIgnoreCase("Customer Detailed Report") || 
+				ReportName.equalsIgnoreCase("User Detailed Report") || ReportName.equalsIgnoreCase("Customer Detailed Report") ||
 				ReportName.equalsIgnoreCase("Day wise Report") || ReportName.equalsIgnoreCase("Month wise Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Date = (TextView)Row.getChildAt(0);
 					Bill = (TextView)Row.getChildAt(1);
 					Discount = (TextView)Row.getChildAt(3);
 					SalesTax = (TextView)Row.getChildAt(4);
 					ServiceTax = (TextView)Row.getChildAt(5);
 					Amount = (TextView)Row.getChildAt(6);
-					
+
 					strPrintData = String.format("%-11s", Date.getText().toString());
 					strPrintData += String.format("%6s", Bill.getText().toString());
 					strPrintData += String.format("%7s", Discount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%8s", SalesTax.getText().toString());
 					strPrintData += String.format("%8s", ServiceTax.getText().toString());
 					strPrintData += String.format("%8s", Amount.getText().toString()) + "\r";
@@ -3227,53 +3227,53 @@ public class ReportHelper{
 				}
 			}
 		}
-		else if(ReportName.equalsIgnoreCase("Waiter wise Report") || 
-				ReportName.equalsIgnoreCase("Rider wise Report") ||  
+		else if(ReportName.equalsIgnoreCase("Waiter wise Report") ||
+				ReportName.equalsIgnoreCase("Rider wise Report") ||
 				ReportName.equalsIgnoreCase("User wise Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Id = (TextView)Row.getChildAt(0);
 					Name = (TextView)Row.getChildAt(1);
 					Bill = (TextView)Row.getChildAt(3);
 					Amount = (TextView)Row.getChildAt(6);
-					
+
 					strPrintData = String.format("%-6s", Id.getText().toString());
 					strPrintData += String.format("%-18s", Name.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%-6s", Bill.getText().toString());
 					strPrintData += String.format("%9s", Amount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
 				}
 			}
 		}
-		else if(ReportName.equalsIgnoreCase("Department wise Report") || 
-				ReportName.equalsIgnoreCase("Category wise Report") ||  
+		else if(ReportName.equalsIgnoreCase("Department wise Report") ||
+				ReportName.equalsIgnoreCase("Category wise Report") ||
 				ReportName.equalsIgnoreCase("Kitchen wise Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Name = (TextView)Row.getChildAt(1);
 					Items = (TextView)Row.getChildAt(2);
 					Discount = (TextView)Row.getChildAt(3);
 					SalesTax = (TextView)Row.getChildAt(4);
 					ServiceTax = (TextView)Row.getChildAt(5);
 					Amount = (TextView)Row.getChildAt(6);
-					
+
 					strPrintData = String.format("%-11s", Name.getText().toString());
 					strPrintData += String.format("%6s", Items.getText().toString());
 					strPrintData += String.format("%7s", Discount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%8s", SalesTax.getText().toString());
 					strPrintData += String.format("%8s", ServiceTax.getText().toString());
 					strPrintData += String.format("%8s", Amount.getText().toString()) + "\r";
@@ -3281,48 +3281,48 @@ public class ReportHelper{
 				}
 			}
 		}
-		else if(ReportName.equalsIgnoreCase("Sales Tax Report") || 
+		else if(ReportName.equalsIgnoreCase("Sales Tax Report") ||
 				ReportName.equalsIgnoreCase("Service Tax Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Percent = (TextView)Row.getChildAt(0);
 					Description = (TextView)Row.getChildAt(1);
 					SalesTax = (TextView)Row.getChildAt(2);
 					Amount = (TextView)Row.getChildAt(3);
-					
+
 					strPrintData = String.format("%-8s", Percent.getText().toString());
 					strPrintData += String.format("%-16s", Description.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%-9s", SalesTax.getText().toString());
 					strPrintData += String.format("%10s", Amount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
 				}
 			}
 		}
-		else if(ReportName.equalsIgnoreCase("Payments Report") || 
+		else if(ReportName.equalsIgnoreCase("Payments Report") ||
 				ReportName.equalsIgnoreCase("Receipts Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Date = (TextView)Row.getChildAt(0);
 					Description = (TextView)Row.getChildAt(1);
 					Amount = (TextView)Row.getChildAt(2);
 					Reason = (TextView)Row.getChildAt(3);
-					
+
 					strPrintData = String.format("%-11s", Date.getText().toString());
 					strPrintData += String.format("%-13s", Description.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%9s", Amount.getText().toString());
 					strPrintData += String.format("%-15s", Reason.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
@@ -3330,13 +3330,13 @@ public class ReportHelper{
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("Transaction Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Date = (TextView)Row.getChildAt(0);
 					Bill = (TextView)Row.getChildAt(1);
 					Amount = (TextView)Row.getChildAt(3);
@@ -3344,13 +3344,13 @@ public class ReportHelper{
 					Card = (TextView)Row.getChildAt(5);
 					Coupon = (TextView)Row.getChildAt(6);
 					TextView pettyCash = (TextView)Row.getChildAt(7);
-                    TextView ewallet = (TextView)Row.getChildAt(8);
+					TextView ewallet = (TextView)Row.getChildAt(8);
 
 					strPrintData = String.format("%-11s", Date.getText().toString());
 					strPrintData += String.format("%-6s", Bill.getText().toString());
 					strPrintData += String.format("%7s", Amount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%8s", Cash.getText().toString());
 					strPrintData += String.format("%8s", Card.getText().toString());
 					strPrintData += String.format("%8s", Coupon.getText().toString()) + "\r";
@@ -3359,23 +3359,23 @@ public class ReportHelper{
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("Customer wise Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Id = (TextView)Row.getChildAt(0);
 					Name = (TextView)Row.getChildAt(1);
 					Bill = (TextView)Row.getChildAt(3);
 					SalesTax = (TextView)Row.getChildAt(4);			// Last Transaction
 					ServiceTax = (TextView)Row.getChildAt(5);		// Total Transaction
-					
+
 					strPrintData = String.format("%-4s", Id.getText().toString());
 					strPrintData += String.format("%-20s", Name.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%-6s", Bill.getText().toString());
 					strPrintData += String.format("%-9s", SalesTax.getText().toString());
 					strPrintData += String.format("%-9s", ServiceTax.getText().toString()) + "\r";
@@ -3384,75 +3384,75 @@ public class ReportHelper{
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("KOT Pending Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Token = (TextView)Row.getChildAt(0);
 					Table = (TextView)Row.getChildAt(1);
 					Time = (TextView)Row.getChildAt(2);
 					Waiter = (TextView)Row.getChildAt(3);
 					Items = (TextView)Row.getChildAt(4);
-					
+
 					strPrintData = String.format("%-6s", Token.getText().toString());
 					strPrintData += String.format("%-6s", Table.getText().toString());
 					strPrintData += String.format("%-6s", Time.getText().toString());
 					strPrintData += String.format("%-6s", Waiter.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%-6s", Items.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
 				}
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("KOT Deleted Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Token = (TextView)Row.getChildAt(0);
 					Table = (TextView)Row.getChildAt(1);
 					Time = (TextView)Row.getChildAt(2);
 					Waiter = (TextView)Row.getChildAt(3);
 					Reason = (TextView)Row.getChildAt(4);
-					
+
 					strPrintData = String.format("%-6s", Token.getText().toString());
 					strPrintData += String.format("%-6s", Table.getText().toString());
 					strPrintData += String.format("%-6s", Time.getText().toString());
 					strPrintData += String.format("%-6s", Waiter.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%-24s", Reason.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
 				}
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("Item wise Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Name = (TextView)Row.getChildAt(1);
 					Qty = (TextView)Row.getChildAt(2);
 					Discount = (TextView)Row.getChildAt(3);
 					SalesTax = (TextView)Row.getChildAt(4);
 					ServiceTax = (TextView)Row.getChildAt(5);
 					Amount = (TextView)Row.getChildAt(6);
-					
+
 					strPrintData = String.format("%-12s", Name.getText().toString());
 					strPrintData += String.format("%5s", Qty.getText().toString());
 					strPrintData += String.format("%7s", Discount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%8s", SalesTax.getText().toString());
 					strPrintData += String.format("%8s", ServiceTax.getText().toString());
 					strPrintData += String.format("%8s", Amount.getText().toString()) + "\r";
@@ -3461,13 +3461,13 @@ public class ReportHelper{
 			}
 		}
 		else if(ReportName.equalsIgnoreCase("Duplicate Bill Report")){
-			
+
 			for(iCount = 1; iCount < ReportTable.getChildCount(); iCount++){
-				
+
 				Row = (TableRow)ReportTable.getChildAt(iCount);
-				
+
 				if(Row.getChildAt(0) != null){
-					
+
 					Bill = (TextView)Row.getChildAt(1);
 					Items = (TextView)Row.getChildAt(2);
 					Count = (TextView)Row.getChildAt(7);
@@ -3475,13 +3475,13 @@ public class ReportHelper{
 					SalesTax = (TextView)Row.getChildAt(4);
 					ServiceTax = (TextView)Row.getChildAt(5);
 					Amount = (TextView)Row.getChildAt(6);
-					
+
 					strPrintData = String.format("%-5s", Bill.getText().toString());
 					strPrintData += String.format("%-6s", Items.getText().toString());
 					strPrintData += String.format("%-6s", Count.getText().toString());
 					strPrintData += String.format("%7s", Discount.getText().toString()) + "\r";
 					spPrinter.Write(strPrintData.getBytes());
-					
+
 					strPrintData = String.format("%8s", SalesTax.getText().toString());
 					strPrintData += String.format("%8s", ServiceTax.getText().toString());
 					strPrintData += String.format("%8s", Amount.getText().toString()) + "\r";
@@ -3491,10 +3491,10 @@ public class ReportHelper{
 		}
 		strPrintData = "------------------------" + "\r\r\r";
 		spPrinter.Write(strPrintData.getBytes());
-		
+
 		//Close Serial port
 		spPrinter.Close();
-		
+
 		//return strPrintData;
 	}
 
