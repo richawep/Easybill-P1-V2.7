@@ -13,6 +13,7 @@ public class PrintKotBillItem implements Serializable {
     private String waiterName;
     private int waiterNo;
     private int boldHeader;
+    private int AmountInNextLine;
     private int ownerDetail;
     private int printService;
     private String orderBy;
@@ -122,6 +123,14 @@ public class PrintKotBillItem implements Serializable {
         this.UTGSTEnabled = UTGSTEnabled;
         this.HSNPrintEnabled_out = HSNPrintEnabled_out;
         this.roundOff = roundOff;
+    }
+
+    public int getAmountInNextLine() {
+        return AmountInNextLine;
+    }
+
+    public void setAmountInNextLine(int amountInNextLine) {
+        AmountInNextLine = amountInNextLine;
     }
 
     public String getWaiterName() {

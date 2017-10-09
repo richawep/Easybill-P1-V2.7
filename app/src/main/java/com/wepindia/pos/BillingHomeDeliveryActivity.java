@@ -101,7 +101,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
     Pattern p = Pattern.compile("^(-?[0-9]+[\\.\\,][0-9]{1,2})?[0-9]*$");
     int CUSTOMER_FOUND =0;
     int PRINTOWNERDETAIL = 0, BOLDHEADER = 0, PRINTSERVICE = 0, BILLAMOUNTROUNDOFF = 0;
-
+    int AMOUNTPRINTINNEXTLINE = 0;
     private final int CHECK_INTEGER_VALUE = 0;
     private final int CHECK_DOUBLE_VALUE = 1;
     private final int CHECK_STRING_VALUE = 2;
@@ -3257,6 +3257,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
         setInvoiceDate();
         fTotalDiscount =0;
         fRoundOfValue =0;
+        AMOUNTPRINTINNEXTLINE =0;
 
     }
 
@@ -6901,6 +6902,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
 
     public ArrayList<BillKotItem> billPrint(ArrayList<BillTaxSlab> billTaxSlabs) {
         ArrayList<BillKotItem> billKotItems = new ArrayList<BillKotItem>();
+        AMOUNTPRINTINNEXTLINE =0;
         int count = 1;
         for (int iRow = 0; iRow < tblOrderItems.getChildCount(); iRow++) {
             TableRow row = (TableRow) tblOrderItems.getChildAt(iRow);
@@ -6932,6 +6934,8 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
             else
                 amount = Double.parseDouble(itemAmount.getText().toString().trim());*/
             amount = originalRate *qty;
+            if(String.format("%.2f",amount).length()>8)
+                AMOUNTPRINTINNEXTLINE = 1;
             String taxIndex = " ";
             double TaxRate =0;
             if(chk_interstate.isChecked())
@@ -7497,6 +7501,7 @@ public class BillingHomeDeliveryActivity extends WepPrinterBaseActivity implemen
                     ArrayList<BillKotItem> billKotItems = billPrint(billTaxSlabs);
                     item.setCustomerName(CustDetails);
                     item.setBillKotItems(billKotItems);
+                    item.setAmountInNextLine(AMOUNTPRINTINNEXTLINE);
                     item.setBillOtherChargesItems(billOtherChargesItems);
                     //item.setBillTaxItems(billTaxItems);
                     //item.setBillServiceTaxItems(billServiceTaxItems);

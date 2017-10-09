@@ -104,7 +104,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
     DecimalFormat df_2, df_3;
     Pattern p = Pattern.compile("^(-?[0-9]+[\\.\\,][0-9]{1,2})?[0-9]*$");
     int PRINTOWNERDETAIL = 0, BOLDHEADER = 0, PRINTSERVICE = 0, BILLAMOUNTROUNDOFF = 0;
-
+    int AMOUNTPRINTINNEXTLINE = 0;
     private static final String TAG = BillingDineInActivity.class.getSimpleName();
     private DatabaseHandler db;
     Context myContext;
@@ -3086,6 +3086,7 @@ public class BillingDineInActivity extends WepPrinterBaseActivity implements Tex
         setInvoiceDate();
         fTotalDiscount =0;
         fRoundOfValue =0;
+        AMOUNTPRINTINNEXTLINE =0;
     }
 
 
@@ -7133,6 +7134,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
     public ArrayList<BillKotItem> billPrint(ArrayList<BillTaxSlab> billTaxSlabs) {
         ArrayList<BillKotItem> billKotItems = new ArrayList<BillKotItem>();
         int count = 1;
+        AMOUNTPRINTINNEXTLINE =0;
         for (int iRow = 0; iRow < tblOrderItems.getChildCount(); iRow++) {
             TableRow row = (TableRow) tblOrderItems.getChildAt(iRow);
             CheckBox itemId = (CheckBox) row.getChildAt(0);
@@ -7164,6 +7166,8 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                 amount = Double.parseDouble(itemAmount.getText().toString().trim());*/
 
             amount = originalRate *qty;
+            if(String.format("%.2f",amount).length()>8)
+                AMOUNTPRINTINNEXTLINE = 1;
             String taxIndex = " ";
             double TaxRate =0;
             if(chk_interstate.isChecked())
@@ -7848,6 +7852,7 @@ private void LoadModifyKOTItems_old(Cursor crsrBillItems) {
                     ArrayList<BillKotItem> billKotItems = billPrint(billTaxSlabs);
 
                     item.setBillKotItems(billKotItems);
+                    item.setAmountInNextLine(AMOUNTPRINTINNEXTLINE);
                     item.setBillOtherChargesItems(billOtherChargesItems);
                     item.setBillTaxSlabs(billTaxSlabs);
                     item.setBillcessTaxItems(billcessTaxItems);

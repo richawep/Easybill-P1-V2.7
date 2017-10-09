@@ -91,6 +91,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
     String tx ="";
     int CUSTOMER_FOUND =0;
     int PRINTOWNERDETAIL = 0, BOLDHEADER = 0, PRINTSERVICE = 0, BILLAMOUNTROUNDOFF = 0;
+    int AMOUNTPRINTINNEXTLINE = 0;
     boolean REVERSETAX = false;
     boolean ROUNDOFFAMOUNT = false;
     DecimalFormat df_2, df_3;
@@ -550,6 +551,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
 
         fTotalDiscount =0;
         fRoundOfValue =0;
+        AMOUNTPRINTINNEXTLINE =0;
     }
     private static int checkScreenResolutionWidthType(Context context) {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -1593,7 +1595,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
 //                    etRate.setTextSize(11);
                     etRate.setWidth(mRateWidth); // 74px ~= 110dp
                     etRate.setTextSize(mDataMiniDeviceTextsize);
-                    //etRate.setSelectAllOnFocus(true);
+                    etRate.setSelectAllOnFocus(true);
                     etRate.setFilters(new InputFilter[] {new DecimalDigitsInputFilter(4,1)});
                     etRate.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
@@ -3736,6 +3738,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                     billcessTaxItems = cessTaxPrint();
                     billKotItems = billPrint(billTaxSlabs);
                     item.setBillKotItems(billKotItems);
+                    item.setAmountInNextLine(AMOUNTPRINTINNEXTLINE);
                     item.setBillOtherChargesItems(billOtherChargesItems);
                     item.setBillTaxSlabs(billTaxSlabs);
                     item.setBillcessTaxItems(billcessTaxItems);
@@ -3930,6 +3933,7 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
     public ArrayList<BillKotItem> billPrint(ArrayList<BillTaxSlab> billTaxSlabs) {
         ArrayList<BillKotItem> billKotItems = new ArrayList<BillKotItem>();
         int count = 1;
+        AMOUNTPRINTINNEXTLINE =0;
         for (int iRow = 0; iRow < tblOrderItems.getChildCount(); iRow++) {
             TableRow row = (TableRow) tblOrderItems.getChildAt(iRow);
             CheckBox itemId = (CheckBox) row.getChildAt(0);
@@ -3961,6 +3965,8 @@ public class BillingCounterSalesActivity extends WepPrinterBaseActivity implemen
                 amount = Double.parseDouble(itemAmount.getText().toString().trim());*/
 
             amount = originalRate *qty;
+            if(String.format("%.2f",amount).length()>8)
+                AMOUNTPRINTINNEXTLINE = 1;
             String taxIndex = " ";
             double TaxRate =0;
             if(chk_interstate.isChecked())
